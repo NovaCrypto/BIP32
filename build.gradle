@@ -53,7 +53,7 @@ task sourcesJar(type: Jar, dependsOn: classes) {
 
 task javadocJar(type: Jar, dependsOn: Javadoc) {
     classifier = 'javadoc'
-    from Javadoc.destinationDir
+    from javadoc.destinationDir
 }
 
 artifacts {
@@ -68,13 +68,13 @@ publishing {
             groupId group
             artifactId 'BIP32'
             version project.version
-            Artifact("$buildDir/libs/bip32-${project.version}-sources.jar"){
+            artifact("$buildDir/libs/bip32-${project.version}-sources.jar"){
                 classifier = 'sources'
             }
-            Artifact("$buildDir/libs/bip32-${project.version}-javadoc.jar"){
+            artifact("$buildDir/libs/bip32-${project.version}-javadoc.jar"){
                 classifier = 'javadoc'
             }
-            Artifact("$buildDir/libs/bip32-${project.version}.jar")
+            artifact("$buildDir/libs/bip32-${project.version}.jar")
         }
     }
 }
