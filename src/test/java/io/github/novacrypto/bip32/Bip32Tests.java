@@ -29,11 +29,11 @@ import org.junit.Test;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.security.InvalidKeyException;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
 import static io.github.novacrypto.base58.Base58.base58Encode;
+import static io.github.novacrypto.bip32.Sha256.sha256;
 import static org.junit.Assert.assertEquals;
 
 public final class Bip32Tests {
@@ -92,23 +92,9 @@ public final class Bip32Tests {
             //write
         }
 
-        final byte[] checksum = shar256(shar256(base58, 0, 78));
+        final byte[] checksum = sha256(sha256(base58, 0, 78));
         writeBytes(base58, checksum, idx, 4);
         return base58;
-    }
-
-    private static byte[] shar256(byte[] bytes) {
-        return shar256(bytes, 0, bytes.length);
-    }
-
-    private static byte[] shar256(byte[] bytes, int offset, int length) {
-        try {
-            MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            digest.update(bytes, offset, length);
-            return digest.digest();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
 
     private static int writeBytes(byte[] bytes, byte[] bytesSource, int offset, int length) {
