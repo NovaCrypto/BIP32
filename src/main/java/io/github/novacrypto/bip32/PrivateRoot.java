@@ -21,11 +21,13 @@
 
 package io.github.novacrypto.bip32;
 
-import java.io.UnsupportedEncodingException;
+import io.github.novacrypto.toruntime.CheckedExceptionToRuntime;
+
 import java.util.Arrays;
 
 import static io.github.novacrypto.bip32.HmacSha512.hmacSha512;
 import static io.github.novacrypto.bip32.Sha256.sha256;
+import static io.github.novacrypto.toruntime.CheckedExceptionToRuntime.toRuntime;
 
 /**
  * A BIP32 root private key
@@ -38,8 +40,8 @@ public final class PrivateRoot {
         this.bytes = bytes;
     }
 
-    public static PrivateRoot fromSeed(final byte[] seed, final Network network) throws UnsupportedEncodingException {
-        byte[] byteKey = "Bitcoin seed".getBytes("UTF-8");
+    public static PrivateRoot fromSeed(final byte[] seed, final Network network) {
+        byte[] byteKey = getBytes();
         byte[] hash = hmacSha512(byteKey, seed);
 
         final byte[] il = Arrays.copyOf(hash, 32);
@@ -68,6 +70,15 @@ public final class PrivateRoot {
         final byte[] checksum = sha256(sha256(privateKey, 0, 78));
         writer.writeBytes(checksum, 4);
         return privateKey;
+    }
+
+    private static byte[] getBytes() {
+        return toRuntime(new CheckedExceptionToRuntime.Func<byte[]>() {
+            @Override
+            public byte[] run() throws Exception {
+                return "Bitcoin seed".getBytes("UTF-8");
+            }
+        });
     }
 
     public byte[] toByteArray() {
