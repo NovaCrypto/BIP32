@@ -39,11 +39,11 @@ public final class ByteArrayWriter {
         writeBytes(bytesSource, bytesSource.length);
     }
 
-    public void writeInt(int value) {
-        bytes[idx++] = (byte) (value >> 24);
-        bytes[idx++] = (byte) (value >> 16);
-        bytes[idx++] = (byte) (value >> 8);
-        bytes[idx++] = (byte) (value);
+    public void writeIntBigEndian(int value) {
+        writeByte((byte) (value >> 24));
+        writeByte((byte) (value >> 16));
+        writeByte((byte) (value >> 8));
+        writeByte((byte) (value));
     }
 
     public void writeByte(byte b) {

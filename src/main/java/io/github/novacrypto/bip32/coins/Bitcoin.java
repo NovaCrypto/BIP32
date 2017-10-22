@@ -24,17 +24,17 @@ package io.github.novacrypto.bip32.coins;
 import io.github.novacrypto.bip32.Coin;
 
 public enum Bitcoin implements Coin {
-    TESTNET {
-        @Override
-        public int getVersion() {
-            return 0x4358394;
-        }
-    },
-
-    INSTANCE {
+    MAIN_NET {
         @Override
         public int getVersion() {
             return 0x488ade4;
+        }
+    },
+
+    TEST_NET {
+        @Override
+        public int getVersion() {
+            return 0x4358394;
         }
     }
 }

@@ -19,40 +19,35 @@
  *  You can contact the authors via github issues.
  */
 
-package io.github.novacrypto.hash;
+package io.github.novacrypto.bip32;
 
 import io.github.novacrypto.toruntime.CheckedExceptionToRuntime;
 
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
+import java.security.MessageDigest;
 
 import static io.github.novacrypto.toruntime.CheckedExceptionToRuntime.toRuntime;
 
-public final class HmacSha512 {
-    private static final String HMAC_SHA512 = "HmacSHA512";
+final class Sha256 {
 
-    public static byte[] hmacSha512(byte[] byteKey, byte[] seed) {
-        return initialize(byteKey)
-                .doFinal(seed);
+    static byte[] sha256(byte[] bytes) {
+        return sha256(bytes, 0, bytes.length);
     }
 
-    private static Mac initialize(byte[] byteKey) {
-        final Mac hmacSha512 = getInstance(HMAC_SHA512);
-        final SecretKeySpec keySpec = new SecretKeySpec(byteKey, HMAC_SHA512);
-        toRuntime(new CheckedExceptionToRuntime.Action() {
-            @Override
-            public void run() throws Exception {
-                hmacSha512.init(keySpec);
-            }
-        });
-        return hmacSha512;
+    static byte[] sha256(byte[] bytes, int offset, int length) {
+        try {
+            MessageDigest digest = sha256();
+            digest.update(bytes, offset, length);
+            return digest.digest();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    private static Mac getInstance(final String HMAC_SHA256) {
-        return toRuntime(new CheckedExceptionToRuntime.Func<Mac>() {
+    private static MessageDigest sha256() {
+        return toRuntime(new CheckedExceptionToRuntime.Func<MessageDigest>() {
             @Override
-            public Mac run() throws Exception {
-                return Mac.getInstance(HMAC_SHA256);
+            public MessageDigest run() throws Exception {
+                return MessageDigest.getInstance("SHA-256");
             }
         });
     }
