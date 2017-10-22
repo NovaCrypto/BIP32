@@ -38,7 +38,7 @@ public final class PrivateRoot {
         this.bytes = bytes;
     }
 
-    public static PrivateRoot fromSeed(final byte[] seed, final Coin coin) throws UnsupportedEncodingException {
+    public static PrivateRoot fromSeed(final byte[] seed, final Network network) throws UnsupportedEncodingException {
         byte[] byteKey = "Bitcoin seed".getBytes("UTF-8");
         byte[] hash = hmacSha512(byteKey, seed);
 
@@ -46,13 +46,13 @@ public final class PrivateRoot {
         final byte[] ir = new byte[hash.length - 32];
         System.arraycopy(hash, 32, ir, 0, ir.length);
 
-        return new PrivateRoot(calculatePrivateRootKey(coin, il, ir));
+        return new PrivateRoot(calculatePrivateRootKey(network, il, ir));
     }
 
-    private static byte[] calculatePrivateRootKey(Coin coin, byte[] il, byte[] ir) {
+    private static byte[] calculatePrivateRootKey(Network network, byte[] il, byte[] ir) {
         final byte[] privateKey = new byte[82];
         final ByteArrayWriter writer = new ByteArrayWriter(privateKey);
-        writer.writeIntBigEndian(coin.getVersion());
+        writer.writeIntBigEndian(network.getVersion());
         writer.writeByte((byte) 0);  //depth
         writer.writeIntBigEndian(0); //parent fingerprint, 0 for master
         writer.writeIntBigEndian(0); //child no, 0 for master

@@ -19,11 +19,11 @@
  *  You can contact the authors via github issues.
  */
 
-package io.github.novacrypto.bip32.coins;
+package io.github.novacrypto.bip32.networks;
 
-import io.github.novacrypto.bip32.Coin;
+import io.github.novacrypto.bip32.Network;
 
-public enum Bitcoin implements Coin {
+public enum Bitcoin implements Network {
     MAIN_NET {
         @Override
         public int getVersion() {

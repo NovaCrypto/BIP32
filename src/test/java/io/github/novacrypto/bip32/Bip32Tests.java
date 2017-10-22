@@ -21,8 +21,8 @@
 
 package io.github.novacrypto.bip32;
 
-import io.github.novacrypto.bip32.coins.Bitcoin;
-import io.github.novacrypto.bip32.coins.Litecoin;
+import io.github.novacrypto.bip32.networks.Bitcoin;
+import io.github.novacrypto.bip32.networks.Litecoin;
 import io.github.novacrypto.bip39.SeedCalculator;
 import org.junit.Test;
 
@@ -42,7 +42,7 @@ public final class Bip32Tests {
     public void bip32RootLitecoin() throws Exception {
         assertBip32Root(
                 "xprv9s21ZrQH143K49A3PVsMF6DG6RryWeoBaJw1eAmBTn5anZum4AhQDRYH29DMvQ6BY8HWc1jB4vxWPVoD6mmCcN3L3Wf3fq5pQCAA4suatkG",
-                "edge talent poet tortoise trumpet dose", Litecoin.INSTANCE);
+                "edge talent poet tortoise trumpet dose", Litecoin.MAIN_NET);
     }
 
     @Test
@@ -52,15 +52,15 @@ public final class Bip32Tests {
                 "edge talent poet tortoise trumpet dose", Bitcoin.TEST_NET);
     }
 
-    private void assertBip32Root(String expectedBip32Root, String mnemonic, Coin coin) throws Exception {
+    private void assertBip32Root(String expectedBip32Root, String mnemonic, Network network) throws Exception {
         final byte[] seed = new SeedCalculator().calculateSeed(mnemonic, "");
 
-        final byte[] bip32Root = findBip32Root(seed, coin);
+        final byte[] bip32Root = findBip32Root(seed, network);
         final String actualBip32Root = base58Encode(bip32Root).toString();
         assertEquals(expectedBip32Root, actualBip32Root);
     }
 
-    private byte[] findBip32Root(byte[] seed, Coin coin) throws Exception {
-        return PrivateRoot.fromSeed(seed, coin).toByteArray();
+    private byte[] findBip32Root(byte[] seed, Network network) throws Exception {
+        return PrivateRoot.fromSeed(seed, network).toByteArray();
     }
 }

@@ -22,8 +22,8 @@
 package io.github.novacrypto.bip32;
 
 /**
- * Coin represents the network to use.
+ * Network represents the network to use.
  */
-public interface Coin {
+public interface Network {
     int getVersion();
 }
