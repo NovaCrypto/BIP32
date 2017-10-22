@@ -34,27 +34,32 @@ import static io.github.novacrypto.toruntime.CheckedExceptionToRuntime.toRuntime
  */
 public final class PrivateRoot {
 
+    private static final byte[] bitcoinSeed = getBytes("Bitcoin seed");
     private final byte[] bytes;
+    private final EcPair keyPairData;
+    private final byte[] chainCode;
 
-    private PrivateRoot(final byte[] bytes) {
+    private PrivateRoot(final byte[] bytes, final byte[] keyPairData, final byte[] chainCode) {
         this.bytes = bytes;
+        this.keyPairData = new EcPair(keyPairData);
+        this.chainCode = chainCode;
     }
 
     public static PrivateRoot fromSeed(final byte[] seed, final Network network) {
-        byte[] byteKey = getBytes();
-        byte[] hash = hmacSha512(byteKey, seed);
+        byte[] hash = hmacSha512(bitcoinSeed, seed);
 
         final byte[] il = Arrays.copyOf(hash, 32);
         final byte[] ir = new byte[hash.length - 32];
         System.arraycopy(hash, 32, ir, 0, ir.length);
 
-        return new PrivateRoot(calculatePrivateRootKey(network, il, ir));
+        return new PrivateRoot(calculatePrivateRootKey(network, il, ir), il, ir);
     }
 
     private static byte[] calculatePrivateRootKey(Network network, byte[] il, byte[] ir) {
+        final int version = network.getVersion();
         final byte[] privateKey = new byte[82];
         final ByteArrayWriter writer = new ByteArrayWriter(privateKey);
-        writer.writeIntBigEndian(network.getVersion());
+        writer.writeIntBigEndian(version);
         writer.writeByte((byte) 0);  //depth
         writer.writeIntBigEndian(0); //parent fingerprint, 0 for master
         writer.writeIntBigEndian(0); //child no, 0 for master
@@ -66,22 +71,46 @@ public final class PrivateRoot {
         } else {
             //write
         }
-
         final byte[] checksum = sha256(sha256(privateKey, 0, 78));
         writer.writeBytes(checksum, 4);
         return privateKey;
     }
 
-    private static byte[] getBytes() {
+    private static byte[] getBytes(final String seed) {
         return toRuntime(new CheckedExceptionToRuntime.Func<byte[]>() {
             @Override
             public byte[] run() throws Exception {
-                return "Bitcoin seed".getBytes("UTF-8");
+                return seed.getBytes("UTF-8");
             }
         });
     }
 
     public byte[] toByteArray() {
         return bytes;
+    }
+
+    public PrivateRoot cKDpriv(int i) {
+
+        byte[] data = new byte[37];
+        ByteArrayWriter writer = new ByteArrayWriter(data);
+        writer.writeBytes(publicKeyBuffer());
+        writer.writeIntBigEndian(i);
+
+        byte[] hash = hmacSha512(chainCode, data);
+
+        final byte[] il = Arrays.copyOf(hash, 32);
+        final byte[] ir = new byte[hash.length - 32];
+        System.arraycopy(hash, 32, ir, 0, ir.length);
+
+        //let I = HMAC-SHA512(Key = cpar, Data = serP(point(kpar)) || ser32(i)).
+        return null;
+    }
+
+    private byte[] publicKeyBuffer() {
+        return new byte[0];
+    }
+
+    public PublicRoot neuter() {
+        return null;
     }
 }
