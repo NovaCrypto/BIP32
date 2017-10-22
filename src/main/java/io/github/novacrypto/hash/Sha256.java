@@ -19,23 +19,36 @@
  *  You can contact the authors via github issues.
  */
 
-package io.github.novacrypto.bip32;
+package io.github.novacrypto.hash;
+
+import io.github.novacrypto.toruntime.CheckedExceptionToRuntime;
 
 import java.security.MessageDigest;
 
-final class Sha256 {
+import static io.github.novacrypto.toruntime.CheckedExceptionToRuntime.toRuntime;
 
-    static byte[] sha256(byte[] bytes) {
+public final class Sha256 {
+
+    public static byte[] sha256(byte[] bytes) {
         return sha256(bytes, 0, bytes.length);
     }
 
-    static byte[] sha256(byte[] bytes, int offset, int length) {
+    public static byte[] sha256(byte[] bytes, int offset, int length) {
         try {
-            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            MessageDigest digest = sha256();
             digest.update(bytes, offset, length);
             return digest.digest();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private static MessageDigest sha256() {
+        return toRuntime(new CheckedExceptionToRuntime.Func<MessageDigest>() {
+            @Override
+            public MessageDigest run() throws Exception {
+                return MessageDigest.getInstance("SHA-256");
+            }
+        });
     }
 }

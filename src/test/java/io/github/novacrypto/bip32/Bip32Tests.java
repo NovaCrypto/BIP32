@@ -26,14 +26,11 @@ import io.github.novacrypto.bip32.coins.Litecoin;
 import io.github.novacrypto.bip39.SeedCalculator;
 import org.junit.Test;
 
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
 import static io.github.novacrypto.base58.Base58.base58Encode;
-import static io.github.novacrypto.bip32.Sha256.sha256;
+import static io.github.novacrypto.hash.HmacSha512.hmacSha512;
+import static io.github.novacrypto.hash.Sha256.sha256;
 import static org.junit.Assert.assertEquals;
 
 public final class Bip32Tests {
@@ -69,7 +66,7 @@ public final class Bip32Tests {
 
     private byte[] findBip32Root(byte[] seed, Coin coin) throws Exception {
         byte[] byteKey = "Bitcoin seed".getBytes("UTF-8");
-        byte[] hash = hmac(byteKey, seed);
+        byte[] hash = hmacSha512(byteKey, seed);
 
         final byte[] il = Arrays.copyOf(hash, 32);
         final byte[] ir = new byte[hash.length - 32];
@@ -77,48 +74,23 @@ public final class Bip32Tests {
 
         //base58
         byte[] base58 = new byte[82];
+        ByteArrayWriter writer = new ByteArrayWriter(base58);
         int version = coin.getVersion();
-        int idx = 0;
-        idx = writeInt(base58, version, idx);
-        base58[idx++] = 0; //depth
-        idx = writeInt(base58, 0, idx); //parent fingerprint, 0 for master
-        idx = writeInt(base58, 0, idx); //child no, 0 for master
-        idx = writeBytes(base58, ir, idx);
+        writer.writeInt(version);
+        writer.writeByte((byte) 0);  //depth
+        writer.writeInt(0); //parent fingerprint, 0 for master
+        writer.writeInt(0); //child no, 0 for master
+        writer.writeBytes(ir);
         boolean netured = false;
         if (!netured) {
-            base58[idx++] = 0; //
-            idx = writeBytes(base58, il, idx);
+            writer.writeByte((byte) 0); //
+            writer.writeBytes(il);
         } else {
             //write
         }
 
         final byte[] checksum = sha256(sha256(base58, 0, 78));
-        writeBytes(base58, checksum, idx, 4);
+        writer.writeBytes(checksum, 4);
         return base58;
-    }
-
-    private static int writeBytes(byte[] bytes, byte[] bytesSource, int offset, int length) {
-        System.arraycopy(bytesSource, 0, bytes, offset, length);
-        return offset + length;
-    }
-
-    private static int writeBytes(byte[] bytes, byte[] bytesSource, int offset) {
-        return writeBytes(bytes, bytesSource, offset, bytesSource.length);
-    }
-
-    private static int writeInt(byte[] bytes, int value, int offset) {
-        bytes[offset] = (byte) (value >> 24);
-        bytes[offset + 1] = (byte) (value >> 16);
-        bytes[offset + 2] = (byte) (value >> 8);
-        bytes[offset + 3] = (byte) (value);
-        return offset + 4;
-    }
-
-    private static byte[] hmac(byte[] byteKey, byte[] seed) throws NoSuchAlgorithmException, InvalidKeyException {
-        final String HMAC_SHA256 = "HmacSHA512";
-        final Mac sha512_HMAC = Mac.getInstance(HMAC_SHA256);
-        final SecretKeySpec keySpec = new SecretKeySpec(byteKey, HMAC_SHA256);
-        sha512_HMAC.init(keySpec);
-        return sha512_HMAC.doFinal(seed);
     }
 }
