@@ -19,35 +19,40 @@
  *  You can contact the authors via github issues.
  */
 
-package io.github.novacrypto.hash;
+package io.github.novacrypto.bip32;
 
 import io.github.novacrypto.toruntime.CheckedExceptionToRuntime;
 
-import java.security.MessageDigest;
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
 
 import static io.github.novacrypto.toruntime.CheckedExceptionToRuntime.toRuntime;
 
-public final class Sha256 {
+final class HmacSha512 {
+    private static final String HMAC_SHA512 = "HmacSHA512";
 
-    public static byte[] sha256(byte[] bytes) {
-        return sha256(bytes, 0, bytes.length);
+    static byte[] hmacSha512(final byte[] byteKey, final byte[] seed) {
+        return initialize(byteKey)
+                .doFinal(seed);
     }
 
-    public static byte[] sha256(byte[] bytes, int offset, int length) {
-        try {
-            MessageDigest digest = sha256();
-            digest.update(bytes, offset, length);
-            return digest.digest();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private static MessageDigest sha256() {
-        return toRuntime(new CheckedExceptionToRuntime.Func<MessageDigest>() {
+    private static Mac initialize(final byte[] byteKey) {
+        final Mac hmacSha512 = getInstance(HMAC_SHA512);
+        final SecretKeySpec keySpec = new SecretKeySpec(byteKey, HMAC_SHA512);
+        toRuntime(new CheckedExceptionToRuntime.Action() {
             @Override
-            public MessageDigest run() throws Exception {
-                return MessageDigest.getInstance("SHA-256");
+            public void run() throws Exception {
+                hmacSha512.init(keySpec);
+            }
+        });
+        return hmacSha512;
+    }
+
+    private static Mac getInstance(final String HMAC_SHA256) {
+        return toRuntime(new CheckedExceptionToRuntime.Func<Mac>() {
+            @Override
+            public Mac run() throws Exception {
+                return Mac.getInstance(HMAC_SHA256);
             }
         });
     }

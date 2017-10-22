@@ -21,9 +21,30 @@
 
 package io.github.novacrypto.bip32;
 
-/**
- * Coin represents the network to use.
- */
-public interface Coin {
-    int getVersion();
+import io.github.novacrypto.toruntime.CheckedExceptionToRuntime;
+
+import java.security.MessageDigest;
+
+import static io.github.novacrypto.toruntime.CheckedExceptionToRuntime.toRuntime;
+
+final class Sha256 {
+
+    static byte[] sha256(final byte[] bytes) {
+        return sha256(bytes, 0, bytes.length);
+    }
+
+    static byte[] sha256(final byte[] bytes, final int offset, final int length) {
+        final MessageDigest digest = sha256();
+        digest.update(bytes, offset, length);
+        return digest.digest();
+    }
+
+    private static MessageDigest sha256() {
+        return toRuntime(new CheckedExceptionToRuntime.Func<MessageDigest>() {
+            @Override
+            public MessageDigest run() throws Exception {
+                return MessageDigest.getInstance("SHA-256");
+            }
+        });
+    }
 }

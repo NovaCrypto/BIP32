@@ -21,36 +21,25 @@
 
 package io.github.novacrypto.bip32;
 
-final class ByteArrayWriter {
+import org.spongycastle.asn1.x9.X9ECParameters;
+import org.spongycastle.crypto.ec.CustomNamedCurves;
+import org.spongycastle.math.ec.ECPoint;
 
-    private final byte[] bytes;
-    private int idx = 0;
+import java.math.BigInteger;
 
-    ByteArrayWriter(final byte[] target) {
-        this.bytes = target;
+import static io.github.novacrypto.bip32.BigIntegerUtils.parse256;
+
+final class Secp256k1BC {
+
+    private static final X9ECParameters CURVE = CustomNamedCurves.getByName("secp256k1");
+
+    static BigInteger n() {
+        return CURVE.getN();
     }
 
-    void concat(final byte[] bytesSource, final int length) {
-        System.arraycopy(bytesSource, 0, bytes, idx, length);
-        idx += length;
-    }
-
-    void concat(final byte[] bytesSource) {
-        concat(bytesSource, bytesSource.length);
-    }
-
-    /**
-     * ser32(i): serialize a 32-bit unsigned integer i as a 4-byte sequence, most significant byte first.
-     * @param i a 32-bit unsigned integer
-     */
-    void concatSer32(final int i) {
-        concat((byte) (i >> 24));
-        concat((byte) (i >> 16));
-        concat((byte) (i >> 8));
-        concat((byte) (i));
-    }
-
-    void concat(final byte b) {
-        bytes[idx++] = b;
+    static byte[] point(final byte[] pBytes) {
+        final BigInteger p = parse256(pBytes);
+        final ECPoint point2 = CURVE.getG().multiply(p);
+        return point2.getEncoded(true);
     }
 }

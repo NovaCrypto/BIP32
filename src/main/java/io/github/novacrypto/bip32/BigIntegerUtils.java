@@ -19,15 +19,26 @@
  *  You can contact the authors via github issues.
  */
 
-package io.github.novacrypto.bip32.coins;
+package io.github.novacrypto.bip32;
 
-import io.github.novacrypto.bip32.Coin;
+import java.math.BigInteger;
+import java.util.Arrays;
 
-public enum Litecoin implements Coin {
-    INSTANCE {
-        @Override
-        public int getVersion() {
-            return 0x488ade4;
-        }
+final class BigIntegerUtils {
+
+    static BigInteger parse256(final byte[] bytes) {
+        return new BigInteger(1, bytes);
+    }
+
+    public static void ser256(final byte[] target, final BigInteger integer) {
+        final byte[] modArr = integer.toByteArray();
+        copyTail(modArr, target);
+        Arrays.fill(modArr, (byte) 0);
+    }
+
+    private static void copyTail(final byte[] src, final byte[] dest) {
+        final int start = src.length - dest.length;
+        //TODO: expect this to fail when the source.length < dest.length
+        System.arraycopy(src, start, dest, 0, dest.length);
     }
 }

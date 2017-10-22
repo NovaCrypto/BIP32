@@ -19,38 +19,20 @@
  *  You can contact the authors via github issues.
  */
 
-package io.github.novacrypto.bip32;
+package io.github.novacrypto.bip32.networks;
 
-final class ByteArrayWriter {
+import io.github.novacrypto.bip32.Network;
 
-    private final byte[] bytes;
-    private int idx = 0;
+public enum Litecoin implements Network {
+    MAIN_NET {
+        @Override
+        public int getPrivateVersion() {
+            return 0x488ade4;
+        }
 
-    ByteArrayWriter(final byte[] target) {
-        this.bytes = target;
-    }
-
-    void concat(final byte[] bytesSource, final int length) {
-        System.arraycopy(bytesSource, 0, bytes, idx, length);
-        idx += length;
-    }
-
-    void concat(final byte[] bytesSource) {
-        concat(bytesSource, bytesSource.length);
-    }
-
-    /**
-     * ser32(i): serialize a 32-bit unsigned integer i as a 4-byte sequence, most significant byte first.
-     * @param i a 32-bit unsigned integer
-     */
-    void concatSer32(final int i) {
-        concat((byte) (i >> 24));
-        concat((byte) (i >> 16));
-        concat((byte) (i >> 8));
-        concat((byte) (i));
-    }
-
-    void concat(final byte b) {
-        bytes[idx++] = b;
+        @Override
+        public int getPublicVersion() {
+            return 0x0488b21e;
+        }
     }
 }

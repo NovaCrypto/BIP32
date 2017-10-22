@@ -21,36 +21,7 @@
 
 package io.github.novacrypto.bip32;
 
-final class ByteArrayWriter {
+public interface ToByteArray {
 
-    private final byte[] bytes;
-    private int idx = 0;
-
-    ByteArrayWriter(final byte[] target) {
-        this.bytes = target;
-    }
-
-    void concat(final byte[] bytesSource, final int length) {
-        System.arraycopy(bytesSource, 0, bytes, idx, length);
-        idx += length;
-    }
-
-    void concat(final byte[] bytesSource) {
-        concat(bytesSource, bytesSource.length);
-    }
-
-    /**
-     * ser32(i): serialize a 32-bit unsigned integer i as a 4-byte sequence, most significant byte first.
-     * @param i a 32-bit unsigned integer
-     */
-    void concatSer32(final int i) {
-        concat((byte) (i >> 24));
-        concat((byte) (i >> 16));
-        concat((byte) (i >> 8));
-        concat((byte) (i));
-    }
-
-    void concat(final byte b) {
-        bytes[idx++] = b;
-    }
+    byte[] toByteArray();
 }

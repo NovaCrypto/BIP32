@@ -19,22 +19,13 @@
  *  You can contact the authors via github issues.
  */
 
-package io.github.novacrypto.bip32.coins;
+package io.github.novacrypto.bip32;
 
-import io.github.novacrypto.bip32.Coin;
+/**
+ * Network represents the network to use.
+ */
+public interface Network {
+    int getPrivateVersion();
 
-public enum Bitcoin implements Coin {
-    TESTNET {
-        @Override
-        public int getVersion() {
-            return 0x4358394;
-        }
-    },
-
-    INSTANCE {
-        @Override
-        public int getVersion() {
-            return 0x488ade4;
-        }
-    }
+    int getPublicVersion();
 }
