@@ -34,10 +34,10 @@ import static io.github.novacrypto.toruntime.CheckedExceptionToRuntime.toRuntime
  */
 public final class PrivateRoot {
 
-    private static final byte[] bitcoinSeed = getBytes("Bitcoin seed");
-    private final byte[] bytes;
-    private final EcPair keyPairData;
-    private final byte[] chainCode;
+     static final byte[] bitcoinSeed = getBytes("Bitcoin seed");
+    final byte[] bytes;
+    final EcPair keyPairData;
+    final byte[] chainCode;
 
     private PrivateRoot(final byte[] bytes, final byte[] keyPairData, final byte[] chainCode) {
         this.bytes = bytes;
@@ -52,11 +52,21 @@ public final class PrivateRoot {
         final byte[] ir = new byte[hash.length - 32];
         System.arraycopy(hash, 32, ir, 0, ir.length);
 
-        return new PrivateRoot(calculatePrivateRootKey(network, il, ir), il, ir);
+        return new PrivateRoot(calculatePrivateRootKey(network, il, ir, false), il, ir);
     }
 
-    private static byte[] calculatePrivateRootKey(Network network, byte[] il, byte[] ir) {
-        final int version = network.getVersion();
+    public static PrivateRoot fromSeed2(final byte[] seed, final Network network, final PrivateRoot privateRoot) {
+        byte[] hash = hmacSha512(bitcoinSeed, seed);
+
+        final byte[] il = seed;
+        final byte[] ir = privateRoot.chainCode;
+
+        return new PrivateRoot(calculatePrivateRootKey(network, il, ir, true), il, ir);
+    }
+
+    private static byte[] calculatePrivateRootKey(final Network network, final byte[] il,
+                                                  final byte[] ir, final boolean neutered) {
+        final int version = neutered ? network.getPublicVersion() : network.getVersion();
         final byte[] privateKey = new byte[82];
         final ByteArrayWriter writer = new ByteArrayWriter(privateKey);
         writer.writeIntBigEndian(version);
@@ -64,12 +74,11 @@ public final class PrivateRoot {
         writer.writeIntBigEndian(0); //parent fingerprint, 0 for master
         writer.writeIntBigEndian(0); //child no, 0 for master
         writer.writeBytes(ir);
-        boolean netured = false;
-        if (!netured) {
+        if (!neutered) {
             writer.writeByte((byte) 0); //
             writer.writeBytes(il);
         } else {
-            //write
+            writer.writeBytes(il);
         }
         final byte[] checksum = sha256(sha256(privateKey, 0, 78));
         writer.writeBytes(checksum, 4);

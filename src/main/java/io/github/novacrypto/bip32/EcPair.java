@@ -23,7 +23,7 @@ package io.github.novacrypto.bip32;
 
 public final class EcPair {
 
-    private final byte[] keyPairData;
+     final byte[] keyPairData;
 
     public EcPair(byte[] keyPairData) {
         this.keyPairData = keyPairData;

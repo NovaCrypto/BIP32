@@ -66,34 +66,14 @@ public final class Bip32PublicRootTests {
     }
 
     private byte[] findBip32Root(byte[] seed, Network network) {
-        final byte[] bytes = PrivateRoot.fromSeed(seed, network)
+        final PrivateRoot privateRoot = PrivateRoot.fromSeed(seed, network);
+        final byte[] bytes = privateRoot
                 .toByteArray();
 
 
-        final byte[] q = new Secp256k1BC().getPoint(bytes);
+        final byte[] q = new Secp256k1BC().getPoint(privateRoot.keyPairData.keyPairData);
 
-        return PrivateRoot.fromSeed(q,network).toByteArray();
-
-//        byte[] result = new byte[82];
-//
-//        final ByteArrayWriter writer = new ByteArrayWriter(result);
-//
-//        writer.writeIntBigEndian(network.getVersion());
-//        writer.writeByte((byte) 0);  //depth
-//        writer.writeIntBigEndian(0); //parent fingerprint, 0 for master
-//        writer.writeIntBigEndian(0); //child no, 0 for master
-//
-//        byte[] hash = hmacSha512(byteKey, seed);
-//
-//        final byte[] il = Arrays.copyOf(hash, 32);
-//        final byte[] ir = new byte[hash.length - 32];
-//        System.arraycopy(hash, 32, ir, 0, ir.length);
-//
-//
-//
-//        return result;
-
-        //return bytes;
+        return PrivateRoot.fromSeed2(q,network, privateRoot).toByteArray();
     }
 
     private static String toHex(byte[] array) {

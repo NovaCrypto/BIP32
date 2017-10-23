@@ -26,4 +26,6 @@ package io.github.novacrypto.bip32;
  */
 public interface Network {
     int getVersion();
+
+    int getPublicVersion();
 }

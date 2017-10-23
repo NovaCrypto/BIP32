@@ -29,12 +29,22 @@ public enum Bitcoin implements Network {
         public int getVersion() {
             return 0x488ade4;
         }
+
+        @Override
+        public int getPublicVersion() {
+            return 0x0488b21e;
+        }
     },
 
     TEST_NET {
         @Override
         public int getVersion() {
             return 0x4358394;
+        }
+
+        @Override
+        public int getPublicVersion() {
+            return 0x043587cf;
         }
     }
 }
