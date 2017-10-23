@@ -26,7 +26,6 @@ import io.github.novacrypto.toruntime.CheckedExceptionToRuntime;
 import java.util.Arrays;
 
 import static io.github.novacrypto.bip32.HmacSha512.hmacSha512;
-import static io.github.novacrypto.bip32.Sha256.sha256;
 import static io.github.novacrypto.toruntime.CheckedExceptionToRuntime.toRuntime;
 
 /**
@@ -34,55 +33,56 @@ import static io.github.novacrypto.toruntime.CheckedExceptionToRuntime.toRuntime
  */
 public final class PrivateRoot {
 
-     static final byte[] bitcoinSeed = getBytes("Bitcoin seed");
-    final byte[] bytes;
-    final EcPair keyPairData;
-    final byte[] chainCode;
+    private static final byte[] BITCOIN_SEED = getBytes("Bitcoin seed");
 
-    private PrivateRoot(final byte[] bytes, final byte[] keyPairData, final byte[] chainCode) {
+    private final HdNode hdNode;
+    private final Serializer serializer;
+    private final Network network;
+    private final byte[] bytes;
+    private final EcPair keyPairData;
+    private final byte[] chainCode;
+
+    private PrivateRoot(final Network network, final byte[] bytes, final byte[] key, final byte[] chainCode) {
+        this.network = network;
         this.bytes = bytes;
-        this.keyPairData = new EcPair(keyPairData);
+        this.keyPairData = new EcPair(key);
         this.chainCode = chainCode;
+        serializer = new Serializer.Builder()
+                .network(network)
+                .neutered(false)
+                .build();
+        hdNode = new HdNode.Builder()
+                .network(network)
+                .neutered(false)
+                .key(key)
+                .chainCode(chainCode)
+                .build();
     }
 
     public static PrivateRoot fromSeed(final byte[] seed, final Network network) {
-        byte[] hash = hmacSha512(bitcoinSeed, seed);
+        byte[] hash = hmacSha512(BITCOIN_SEED, seed);
 
         final byte[] il = Arrays.copyOf(hash, 32);
         final byte[] ir = new byte[hash.length - 32];
         System.arraycopy(hash, 32, ir, 0, ir.length);
 
-        return new PrivateRoot(calculatePrivateRootKey(network, il, ir, false), il, ir);
+        return new PrivateRoot(network, calculatePrivateRootKey(network, il, ir, false), il, ir);
     }
 
     public static PrivateRoot fromSeed2(final byte[] seed, final Network network, final PrivateRoot privateRoot) {
-        byte[] hash = hmacSha512(bitcoinSeed, seed);
-
         final byte[] il = seed;
         final byte[] ir = privateRoot.chainCode;
 
-        return new PrivateRoot(calculatePrivateRootKey(network, il, ir, true), il, ir);
+        return new PrivateRoot(network, calculatePrivateRootKey(network, il, ir, true), il, ir);
     }
 
     private static byte[] calculatePrivateRootKey(final Network network, final byte[] il,
                                                   final byte[] ir, final boolean neutered) {
-        final int version = neutered ? network.getPublicVersion() : network.getVersion();
-        final byte[] privateKey = new byte[82];
-        final ByteArrayWriter writer = new ByteArrayWriter(privateKey);
-        writer.writeIntBigEndian(version);
-        writer.writeByte((byte) 0);  //depth
-        writer.writeIntBigEndian(0); //parent fingerprint, 0 for master
-        writer.writeIntBigEndian(0); //child no, 0 for master
-        writer.writeBytes(ir);
-        if (!neutered) {
-            writer.writeByte((byte) 0); //
-            writer.writeBytes(il);
-        } else {
-            writer.writeBytes(il);
-        }
-        final byte[] checksum = sha256(sha256(privateKey, 0, 78));
-        writer.writeBytes(checksum, 4);
-        return privateKey;
+        final Serializer ser = new Serializer.Builder()
+                .network(network)
+                .neutered(neutered)
+                .build();
+        return ser.serialize(il, ir);
     }
 
     private static byte[] getBytes(final String seed) {
@@ -119,7 +119,9 @@ public final class PrivateRoot {
         return new byte[0];
     }
 
-    public PublicRoot neuter() {
-        return null;
+    public PrivateRoot neuter() {
+        final byte[] q = new Secp256k1BC().getPoint(keyPairData.keyPairData);
+
+        return PrivateRoot.fromSeed2(q, network, this);
     }
 }

@@ -21,6 +21,7 @@
 
 package io.github.novacrypto.bip32;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.math.BigInteger;
@@ -31,6 +32,7 @@ import static org.junit.Assert.assertEquals;
 public final class Secp256k1Bouncy {
 
     @Test
+    @Ignore
     public void compare() {
         final BigInteger x = new BigInteger("0279BE667EF9DCBBAC55A06295CE870B07029BFCAA2DCE28D959F2815B16F81798", 16);
         assertEquals(base58Encode(new Secp256k1BC().getPoint(x).getEncoded()),

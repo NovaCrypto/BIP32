@@ -67,13 +67,9 @@ public final class Bip32PublicRootTests {
 
     private byte[] findBip32Root(byte[] seed, Network network) {
         final PrivateRoot privateRoot = PrivateRoot.fromSeed(seed, network);
-        final byte[] bytes = privateRoot
+        return privateRoot
+                .neuter()
                 .toByteArray();
-
-
-        final byte[] q = new Secp256k1BC().getPoint(privateRoot.keyPairData.keyPairData);
-
-        return PrivateRoot.fromSeed2(q,network, privateRoot).toByteArray();
     }
 
     private static String toHex(byte[] array) {
