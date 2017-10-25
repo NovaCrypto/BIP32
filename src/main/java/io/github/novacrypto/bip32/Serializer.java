@@ -34,10 +34,9 @@ final class Serializer {
     }
 
     public byte[] serialize(byte[] il, byte[] ir) {
-        final int version = neutered ? network.getPublicVersion() : network.getVersion();
         final byte[] privateKey = new byte[82];
         final ByteArrayWriter writer = new ByteArrayWriter(privateKey);
-        writer.writeIntBigEndian(version);
+        writer.writeIntBigEndian(getVersion());
         writer.writeByte((byte) 0);  //depth
         writer.writeIntBigEndian(0); //parent fingerprint, 0 for master
         writer.writeIntBigEndian(0); //child no, 0 for master
@@ -51,6 +50,10 @@ final class Serializer {
         final byte[] checksum = sha256(sha256(privateKey, 0, 78));
         writer.writeBytes(checksum, 4);
         return privateKey;
+    }
+
+    private int getVersion() {
+        return neutered ? network.getPublicVersion() : network.getPrivateVersion();
     }
 
     static class Builder {
@@ -72,6 +75,4 @@ final class Serializer {
             return new Serializer(this);
         }
     }
-
-
 }

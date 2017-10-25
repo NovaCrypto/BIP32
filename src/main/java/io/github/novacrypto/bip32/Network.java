@@ -25,7 +25,7 @@ package io.github.novacrypto.bip32;
  * Network represents the network to use.
  */
 public interface Network {
-    int getVersion();
+    int getPrivateVersion();
 
     int getPublicVersion();
 }

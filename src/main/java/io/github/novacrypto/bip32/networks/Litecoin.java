@@ -26,7 +26,7 @@ import io.github.novacrypto.bip32.Network;
 public enum Litecoin implements Network {
     MAIN_NET {
         @Override
-        public int getVersion() {
+        public int getPrivateVersion() {
             return 0x488ade4;
         }
 
