@@ -41,18 +41,11 @@ public final class PrivateRoot {
     private final byte[] chainCode;
 
     private PrivateRoot(final Network network, final byte[] key, final byte[] chainCode) {
-        this.network = network;
-        this.chainCode = chainCode;
-        hdNode = new HdNode.Builder()
-                .network(network)
-                .neutered(false)
-                .key(key)
-                .chainCode(chainCode)
-                .build();
+        this(network, key, chainCode, 0, 0);
     }
 
-    public PrivateRoot(final Network network, final byte[] key, final byte[] chainCode,
-                       final int fingerprint, final int depth) {
+    private PrivateRoot(final Network network, final byte[] key, final byte[] chainCode,
+                        final int fingerprint, final int depth) {
         this.network = network;
         this.chainCode = chainCode;
         hdNode = new HdNode.Builder()
@@ -89,7 +82,6 @@ public final class PrivateRoot {
     }
 
     public PrivateRoot cKDpriv(int i) {
-
         byte[] data = new byte[37];
         ByteArrayWriter writer = new ByteArrayWriter(data);
         writer.writeBytes(publicKeyBuffer());
@@ -103,8 +95,7 @@ public final class PrivateRoot {
 
         il = new BigInteger(il).add(new BigInteger(hdNode.getKey())).mod(new Secp256k1BC().getN()).toByteArray();
 
-        //let I = HMAC-SHA512(Key = cpar, Data = serP(point(kpar)) || ser32(i)).
-        return new PrivateRoot(network, il, ir, hdNode.fingerPrint(), hdNode.depth()+1);
+        return new PrivateRoot(network, il, ir, hdNode.fingerPrint(), hdNode.depth() + 1);
     }
 
     private byte[] publicKeyBuffer() {

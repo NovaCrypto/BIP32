@@ -21,7 +21,7 @@
 
 package io.github.novacrypto.bip32;
 
-import org.bouncycastle.crypto.digests.RIPEMD160Digest;
+import static io.github.novacrypto.bip32.Hash160.hash160;
 
 final class HdNode {
 
@@ -30,7 +30,6 @@ final class HdNode {
     private final byte[] chainCode;
     private final byte[] key;
     private int depth;
-    private int fingerprint;
     private final Serializer serializer;
 
     private HdNode(Builder builder) {
@@ -60,11 +59,7 @@ final class HdNode {
 
     public int fingerPrint() {
         final byte[] point = getPoint();
-        final byte[] sha256 = Sha256.sha256(point);
-        final RIPEMD160Digest d = new RIPEMD160Digest();
-        d.update(sha256, 0, sha256.length);
-        final byte[] o = new byte[d.getDigestSize()];
-        d.doFinal(o, 0);
+        final byte[] o = hash160(point);
         return ((o[0] & 0xFF) << 24) |
                 ((o[1] & 0xFF) << 16) |
                 ((o[2] & 0xFF) << 8) |
