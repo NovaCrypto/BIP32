@@ -21,12 +21,16 @@
 
 package io.github.novacrypto.bip32;
 
+import org.bouncycastle.crypto.digests.RIPEMD160Digest;
+
 final class HdNode {
 
     private final Network network;
     private final boolean neutered;
     private final byte[] chainCode;
     private final byte[] key;
+    private int depth;
+    private int fingerprint;
     private final Serializer serializer;
 
     private HdNode(Builder builder) {
@@ -37,6 +41,8 @@ final class HdNode {
         serializer = new Serializer.Builder()
                 .network(builder.network)
                 .neutered(builder.neutered)
+                .depth(builder.depth)
+                .fingerprint(builder.fingerprint)
                 .build();
     }
 
@@ -48,12 +54,35 @@ final class HdNode {
         return new Secp256k1BC().getPoint(key);
     }
 
+    public byte[] getKey() {
+        return key;
+    }
+
+    public int fingerPrint() {
+        final byte[] point = getPoint();
+        final byte[] sha256 = Sha256.sha256(point);
+        final RIPEMD160Digest d = new RIPEMD160Digest();
+        d.update(sha256, 0, sha256.length);
+        final byte[] o = new byte[d.getDigestSize()];
+        d.doFinal(o, 0);
+        return ((o[0] & 0xFF) << 24) |
+                ((o[1] & 0xFF) << 16) |
+                ((o[2] & 0xFF) << 8) |
+                (o[3] & 0xFF);
+    }
+
+    public int depth() {
+        return 0;
+    }
+
     static class Builder {
 
         private Network network;
         private boolean neutered;
         private byte[] chainCode;
         private byte[] key;
+        private int depth;
+        private int fingerprint;
 
         public Builder network(Network network) {
             this.network = network;
@@ -72,6 +101,16 @@ final class HdNode {
 
         public Builder chainCode(byte[] chainCode) {
             this.chainCode = chainCode;
+            return this;
+        }
+
+        public Builder depth(int depth) {
+            this.depth = depth;
+            return this;
+        }
+
+        public Builder fingerprint(int fingerprint) {
+            this.fingerprint = fingerprint;
             return this;
         }
 

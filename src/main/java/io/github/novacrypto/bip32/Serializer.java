@@ -27,18 +27,22 @@ final class Serializer {
 
     private final Network network;
     private final boolean neutered;
+    private final int depth;
+    private final int fingerprint;
 
     private Serializer(Builder builder) {
         network = builder.network;
         neutered = builder.neutered;
+        depth = builder.depth;
+        fingerprint = builder.fingerprint;
     }
 
     public byte[] serialize(byte[] il, byte[] ir) {
         final byte[] privateKey = new byte[82];
         final ByteArrayWriter writer = new ByteArrayWriter(privateKey);
         writer.writeIntBigEndian(getVersion());
-        writer.writeByte((byte) 0);  //depth
-        writer.writeIntBigEndian(0); //parent fingerprint, 0 for master
+        writer.writeByte((byte) depth);  //depth
+        writer.writeIntBigEndian(fingerprint); //parent fingerprint, 0 for master
         writer.writeIntBigEndian(0); //child no, 0 for master
         writer.writeBytes(ir);
         if (!neutered) {
@@ -60,6 +64,8 @@ final class Serializer {
 
         private Network network;
         private boolean neutered;
+        private int depth;
+        private int fingerprint;
 
         public Builder network(Network network) {
             this.network = network;
@@ -68,6 +74,16 @@ final class Serializer {
 
         public Builder neutered(boolean neutered) {
             this.neutered = neutered;
+            return this;
+        }
+
+        public Builder depth(int depth) {
+            this.depth = depth;
+            return this;
+        }
+
+        public Builder fingerprint(int fingerprint) {
+            this.fingerprint = fingerprint;
             return this;
         }
 

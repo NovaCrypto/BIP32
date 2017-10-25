@@ -26,13 +26,14 @@ import io.github.novacrypto.bip39.SeedCalculator;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import static io.github.novacrypto.base58.Base58.base58Decode;
 import static io.github.novacrypto.base58.Base58.base58Encode;
+import static io.github.novacrypto.bip32.Hex.toHex;
 import static org.junit.Assert.assertEquals;
 
 public final class DeriveNonHardenedTests {
 
     @Test
-    @Ignore
     public void deriveFirstIndexNonHardened() {
         assertPrivateKey("xprv9vUtFfdFpb4T59CoQMSLmbpVg1dVZcWXsznR8BVeV4gn7pN1dZa7Kq1VR7fovgbbodEziyyk1i9wrb8wmfwr69DsGsdgV24EtDh5XgzqjHD",
                 "edge talent poet tortoise trumpet dose", "m/0", Bitcoin.MAIN_NET);
@@ -43,6 +44,7 @@ public final class DeriveNonHardenedTests {
 
         final byte[] bip32Root = findPrivateKey(seed, network, derivationPath);
         final String actualBip32Root = base58Encode(bip32Root).toString();
+        assertEquals(toHex(base58Decode(expectedBip32Root)), toHex(base58Decode(actualBip32Root)));
         assertEquals(expectedBip32Root, actualBip32Root);
     }
 

@@ -23,6 +23,7 @@ package io.github.novacrypto.bip32;
 
 import io.github.novacrypto.toruntime.CheckedExceptionToRuntime;
 
+import java.math.BigInteger;
 import java.util.Arrays;
 
 import static io.github.novacrypto.bip32.HmacSha512.hmacSha512;
@@ -47,6 +48,20 @@ public final class PrivateRoot {
                 .neutered(false)
                 .key(key)
                 .chainCode(chainCode)
+                .build();
+    }
+
+    public PrivateRoot(final Network network, final byte[] key, final byte[] chainCode,
+                       final int fingerprint, final int depth) {
+        this.network = network;
+        this.chainCode = chainCode;
+        hdNode = new HdNode.Builder()
+                .network(network)
+                .neutered(false)
+                .key(key)
+                .chainCode(chainCode)
+                .depth(depth)
+                .fingerprint(fingerprint)
                 .build();
     }
 
@@ -82,16 +97,18 @@ public final class PrivateRoot {
 
         byte[] hash = hmacSha512(chainCode, data);
 
-        final byte[] il = Arrays.copyOf(hash, 32);
+        byte[] il = Arrays.copyOf(hash, 32);
         final byte[] ir = new byte[hash.length - 32];
         System.arraycopy(hash, 32, ir, 0, ir.length);
 
+        il = new BigInteger(il).add(new BigInteger(hdNode.getKey())).mod(new Secp256k1BC().getN()).toByteArray();
+
         //let I = HMAC-SHA512(Key = cpar, Data = serP(point(kpar)) || ser32(i)).
-        return null;
+        return new PrivateRoot(network, il, ir, hdNode.fingerPrint(), hdNode.depth()+1);
     }
 
     private byte[] publicKeyBuffer() {
-        return new byte[0];
+        return hdNode.getPoint();
     }
 
     public PublicRoot neuter() {

@@ -54,8 +54,8 @@ public class Secp256k1BC {
         return curve;
     }
 
-    public byte[] getPoint(byte[] bytes) {
-        ECPoint point = new Secp256k1BC().getPoint(new BigInteger(bytes));
+    public byte[] getPoint(final byte[] bytes) {
+        final ECPoint point = getPoint(new BigInteger(bytes));
         return new ECPoint.Fp(point.getCurve(), point.getX(), point.getY(), true).getEncoded();
     }
 }
