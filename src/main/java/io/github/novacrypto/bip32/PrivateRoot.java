@@ -41,11 +41,11 @@ public final class PrivateRoot {
     private final byte[] chainCode;
 
     private PrivateRoot(final Network network, final byte[] key, final byte[] chainCode) {
-        this(network, key, chainCode, 0, 0);
+        this(network, key, chainCode, 0, 0, 0);
     }
 
     private PrivateRoot(final Network network, final byte[] key, final byte[] chainCode,
-                        final int fingerprint, final int depth) {
+                        final int fingerprint, final int childNumber, final int depth) {
         this.network = network;
         this.chainCode = chainCode;
         hdNode = new HdNode.Builder()
@@ -54,6 +54,7 @@ public final class PrivateRoot {
                 .key(key)
                 .chainCode(chainCode)
                 .depth(depth)
+                .childNumber(childNumber)
                 .fingerprint(fingerprint)
                 .build();
     }
@@ -81,7 +82,7 @@ public final class PrivateRoot {
         return hdNode.serialize();
     }
 
-    public PrivateRoot cKDpriv(int i) {
+    public PrivateRoot cKDpriv(final int i) {
         byte[] data = new byte[37];
         ByteArrayWriter writer = new ByteArrayWriter(data);
         writer.writeBytes(publicKeyBuffer());
@@ -89,13 +90,23 @@ public final class PrivateRoot {
 
         byte[] hash = hmacSha512(chainCode, data);
 
-        byte[] il = Arrays.copyOf(hash, 32);
+        final byte[] il = Arrays.copyOf(hash, 32);
         final byte[] ir = new byte[hash.length - 32];
         System.arraycopy(hash, 32, ir, 0, ir.length);
 
-        il = new BigInteger(il).add(new BigInteger(hdNode.getKey())).mod(new Secp256k1BC().getN()).toByteArray();
+        System.out.println(new Secp256k1BC().getN().toString(16));
+        BigInteger mod = new BigInteger(il).add(new BigInteger(hdNode.getKey())).mod(new Secp256k1BC().getN());
 
-        return new PrivateRoot(network, il, ir, hdNode.fingerPrint(), hdNode.depth() + 1);
+        byte[] modArr = mod.toByteArray();
+        copyTail(modArr, il);
+
+        return new PrivateRoot(network, il, ir, hdNode.fingerPrint(), i, hdNode.depth() + 1);
+    }
+
+    private static void copyTail(final byte[] src, final byte[] dest) {
+        final int start = src.length - dest.length;
+        //TODO: expect this to fail when the source.length < dest.length
+        System.arraycopy(src, start, dest, 0, dest.length);
     }
 
     private byte[] publicKeyBuffer() {

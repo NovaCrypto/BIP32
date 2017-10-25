@@ -29,7 +29,6 @@ final class HdNode {
     private final boolean neutered;
     private final byte[] chainCode;
     private final byte[] key;
-    private int depth;
     private final Serializer serializer;
 
     private HdNode(Builder builder) {
@@ -41,6 +40,7 @@ final class HdNode {
                 .network(builder.network)
                 .neutered(builder.neutered)
                 .depth(builder.depth)
+                .childNumber(builder.childNumber)
                 .fingerprint(builder.fingerprint)
                 .build();
     }
@@ -77,6 +77,7 @@ final class HdNode {
         private byte[] chainCode;
         private byte[] key;
         private int depth;
+        private int childNumber;
         private int fingerprint;
 
         public Builder network(Network network) {
@@ -101,6 +102,11 @@ final class HdNode {
 
         public Builder depth(int depth) {
             this.depth = depth;
+            return this;
+        }
+
+        public Builder childNumber(int childNumber) {
+            this.childNumber = childNumber;
             return this;
         }
 

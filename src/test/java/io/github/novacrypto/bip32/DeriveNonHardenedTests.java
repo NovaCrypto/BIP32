@@ -39,6 +39,12 @@ public final class DeriveNonHardenedTests {
                 "edge talent poet tortoise trumpet dose", "m/0", Bitcoin.MAIN_NET);
     }
 
+    @Test
+    public void deriveSecondIndexNonHardened() {
+        assertPrivateKey("xprv9vUtFfdFpb4T9JCuTLJG1ZBQtno7iBXnH82WzuX9qaAptWEEUDApggPW6A1SSyiunpBjsrLimC1GyV7CPYaG5erJNHTkHBj9QwN9LXw6GTV",
+                "edge talent poet tortoise trumpet dose", "m/1", Bitcoin.MAIN_NET);
+    }
+
     private void assertPrivateKey(String expectedBip32Root, String mnemonic, String derivationPath, Network network) {
         final byte[] seed = new SeedCalculator().calculateSeed(mnemonic, "");
 
@@ -50,7 +56,7 @@ public final class DeriveNonHardenedTests {
 
     private byte[] findPrivateKey(byte[] seed, Network network, String derivationPath) {
         return PrivateRoot.fromSeed(seed, network)
-                .cKDpriv(0)
+                .cKDpriv(Integer.parseInt(derivationPath.split("/")[1]))
                 .toByteArray();
     }
 }
