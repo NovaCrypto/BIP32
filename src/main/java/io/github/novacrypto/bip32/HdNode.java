@@ -27,12 +27,25 @@ final class HdNode {
     private final boolean neutered;
     private final byte[] chainCode;
     private final byte[] key;
+    private final Serializer serializer;
 
     private HdNode(Builder builder) {
         network = builder.network;
         neutered = builder.neutered;
         key = builder.key;
         chainCode = builder.chainCode;
+        serializer = new Serializer.Builder()
+                .network(builder.network)
+                .neutered(builder.neutered)
+                .build();
+    }
+
+    byte[] serialize() {
+        return serializer.serialize(key, chainCode);
+    }
+
+    public byte[] getPoint() {
+        return new Secp256k1BC().getPoint(key);
     }
 
     static class Builder {

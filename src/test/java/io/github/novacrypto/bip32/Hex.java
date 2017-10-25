@@ -21,27 +21,18 @@
 
 package io.github.novacrypto.bip32;
 
-/**
- * A BIP32 root public key
- */
-public final class PublicRoot {
+import java.math.BigInteger;
 
-    private final HdNode hdNode;
+public final class Hex {
 
-    private PublicRoot(final Network network, final byte[] key, final byte[] chainCode) {
-        hdNode = new HdNode.Builder()
-                .network(network)
-                .neutered(true)
-                .key(key)
-                .chainCode(chainCode)
-                .build();
-    }
-
-    public static PublicRoot fromKey(final Network network, final byte[] key, final byte[] chainCode) {
-        return new PublicRoot(network, key, chainCode);
-    }
-
-    public byte[] toByteArray() {
-        return hdNode.serialize();
+    public static String toHex(byte[] array) {
+        final BigInteger bi = new BigInteger(1, array);
+        final String hex = bi.toString(16);
+        final int paddingLength = (array.length * 2) - hex.length();
+        if (paddingLength > 0) {
+            return String.format("%0" + paddingLength + "d", 0) + hex;
+        } else {
+            return hex;
+        }
     }
 }

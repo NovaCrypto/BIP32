@@ -36,21 +36,12 @@ public final class PrivateRoot {
     private static final byte[] BITCOIN_SEED = getBytes("Bitcoin seed");
 
     private final HdNode hdNode;
-    private final Serializer serializer;
     private final Network network;
-    private final byte[] bytes;
-    private final EcPair keyPairData;
     private final byte[] chainCode;
 
-    private PrivateRoot(final Network network, final byte[] bytes, final byte[] key, final byte[] chainCode) {
+    private PrivateRoot(final Network network, final byte[] key, final byte[] chainCode) {
         this.network = network;
-        this.bytes = bytes;
-        this.keyPairData = new EcPair(key);
         this.chainCode = chainCode;
-        serializer = new Serializer.Builder()
-                .network(network)
-                .neutered(false)
-                .build();
         hdNode = new HdNode.Builder()
                 .network(network)
                 .neutered(false)
@@ -66,23 +57,7 @@ public final class PrivateRoot {
         final byte[] ir = new byte[hash.length - 32];
         System.arraycopy(hash, 32, ir, 0, ir.length);
 
-        return new PrivateRoot(network, calculatePrivateRootKey(network, il, ir, false), il, ir);
-    }
-
-    public static PrivateRoot fromSeed2(final byte[] seed, final Network network, final PrivateRoot privateRoot) {
-        final byte[] il = seed;
-        final byte[] ir = privateRoot.chainCode;
-
-        return new PrivateRoot(network, calculatePrivateRootKey(network, il, ir, true), il, ir);
-    }
-
-    private static byte[] calculatePrivateRootKey(final Network network, final byte[] il,
-                                                  final byte[] ir, final boolean neutered) {
-        final Serializer ser = new Serializer.Builder()
-                .network(network)
-                .neutered(neutered)
-                .build();
-        return ser.serialize(il, ir);
+        return new PrivateRoot(network, il, ir);
     }
 
     private static byte[] getBytes(final String seed) {
@@ -95,7 +70,7 @@ public final class PrivateRoot {
     }
 
     public byte[] toByteArray() {
-        return bytes;
+        return hdNode.serialize();
     }
 
     public PrivateRoot cKDpriv(int i) {
@@ -119,9 +94,7 @@ public final class PrivateRoot {
         return new byte[0];
     }
 
-    public PrivateRoot neuter() {
-        final byte[] q = new Secp256k1BC().getPoint(keyPairData.keyPairData);
-
-        return PrivateRoot.fromSeed2(q, network, this);
+    public PublicRoot neuter() {
+        return PublicRoot.fromKey(network, hdNode.getPoint(), chainCode);
     }
 }

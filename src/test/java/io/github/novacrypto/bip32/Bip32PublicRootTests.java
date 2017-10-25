@@ -31,6 +31,7 @@ import java.util.Arrays;
 
 import static io.github.novacrypto.base58.Base58.base58Decode;
 import static io.github.novacrypto.base58.Base58.base58Encode;
+import static io.github.novacrypto.bip32.Hex.toHex;
 import static io.github.novacrypto.bip32.HmacSha512.hmacSha512;
 import static org.junit.Assert.assertEquals;
 
@@ -70,16 +71,5 @@ public final class Bip32PublicRootTests {
         return privateRoot
                 .neuter()
                 .toByteArray();
-    }
-
-    private static String toHex(byte[] array) {
-        final BigInteger bi = new BigInteger(1, array);
-        final String hex = bi.toString(16);
-        final int paddingLength = (array.length * 2) - hex.length();
-        if (paddingLength > 0) {
-            return String.format("%0" + paddingLength + "d", 0) + hex;
-        } else {
-            return hex;
-        }
     }
 }

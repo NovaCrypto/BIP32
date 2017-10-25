@@ -49,7 +49,6 @@ public final class DeriveNonHardenedTests {
     private byte[] findPrivateKey(byte[] seed, Network network, String derivationPath) {
         return PrivateRoot.fromSeed(seed, network)
                 .cKDpriv(0)
-
                 .toByteArray();
     }
 }
