@@ -26,6 +26,7 @@ import io.github.novacrypto.toruntime.CheckedExceptionToRuntime;
 import java.math.BigInteger;
 import java.util.Arrays;
 
+import static io.github.novacrypto.bip32.BigIntegerUtils.getBigInteger;
 import static io.github.novacrypto.bip32.HmacSha512.hmacSha512;
 import static io.github.novacrypto.toruntime.CheckedExceptionToRuntime.toRuntime;
 
@@ -106,15 +107,6 @@ public final class PrivateRoot {
                 .childNumber(i)
                 .fingerprint(hdNode.fingerPrint())
                 .build());
-    }
-
-    private static BigInteger getBigInteger(byte[] bytes) {
-        //TODO: Needs to be more efficient, like negate +1
-        byte[] bytes2 = new byte[bytes.length + 1];
-        System.arraycopy(bytes, 0, bytes2, 1, bytes.length);
-        BigInteger q = new BigInteger(bytes2);
-        if (q.signum() < 0) throw new RuntimeException("neg big i");
-        return q;
     }
 
     private static void copyTail(final byte[] src, final byte[] dest) {

@@ -27,9 +27,10 @@ import org.bouncycastle.math.ec.ECCurve;
 import org.bouncycastle.math.ec.ECPoint;
 import org.spongycastle.asn1.x9.X9ECParameters;
 import org.spongycastle.crypto.ec.CustomNamedCurves;
-import org.spongycastle.math.ec.FixedPointCombMultiplier;
 
 import java.math.BigInteger;
+
+import static io.github.novacrypto.bip32.BigIntegerUtils.getBigInteger;
 
 public class Secp256k1BC {
 
@@ -37,13 +38,6 @@ public class Secp256k1BC {
     private final ECParameterSpec p = ECNamedCurveTable.getParameterSpec("secp256k1");
     private final ECCurve curve = p.getCurve();
     private final ECPoint G = p.getG();
-
-    public ECPoint getPoint(final BigInteger k) {
-        org.spongycastle.math.ec.ECPoint point = new FixedPointCombMultiplier().multiply(CURVE.getG(), k);
-        final ECPoint multiply = G.multiply(k);
-        //final byte[] encoded = point.getEncoded(true);
-        return multiply;
-    }
 
     public ECPoint getG() {
         return G;
@@ -62,11 +56,8 @@ public class Secp256k1BC {
     }
 
     public byte[] getPoint(final byte[] bytes) {
-        byte[] bytes2 = new byte[bytes.length+1];
-        System.arraycopy(bytes,0,bytes2,1,bytes.length);
-        final BigInteger q = new BigInteger(bytes2);
+        final BigInteger q = getBigInteger(bytes);
 
-        //org.spongycastle.math.ec.ECPoint point2 = CURVE.getG().normalize().multiply(q).normalize();
         org.spongycastle.math.ec.ECPoint point2 = CURVE.getG().multiply(q);
 
         final ECPoint point = G.multiply(q);
