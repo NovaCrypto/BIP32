@@ -25,10 +25,8 @@ import io.github.novacrypto.bip32.networks.Bitcoin;
 import io.github.novacrypto.bip39.SeedCalculator;
 import org.junit.Test;
 
-import static io.github.novacrypto.base58.Base58.base58Decode;
 import static io.github.novacrypto.base58.Base58.base58Encode;
-import static io.github.novacrypto.bip32.Hex.toHex;
-import static org.junit.Assert.assertEquals;
+import static io.github.novacrypto.bip32.Asserts.assertBase58KeysEqual;
 
 public final class DeriveNonHardenedTests {
 
@@ -56,13 +54,24 @@ public final class DeriveNonHardenedTests {
                 "edge talent poet tortoise trumpet dose", "m/2", Bitcoin.MAIN_NET);
     }
 
+    @Test
+    public void deriveFirstFirstIndexNonHardened() {
+        assertPrivateKey("xprv9xTw8QJDWHrmnWvgkrX1brkMQJzCvVrsv27MDa2MGUpgsExLpYVGP66edfZbqrWuQkDs4eZhbRQm2NjYCR6shAjzsoK78GhsJtzARSeDmqv",
+                "edge talent poet tortoise trumpet dose", "m/0/0", Bitcoin.MAIN_NET);
+    }
+
+    @Test
+    public void deriveFirstSecondIndexNonHardened() {
+        assertPrivateKey("xprv9xTw8QJDWHrmrYVKZx7kTHy8SpaWJLrpa5nrhjNm7gAQdRDG2DTCwtctW6Pecuosk9EV7xS2zEthZ6ic8A4vUVKZGA5qZ367E7faqK9x2HE",
+                "edge talent poet tortoise trumpet dose", "m/0/1", Bitcoin.MAIN_NET);
+    }
+
     private void assertPublicKey(String expectedBase58Key, String mnemonic, String derivationPath, Bitcoin network) {
         final byte[] seed = new SeedCalculator().calculateSeed(mnemonic, "");
 
         final byte[] bip32Root = findPublicKey(seed, network, derivationPath);
         final String actualBip32Root = base58Encode(bip32Root).toString();
-        assertEquals(toHex(base58Decode(expectedBase58Key)), toHex(base58Decode(actualBip32Root)));
-        assertEquals(expectedBase58Key, actualBip32Root);
+        assertBase58KeysEqual(expectedBase58Key, actualBip32Root);
     }
 
     private void assertPrivateKey(String expectedBase58Key, String mnemonic, String derivationPath, Network network) {
@@ -70,8 +79,7 @@ public final class DeriveNonHardenedTests {
 
         final byte[] bip32Root = findPrivateKey(seed, network, derivationPath);
         final String actualBip32Root = base58Encode(bip32Root).toString();
-        assertEquals(toHex(base58Decode(expectedBase58Key)), toHex(base58Decode(actualBip32Root)));
-        assertEquals(expectedBase58Key, actualBip32Root);
+        assertBase58KeysEqual(expectedBase58Key, actualBip32Root);
     }
 
     private byte[] findPrivateKey(byte[] seed, Network network, String derivationPath) {

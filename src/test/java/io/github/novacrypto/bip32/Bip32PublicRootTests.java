@@ -26,10 +26,8 @@ import io.github.novacrypto.bip32.networks.Litecoin;
 import io.github.novacrypto.bip39.SeedCalculator;
 import org.junit.Test;
 
-import static io.github.novacrypto.base58.Base58.base58Decode;
 import static io.github.novacrypto.base58.Base58.base58Encode;
-import static io.github.novacrypto.bip32.Hex.toHex;
-import static org.junit.Assert.assertEquals;
+import static io.github.novacrypto.bip32.Asserts.assertBase58KeysEqual;
 
 public final class Bip32PublicRootTests {
 
@@ -59,7 +57,7 @@ public final class Bip32PublicRootTests {
 
         final byte[] bip32Root = findBip32Root(seed, network);
         final String actualBip32Root = base58Encode(bip32Root).toString();
-        assertEquals(toHex(base58Decode(expectedBip32Root)), toHex(base58Decode(actualBip32Root)));
+        assertBase58KeysEqual(expectedBip32Root, actualBip32Root);
     }
 
     private byte[] findBip32Root(byte[] seed, Network network) {
