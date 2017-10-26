@@ -23,7 +23,6 @@ package io.github.novacrypto.bip32;
 
 import io.github.novacrypto.bip32.networks.Bitcoin;
 import io.github.novacrypto.bip39.SeedCalculator;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import static io.github.novacrypto.base58.Base58.base58Decode;
@@ -76,15 +75,21 @@ public final class DeriveNonHardenedTests {
     }
 
     private byte[] findPrivateKey(byte[] seed, Network network, String derivationPath) {
-        return PrivateRoot.fromSeed(seed, network)
-                .cKDpriv(Integer.parseInt(derivationPath.split("/")[1]))
-                .toByteArray();
+        return derivePrivate(seed, network, derivationPath).toByteArray();
     }
 
     private byte[] findPublicKey(byte[] seed, Bitcoin network, String derivationPath) {
-        return PrivateRoot.fromSeed(seed, network)
-                .cKDpriv(Integer.parseInt(derivationPath.split("/")[1]))
+        return derivePrivate(seed, network, derivationPath)
                 .neuter()
                 .toByteArray();
+    }
+
+    private PrivateRoot derivePrivate(byte[] seed, Network network, String derivationPath) {
+        PrivateRoot privateRoot = PrivateRoot.fromSeed(seed, network);
+        for (String part : derivationPath.substring(2).split("/")) {
+            privateRoot = privateRoot
+                    .cKDpriv(Integer.parseInt(part));
+        }
+        return privateRoot;
     }
 }
