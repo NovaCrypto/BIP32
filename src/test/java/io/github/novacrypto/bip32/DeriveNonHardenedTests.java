@@ -40,9 +40,8 @@ public final class DeriveNonHardenedTests {
     }
 
     @Test
-    @Ignore
     public void deriveFirstIndexNonHardenedPublic() {
-        assertPublicKey("xprv9vUtFfdFpb4T59CoQMSLmbpVg1dVZcWXsznR8BVeV4gn7pN1dZa7Kq1VR7fovgbbodEziyyk1i9wrb8wmfwr69DsGsdgV24EtDh5XgzqjHD",
+        assertPublicKey("xpub69UEfBA9exckHdHGWNyM8jmEE3Tyy5EPFDi1vZuG3QDkzchAB6tMsdKyGQUqT81RAauDSrmC4C69APBpt93RT7n3owDDB7LgBsdqHqcSoi7",
                 "edge talent poet tortoise trumpet dose", "m/0", Bitcoin.MAIN_NET);
     }
 

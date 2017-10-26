@@ -29,12 +29,16 @@ public final class PublicRoot {
     private final HdNode hdNode;
 
     private PublicRoot(final Network network, final byte[] key, final byte[] chainCode) {
-        hdNode = new HdNode.Builder()
+        this(new HdNode.Builder()
                 .network(network)
                 .neutered(true)
                 .key(key)
                 .chainCode(chainCode)
-                .build();
+                .build());
+    }
+
+    public PublicRoot(HdNode hdNode) {
+        this.hdNode = hdNode;
     }
 
     public static PublicRoot fromKey(final Network network, final byte[] key, final byte[] chainCode) {
@@ -43,5 +47,17 @@ public final class PublicRoot {
 
     public byte[] toByteArray() {
         return hdNode.serialize();
+    }
+
+    public static PublicRoot from(HdNode hdNode) {
+        return new PublicRoot(new HdNode.Builder()
+                .network(hdNode.getNetwork())
+                .neutered(true)
+                .key(hdNode.getPoint())
+                .fingerprint(hdNode.getParentFingerprint())
+                .depth(hdNode.depth())
+                .childNumber(hdNode.getChildNumber())
+                .chainCode(hdNode.getChainCode())
+                .build());
     }
 }

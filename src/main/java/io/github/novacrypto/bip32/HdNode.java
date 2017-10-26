@@ -30,12 +30,18 @@ final class HdNode {
     private final byte[] chainCode;
     private final byte[] key;
     private final Serializer serializer;
+    private final int parentFingerprint;
+    private final int childNumber;
+    private final int depth;
 
     private HdNode(Builder builder) {
         network = builder.network;
         neutered = builder.neutered;
         key = builder.key;
+        parentFingerprint = builder.fingerprint;
+        childNumber = builder.childNumber;
         chainCode = builder.chainCode;
+        depth = builder.depth;
         serializer = new Serializer.Builder()
                 .network(builder.network)
                 .neutered(builder.neutered)
@@ -57,6 +63,10 @@ final class HdNode {
         return key;
     }
 
+    public int getParentFingerprint() {
+        return parentFingerprint;
+    }
+
     public int fingerPrint() {
         final byte[] point = getPoint();
         final byte[] o = hash160(point);
@@ -67,7 +77,19 @@ final class HdNode {
     }
 
     public int depth() {
-        return 0;
+        return depth;
+    }
+
+    public Network getNetwork() {
+        return network;
+    }
+
+    public byte[] getChainCode() {
+        return chainCode;
+    }
+
+    public int getChildNumber() {
+        return childNumber;
     }
 
     static class Builder {

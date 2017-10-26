@@ -114,6 +114,6 @@ public final class PrivateRoot {
     }
 
     public PublicRoot neuter() {
-        return PublicRoot.fromKey(network, hdNode.getPoint(), chainCode);
+        return PublicRoot.from(hdNode);
     }
 }
