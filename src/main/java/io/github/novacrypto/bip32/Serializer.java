@@ -47,9 +47,11 @@ final class Serializer {
         writer.writeIntBigEndian(fingerprint);
         writer.writeIntBigEndian(childNumber);
         writer.writeBytes(ir);
+        if (ir.length != 32) throw new RuntimeException("unexpected length");
         if (!neutered) {
             writer.writeByte((byte) 0); //
             writer.writeBytes(il);
+            if (il.length != 32) throw new RuntimeException("unexpected length");
         } else {
             writer.writeBytes(il);
         }

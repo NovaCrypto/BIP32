@@ -27,16 +27,30 @@ import org.junit.Test;
 import java.math.BigInteger;
 
 import static io.github.novacrypto.base58.Base58.base58Encode;
+import static io.github.novacrypto.bip32.Hex.toHex;
 import static org.junit.Assert.assertEquals;
 
 public final class Secp256k1Bouncy {
 
     @Test
-    @Ignore
     public void compare() {
         final BigInteger x = new BigInteger("0279BE667EF9DCBBAC55A06295CE870B07029BFCAA2DCE28D959F2815B16F81798", 16);
         assertEquals(base58Encode(new Secp256k1BC().getPoint(x).getEncoded()),
                 base58Encode(new Secp256k1().getPoint(x).toByteArray()));
 
+    }
+
+    @Test
+    public void compare2() {
+        final BigInteger x = new BigInteger("50586395471493885789969809757315971746084953940794436873514397540836228266313", 16);
+        assertEquals(new BigInteger("97822910189327572255247885838018517468742632933237251602109122903186873731015", 10),
+                new Secp256k1BC().getPoint(x).getX().toBigInteger());
+    }
+
+    @Test
+    public void compare2X() {
+        final BigInteger x = new BigInteger("50586395471493885789969809757315971746084953940794436873514397540836228266313", 16);
+        assertEquals(new BigInteger("97822910189327572255247885838018517468742632933237251602109122903186873731015", 10),
+                new Secp256k1().getPointScala(x).getAffineX());
     }
 }

@@ -25,17 +25,24 @@ import org.bouncycastle.jce.ECNamedCurveTable;
 import org.bouncycastle.jce.spec.ECParameterSpec;
 import org.bouncycastle.math.ec.ECCurve;
 import org.bouncycastle.math.ec.ECPoint;
+import org.spongycastle.asn1.x9.X9ECParameters;
+import org.spongycastle.crypto.ec.CustomNamedCurves;
+import org.spongycastle.math.ec.FixedPointCombMultiplier;
 
 import java.math.BigInteger;
 
 public class Secp256k1BC {
 
+    private final X9ECParameters CURVE = CustomNamedCurves.getByName("secp256k1");
     private final ECParameterSpec p = ECNamedCurveTable.getParameterSpec("secp256k1");
     private final ECCurve curve = p.getCurve();
     private final ECPoint G = p.getG();
 
     public ECPoint getPoint(final BigInteger k) {
-        return G.multiply(k.mod(p.getN()));
+        org.spongycastle.math.ec.ECPoint point = new FixedPointCombMultiplier().multiply(CURVE.getG(), k);
+        final ECPoint multiply = G.multiply(k);
+        //final byte[] encoded = point.getEncoded(true);
+        return multiply;
     }
 
     public ECPoint getG() {
@@ -55,7 +62,47 @@ public class Secp256k1BC {
     }
 
     public byte[] getPoint(final byte[] bytes) {
-        final ECPoint point = getPoint(new BigInteger(bytes));
-        return new ECPoint.Fp(point.getCurve(), point.getX(), point.getY(), true).getEncoded();
+        byte[] bytes2 = new byte[bytes.length+1];
+        System.arraycopy(bytes,0,bytes2,1,bytes.length);
+        final BigInteger q = new BigInteger(bytes2);
+
+        //org.spongycastle.math.ec.ECPoint point2 = CURVE.getG().normalize().multiply(q).normalize();
+        org.spongycastle.math.ec.ECPoint point2 = CURVE.getG().multiply(q);
+
+        final ECPoint point = G.multiply(q);
+
+        System.out.println("G: " + G.getX().toBigInteger() + " " + G.getY().toBigInteger());
+        System.out.println("a,b: " + curve.getA().toBigInteger() + " " + curve.getB().toBigInteger());
+        System.out.println("h: " + p.getH());
+        System.out.println("N: " + getN());
+        System.out.println("get Point input: " + toHex(bytes));
+        System.out.println("get Point input: " + q);
+
+        final ECPoint.Fp fp = new ECPoint.Fp(point.getCurve(), point.getX(), point.getY(), true);
+
+        System.out.println("Fp:" + fp.getX().toBigInteger() + " " + fp.getY().toBigInteger());
+        System.out.println("Pt:" + point.getX().toBigInteger() + " " + point.getY().toBigInteger());
+        System.out.println("P2:" + point2.getX().toBigInteger() + " " + point2.getY().toBigInteger());
+        //System.out.println("P2:" + point2.getAffineXCoord().toBigInteger() + " " + point2.getAffineYCoord().toBigInteger());
+
+        final byte[] encoded = point2.getEncoded(true);
+
+        System.out.println("Encoded Point: " + toHex(fp.getEncoded()));
+        System.out.println("Encoded Point: " + toHex(encoded));
+        System.out.println();
+
+        return encoded;
+    }
+
+
+    public static String toHex(byte[] array) {
+        final BigInteger bi = new BigInteger(1, array);
+        final String hex = bi.toString(16);
+        final int paddingLength = (array.length * 2) - hex.length();
+        if (paddingLength > 0) {
+            return String.format("%0" + paddingLength + "d", 0) + hex;
+        } else {
+            return hex;
+        }
     }
 }
