@@ -40,23 +40,52 @@ public final class DeriveNonHardenedTests {
     }
 
     @Test
+    @Ignore
+    public void deriveFirstIndexNonHardenedPublic() {
+        assertPublicKey("xprv9vUtFfdFpb4T59CoQMSLmbpVg1dVZcWXsznR8BVeV4gn7pN1dZa7Kq1VR7fovgbbodEziyyk1i9wrb8wmfwr69DsGsdgV24EtDh5XgzqjHD",
+                "edge talent poet tortoise trumpet dose", "m/0", Bitcoin.MAIN_NET);
+    }
+
+    @Test
     public void deriveSecondIndexNonHardened() {
         assertPrivateKey("xprv9vUtFfdFpb4T9JCuTLJG1ZBQtno7iBXnH82WzuX9qaAptWEEUDApggPW6A1SSyiunpBjsrLimC1GyV7CPYaG5erJNHTkHBj9QwN9LXw6GTV",
                 "edge talent poet tortoise trumpet dose", "m/1", Bitcoin.MAIN_NET);
     }
 
-    private void assertPrivateKey(String expectedBip32Root, String mnemonic, String derivationPath, Network network) {
+    @Test
+    public void deriveThirdIndexNonHardened() {
+        assertPrivateKey("xprv9vUtFfdFpb4TBot36QNbPt35wgshz2HfeSrw2Er3Znf7AhD9qUKEafG1DQUdqeHWPs19YWumnggvTXQT8xosK92ZqTjacFbWQpL9p5wdabj",
+                "edge talent poet tortoise trumpet dose", "m/2", Bitcoin.MAIN_NET);
+    }
+
+    private void assertPublicKey(String expectedBase58Key, String mnemonic, String derivationPath, Bitcoin network) {
+        final byte[] seed = new SeedCalculator().calculateSeed(mnemonic, "");
+
+        final byte[] bip32Root = findPublicKey(seed, network, derivationPath);
+        final String actualBip32Root = base58Encode(bip32Root).toString();
+        assertEquals(toHex(base58Decode(expectedBase58Key)), toHex(base58Decode(actualBip32Root)));
+        assertEquals(expectedBase58Key, actualBip32Root);
+    }
+
+    private void assertPrivateKey(String expectedBase58Key, String mnemonic, String derivationPath, Network network) {
         final byte[] seed = new SeedCalculator().calculateSeed(mnemonic, "");
 
         final byte[] bip32Root = findPrivateKey(seed, network, derivationPath);
         final String actualBip32Root = base58Encode(bip32Root).toString();
-        assertEquals(toHex(base58Decode(expectedBip32Root)), toHex(base58Decode(actualBip32Root)));
-        assertEquals(expectedBip32Root, actualBip32Root);
+        assertEquals(toHex(base58Decode(expectedBase58Key)), toHex(base58Decode(actualBip32Root)));
+        assertEquals(expectedBase58Key, actualBip32Root);
     }
 
     private byte[] findPrivateKey(byte[] seed, Network network, String derivationPath) {
         return PrivateRoot.fromSeed(seed, network)
                 .cKDpriv(Integer.parseInt(derivationPath.split("/")[1]))
+                .toByteArray();
+    }
+
+    private byte[] findPublicKey(byte[] seed, Bitcoin network, String derivationPath) {
+        return PrivateRoot.fromSeed(seed, network)
+                .cKDpriv(Integer.parseInt(derivationPath.split("/")[1]))
+                .neuter()
                 .toByteArray();
     }
 }
