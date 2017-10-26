@@ -35,4 +35,19 @@ public final class Hex {
             return hex;
         }
     }
+
+    public static byte[] toArray(String s) {
+        final byte[] bytes = new byte[s.length() / 2];
+        for (int i = 0; i < bytes.length; i++) {
+            bytes[i] = (byte) (parseHex(s.charAt(i * 2)) << 4 | parseHex(s.charAt(i * 2 + 1)));
+        }
+        return bytes;
+    }
+
+    private static int parseHex(char c) {
+        if (c >= '0' && c <= '9') return c - '0';
+        if (c >= 'a' && c <= 'f') return (c - 'a') + 10;
+        if (c >= 'A' && c <= 'F') return (c - 'A') + 10;
+        throw new RuntimeException("Invalid hex char '" + c + '\'');
+    }
 }
