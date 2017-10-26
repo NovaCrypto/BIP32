@@ -40,14 +40,14 @@ public final class PrivateRoot {
 
     private PrivateRoot(final Network network, final byte[] key, final byte[] chainCode) {
         this(new HdNode.Builder()
-                        .network(network)
-                        .neutered(false)
-                        .key(key)
-                        .chainCode(chainCode)
-                        .depth(0)
-                        .childNumber(0)
-                        .fingerprint(0)
-                        .build());
+                .network(network)
+                .neutered(false)
+                .key(key)
+                .chainCode(chainCode)
+                .depth(0)
+                .childNumber(0)
+                .fingerprint(0)
+                .build());
     }
 
     public PrivateRoot(HdNode hdNode) {
@@ -90,21 +90,31 @@ public final class PrivateRoot {
         final byte[] ir = new byte[hash.length - 32];
         System.arraycopy(hash, 32, ir, 0, ir.length);
 
-        BigInteger mod = new BigInteger(il).add(new BigInteger(hdNode.getKey())).mod(new Secp256k1BC().getN());
+        final byte[] key = hdNode.getKey();
+        BigInteger mod = getBigInteger(il).add(getBigInteger(key)).mod(new Secp256k1BC().getN());
 
         byte[] modArr = mod.toByteArray();
         copyTail(modArr, il);
         Arrays.fill(modArr, (byte) 0);
 
         return new PrivateRoot(new HdNode.Builder()
-                        .network(hdNode.getNetwork())
-                        .neutered(false)
-                        .key(il)
-                        .chainCode(ir)
-                        .depth(hdNode.depth() + 1)
-                        .childNumber(i)
-                        .fingerprint(hdNode.fingerPrint())
-                        .build());
+                .network(hdNode.getNetwork())
+                .neutered(false)
+                .key(il)
+                .chainCode(ir)
+                .depth(hdNode.depth() + 1)
+                .childNumber(i)
+                .fingerprint(hdNode.fingerPrint())
+                .build());
+    }
+
+    private static BigInteger getBigInteger(byte[] bytes) {
+        //TODO: Needs to be more efficient, like negate +1
+        byte[] bytes2 = new byte[bytes.length + 1];
+        System.arraycopy(bytes, 0, bytes2, 1, bytes.length);
+        BigInteger q = new BigInteger(bytes2);
+        if (q.signum() < 0) throw new RuntimeException("neg big i");
+        return q;
     }
 
     private static void copyTail(final byte[] src, final byte[] dest) {
