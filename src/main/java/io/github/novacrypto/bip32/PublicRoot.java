@@ -26,29 +26,6 @@ package io.github.novacrypto.bip32;
  */
 public final class PublicRoot {
 
-    private final HdNode hdNode;
-
-    private PublicRoot(final Network network, final byte[] key, final byte[] chainCode) {
-        this(new HdNode.Builder()
-                .network(network)
-                .neutered(true)
-                .key(key)
-                .chainCode(chainCode)
-                .build());
-    }
-
-    public PublicRoot(HdNode hdNode) {
-        this.hdNode = hdNode;
-    }
-
-    public static PublicRoot fromKey(final Network network, final byte[] key, final byte[] chainCode) {
-        return new PublicRoot(network, key, chainCode);
-    }
-
-    public byte[] toByteArray() {
-        return hdNode.serialize();
-    }
-
     public static PublicRoot from(HdNode hdNode) {
         return new PublicRoot(new HdNode.Builder()
                 .network(hdNode.getNetwork())
@@ -59,5 +36,15 @@ public final class PublicRoot {
                 .childNumber(hdNode.getChildNumber())
                 .chainCode(hdNode.getChainCode())
                 .build());
+    }
+
+    private final HdNode hdNode;
+
+    public PublicRoot(HdNode hdNode) {
+        this.hdNode = hdNode;
+    }
+
+    public byte[] toByteArray() {
+        return hdNode.serialize();
     }
 }

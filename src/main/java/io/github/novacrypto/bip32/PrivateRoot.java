@@ -37,26 +37,21 @@ public final class PrivateRoot {
     private static final byte[] BITCOIN_SEED = getBytes("Bitcoin seed");
 
     private final HdNode hdNode;
-    private final Network network;
-    private final byte[] chainCode;
 
     private PrivateRoot(final Network network, final byte[] key, final byte[] chainCode) {
-        this(network, key, chainCode, 0, 0, 0);
+        this(new HdNode.Builder()
+                        .network(network)
+                        .neutered(false)
+                        .key(key)
+                        .chainCode(chainCode)
+                        .depth(0)
+                        .childNumber(0)
+                        .fingerprint(0)
+                        .build());
     }
 
-    private PrivateRoot(final Network network, final byte[] key, final byte[] chainCode,
-                        final int fingerprint, final int childNumber, final int depth) {
-        this.network = network;
-        this.chainCode = chainCode;
-        hdNode = new HdNode.Builder()
-                .network(network)
-                .neutered(false)
-                .key(key)
-                .chainCode(chainCode)
-                .depth(depth)
-                .childNumber(childNumber)
-                .fingerprint(fingerprint)
-                .build();
+    public PrivateRoot(HdNode hdNode) {
+        this.hdNode = hdNode;
     }
 
     public static PrivateRoot fromSeed(final byte[] seed, final Network network) {
@@ -88,19 +83,28 @@ public final class PrivateRoot {
         writer.writeBytes(publicKeyBuffer());
         writer.writeIntBigEndian(i);
 
-        byte[] hash = hmacSha512(chainCode, data);
+        byte[] hash = hmacSha512(hdNode.getChainCode(), data);
+        Arrays.fill(data, (byte) 0);
 
         final byte[] il = Arrays.copyOf(hash, 32);
         final byte[] ir = new byte[hash.length - 32];
         System.arraycopy(hash, 32, ir, 0, ir.length);
 
-        System.out.println(new Secp256k1BC().getN().toString(16));
         BigInteger mod = new BigInteger(il).add(new BigInteger(hdNode.getKey())).mod(new Secp256k1BC().getN());
 
         byte[] modArr = mod.toByteArray();
         copyTail(modArr, il);
+        Arrays.fill(modArr, (byte) 0);
 
-        return new PrivateRoot(network, il, ir, hdNode.fingerPrint(), i, hdNode.depth() + 1);
+        return new PrivateRoot(new HdNode.Builder()
+                        .network(hdNode.getNetwork())
+                        .neutered(false)
+                        .key(il)
+                        .chainCode(ir)
+                        .depth(hdNode.depth() + 1)
+                        .childNumber(i)
+                        .fingerprint(hdNode.fingerPrint())
+                        .build());
     }
 
     private static void copyTail(final byte[] src, final byte[] dest) {
