@@ -23,7 +23,7 @@ package io.github.novacrypto;
 
 import java.math.BigInteger;
 
-final class Hex {
+public final class Hex {
 
     static String toHex(byte[] array) {
         final BigInteger bi = new BigInteger(1, array);
@@ -36,7 +36,7 @@ final class Hex {
         }
     }
 
-    static byte[] toArray(String s) {
+    public static byte[] toArray(String s) {
         final byte[] bytes = new byte[s.length() / 2];
         for (int i = 0; i < bytes.length; i++) {
             bytes[i] = (byte) (parseHex(s.charAt(i * 2)) << 4 | parseHex(s.charAt(i * 2 + 1)));

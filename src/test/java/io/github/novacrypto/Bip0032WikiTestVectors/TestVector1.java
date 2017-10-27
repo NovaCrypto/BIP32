@@ -19,20 +19,16 @@
  *  You can contact the authors via github issues.
  */
 
-package io.github.novacrypto;
+package io.github.novacrypto.Bip0032WikiTestVectors;
 
 import io.github.novacrypto.bip32.PrivateKey;
-import io.github.novacrypto.bip32.ToByteArray;
-import io.github.novacrypto.bip32.networks.Bitcoin;
 import org.junit.Test;
 
-import static io.github.novacrypto.Asserts.assertBase58KeysEqual;
-import static io.github.novacrypto.base58.Base58.base58Encode;
-import static io.github.novacrypto.Hex.toArray;
+import static io.github.novacrypto.Bip0032WikiTestVectors.TestVectorHelpers.*;
 
-public final class Bip0032WikiTestVectors {
+public final class TestVector1 {
 
-    private final PrivateKey root = PrivateKey.fromSeed(toArray("000102030405060708090a0b0c0d0e0f"), Bitcoin.MAIN_NET);
+    private final PrivateKey root = createMainNetRootFromSeed("000102030405060708090a0b0c0d0e0f");
 
     @Test
     public void m_private() {
@@ -139,16 +135,5 @@ public final class Bip0032WikiTestVectors {
                         .cKDpriv(hard(2))
                         .cKDpriv(2)
                         .cKDpriv(1000000000));
-    }
-
-    private static void assertBase58(String expectedBase58,
-                                     ToByteArray toByteArray) {
-        assertBase58KeysEqual(expectedBase58,
-                base58Encode(toByteArray
-                        .toByteArray()).toString());
-    }
-
-    private static int hard(int i) {
-        return i | 0x80000000;
     }
 }
