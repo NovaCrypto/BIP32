@@ -33,7 +33,7 @@ import static io.github.novacrypto.toruntime.CheckedExceptionToRuntime.toRuntime
 /**
  * A BIP32 root private key
  */
-public final class PrivateRoot {
+public final class PrivateRoot implements ToByteArray{
 
     private static final byte[] BITCOIN_SEED = getBytes("Bitcoin seed");
 

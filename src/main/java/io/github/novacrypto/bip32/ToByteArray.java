@@ -21,30 +21,7 @@
 
 package io.github.novacrypto.bip32;
 
-/**
- * A BIP32 root public key
- */
-public final class PublicRoot implements ToByteArray {
+public interface ToByteArray {
 
-    public static PublicRoot from(HdNode hdNode) {
-        return new PublicRoot(new HdNode.Builder()
-                .network(hdNode.getNetwork())
-                .neutered(true)
-                .key(hdNode.getPoint())
-                .fingerprint(hdNode.getParentFingerprint())
-                .depth(hdNode.depth())
-                .childNumber(hdNode.getChildNumber())
-                .chainCode(hdNode.getChainCode())
-                .build());
-    }
-
-    private final HdNode hdNode;
-
-    public PublicRoot(HdNode hdNode) {
-        this.hdNode = hdNode;
-    }
-
-    public byte[] toByteArray() {
-        return hdNode.serialize();
-    }
+    byte[] toByteArray();
 }
