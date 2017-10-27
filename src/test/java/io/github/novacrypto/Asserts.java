@@ -25,7 +25,7 @@ import static io.github.novacrypto.base58.Base58.base58Decode;
 import static io.github.novacrypto.Hex.toHex;
 import static org.junit.Assert.assertEquals;
 
-final class Asserts {
+public final class Asserts {
 
     /**
      * Compares two base58 keys. On failure, shows hex comparison.
@@ -33,7 +33,7 @@ final class Asserts {
      * @param expectedKey Base58 string of expected key
      * @param actualKey   Base58 string of actual key
      */
-    static void assertBase58KeysEqual(String expectedKey, String actualKey) {
+    public static void assertBase58KeysEqual(String expectedKey, String actualKey) {
         String failureMessage = "";
         if (!expectedKey.equals(actualKey)) {
             final String expectedDecoded = decodeKey(expectedKey);
