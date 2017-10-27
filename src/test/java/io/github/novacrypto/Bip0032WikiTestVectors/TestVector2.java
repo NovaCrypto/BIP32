@@ -24,7 +24,9 @@ package io.github.novacrypto.Bip0032WikiTestVectors;
 import io.github.novacrypto.bip32.PrivateKey;
 import org.junit.Test;
 
-import static io.github.novacrypto.Bip0032WikiTestVectors.TestVectorHelpers.*;
+import static io.github.novacrypto.Bip0032WikiTestVectors.TestVectorHelpers.assertBase58;
+import static io.github.novacrypto.Bip0032WikiTestVectors.TestVectorHelpers.createMainNetRootFromSeed;
+import static io.github.novacrypto.bip32.PrivateKey.hard;
 
 public final class TestVector2 {
 

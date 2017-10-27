@@ -76,6 +76,10 @@ public final class PrivateKey implements ToByteArray {
         });
     }
 
+    public static int hard(final int index) {
+        return index | 0x80000000;
+    }
+
     public byte[] toByteArray() {
         return hdKey.serialize();
     }
