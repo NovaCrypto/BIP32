@@ -96,6 +96,12 @@ public final class TestVector1 {
     }
 
     @Test
+    public void chain_m_0h_1_2h_private_derive() {
+        assertBase58("xprv9z4pot5VBttmtdRTWfWQmoH1taj2axGVzFqSb8C9xaxKymcFzXBDptWmT7FwuEzG3ryjH4ktypQSAewRiNMjANTtpgP4mLTj34bhnZX7UiM",
+                root.derive("m/0'/1/2'"));
+    }
+
+    @Test
     public void chain_m_0h_1_2h_2_public() {
         assertBase58("xpub6FHa3pjLCk84BayeJxFW2SP4XRrFd1JYnxeLeU8EqN3vDfZmbqBqaGJAyiLjTAwm6ZLRQUMv1ZACTj37sR62cfN7fe5JnJ7dh8zL4fiyLHV",
                 root
@@ -114,6 +120,12 @@ public final class TestVector1 {
                         .cKDpriv(1)
                         .cKDpriv(hard(2))
                         .cKDpriv(2));
+    }
+
+    @Test
+    public void chain_m_0h_1_2h_2_private_derive() {
+        assertBase58("xprvA2JDeKCSNNZky6uBCviVfJSKyQ1mDYahRjijr5idH2WwLsEd4Hsb2Tyh8RfQMuPh7f7RtyzTtdrbdqqsunu5Mm3wDvUAKRHSC34sJ7in334",
+                root.derive("m/0'/1/2'/2"));
     }
 
     @Test
@@ -137,5 +149,11 @@ public final class TestVector1 {
                         .cKDpriv(hard(2))
                         .cKDpriv(2)
                         .cKDpriv(1000000000));
+    }
+
+    @Test
+    public void chain_m_0h_1_2h_2_1000000000_private_derive() {
+        assertBase58("xprvA41z7zogVVwxVSgdKUHDy1SKmdb533PjDz7J6N6mV6uS3ze1ai8FHa8kmHScGpWmj4WggLyQjgPie1rFSruoUihUZREPSL39UNdE3BBDu76",
+                root.derive("m/0'/1/2'/2/1000000000"));
     }
 }
