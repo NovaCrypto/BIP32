@@ -43,4 +43,14 @@ public final class Bip0032WikiTestVectors {
         assertBase58KeysEqual("xpub661MyMwAqRbcFtXgS5sYJABqqG9YLmC4Q1Rdap9gSE8NqtwybGhePY2gZ29ESFjqJoCu1Rupje8YtGqsefD265TMg7usUDFdp6W1EGMcet8",
                 base58Encode(root.neuter().toByteArray()).toString());
     }
+
+    @Test
+    public void chain_m_0h() {
+        assertBase58KeysEqual("xprv9uHRZZhk6KAJC1avXpDAp4MDc3sQKNxDiPvvkX8Br5ngLNv1TxvUxt4cV1rGL5hj6KCesnDYUhd7oWgT11eZG7XnxHrnYeSvkzY7d2bhkJ7",
+                base58Encode(root.cKDpriv(hard(0)).toByteArray()).toString());
+    }
+
+    private static int hard(int i) {
+        return i | 0x80000000;
+    }
 }

@@ -78,11 +78,17 @@ public final class PrivateRoot {
         return hdNode.serialize();
     }
 
-    public PrivateRoot cKDpriv(final int i) {
+    public PrivateRoot cKDpriv(final int index) {
         byte[] data = new byte[37];
         ByteArrayWriter writer = new ByteArrayWriter(data);
-        writer.writeBytes(publicKeyBuffer());
-        writer.writeIntBigEndian(i);
+
+        if (hardened(index)) {
+            writer.writeByte((byte) 0);
+            writer.writeBytes(hdNode.getKey(), 32);
+        } else {
+            writer.writeBytes(publicKeyBuffer());
+        }
+        writer.writeIntBigEndian(index);
 
         byte[] hash = hmacSha512(hdNode.getChainCode(), data);
         Arrays.fill(data, (byte) 0);
@@ -104,9 +110,13 @@ public final class PrivateRoot {
                 .key(il)
                 .chainCode(ir)
                 .depth(hdNode.depth() + 1)
-                .childNumber(i)
+                .childNumber(index)
                 .fingerprint(hdNode.fingerPrint())
                 .build());
+    }
+
+    private static boolean hardened(final int i) {
+        return (i & 0x80000000) != 0;
     }
 
     private static void copyTail(final byte[] src, final byte[] dest) {
