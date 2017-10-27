@@ -31,14 +31,14 @@ import static io.github.novacrypto.toruntime.CheckedExceptionToRuntime.toRuntime
 final class HmacSha512 {
     private static final String HMAC_SHA512 = "HmacSHA512";
 
-    static byte[] hmacSha512(final byte[] byteKey, final byte[] seed) {
-        return initialize(byteKey)
-                .doFinal(seed);
+    static byte[] hmacSha512(final byte[] key, final byte[] data) {
+        return initialize(key)
+                .doFinal(data);
     }
 
-    private static Mac initialize(final byte[] byteKey) {
+    private static Mac initialize(final byte[] key) {
         final Mac hmacSha512 = getInstance(HMAC_SHA512);
-        final SecretKeySpec keySpec = new SecretKeySpec(byteKey, HMAC_SHA512);
+        final SecretKeySpec keySpec = new SecretKeySpec(key, HMAC_SHA512);
         toRuntime(new CheckedExceptionToRuntime.Action() {
             @Override
             public void run() throws Exception {

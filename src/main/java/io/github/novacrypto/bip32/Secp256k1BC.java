@@ -39,6 +39,10 @@ final class Secp256k1BC {
 
     static byte[] point(final byte[] pBytes) {
         final BigInteger p = parse256(pBytes);
+        return point(p);
+    }
+
+    static byte[] point(BigInteger p) {
         final ECPoint point2 = CURVE.getG().multiply(p);
         return point2.getEncoded(true);
     }

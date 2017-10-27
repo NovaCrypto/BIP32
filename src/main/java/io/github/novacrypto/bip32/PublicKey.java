@@ -21,6 +21,8 @@
 
 package io.github.novacrypto.bip32;
 
+import static io.github.novacrypto.bip32.BigIntegerUtils.parse256;
+
 /**
  * A BIP32 public key
  */
@@ -30,7 +32,7 @@ public final class PublicKey implements ToByteArray {
         return new PublicKey(new HdKey.Builder()
                 .network(hdKey.getNetwork())
                 .neutered(true)
-                .key(hdKey.getPoint())
+                .key(parse256(hdKey.point()))
                 .fingerprint(hdKey.getParentFingerprint())
                 .depth(hdKey.depth())
                 .childNumber(hdKey.getChildNumber())

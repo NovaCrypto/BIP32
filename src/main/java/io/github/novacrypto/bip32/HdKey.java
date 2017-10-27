@@ -21,14 +21,15 @@
 
 package io.github.novacrypto.bip32;
 
+import java.math.BigInteger;
+
 import static io.github.novacrypto.bip32.Hash160.hash160;
-import static io.github.novacrypto.bip32.Secp256k1BC.point;
 
 final class HdKey {
 
     private final Network network;
+    private final BigInteger key;
     private final byte[] chainCode;
-    private final byte[] key;
     private final Serializer serializer;
     private final int parentFingerprint;
     private final int childNumber;
@@ -54,11 +55,11 @@ final class HdKey {
         return serializer.serialize(key, chainCode);
     }
 
-    byte[] getPoint() {
-        return point(key);
+    byte[] point() {
+        return Secp256k1BC.point(key);
     }
 
-    byte[] getKey() {
+    BigInteger key() {
         return key;
     }
 
@@ -67,7 +68,7 @@ final class HdKey {
     }
 
     int fingerPrint() {
-        final byte[] point = getPoint();
+        final byte[] point = point();
         final byte[] o = hash160(point);
         return ((o[0] & 0xFF) << 24) |
                 ((o[1] & 0xFF) << 16) |
@@ -95,8 +96,8 @@ final class HdKey {
 
         private Network network;
         private boolean neutered;
+        private BigInteger key;
         private byte[] chainCode;
-        private byte[] key;
         private int depth;
         private int childNumber;
         private int fingerprint;
@@ -111,7 +112,7 @@ final class HdKey {
             return this;
         }
 
-        Builder key(final byte[] key) {
+        Builder key(final BigInteger key) {
             this.key = key;
             return this;
         }

@@ -26,8 +26,8 @@ import io.github.novacrypto.toruntime.CheckedExceptionToRuntime;
 import java.math.BigInteger;
 import java.util.Arrays;
 
-import static io.github.novacrypto.bip32.BigIntegerUtils.ser256;
 import static io.github.novacrypto.bip32.BigIntegerUtils.parse256;
+import static io.github.novacrypto.bip32.BigIntegerUtils.ser256;
 import static io.github.novacrypto.bip32.HmacSha512.hmacSha512;
 import static io.github.novacrypto.bip32.Secp256k1BC.n;
 import static io.github.novacrypto.toruntime.CheckedExceptionToRuntime.toRuntime;
@@ -41,7 +41,7 @@ public final class PrivateKey implements ToByteArray {
 
     private final HdKey hdKey;
 
-    private PrivateKey(final Network network, final byte[] key, final byte[] chainCode) {
+    private PrivateKey(final Network network, final BigInteger key, final byte[] chainCode) {
         this(new HdKey.Builder()
                 .network(network)
                 .neutered(false)
@@ -60,11 +60,10 @@ public final class PrivateKey implements ToByteArray {
     public static PrivateKey fromSeed(final byte[] seed, final Network network) {
         final byte[] hash = hmacSha512(BITCOIN_SEED, seed);
 
-        final byte[] il = Arrays.copyOf(hash, 32);
-        final byte[] ir = new byte[hash.length - 32];
-        System.arraycopy(hash, 32, ir, 0, ir.length);
+        final byte[] il = head32(hash);
+        final byte[] ir = tail32(hash);
 
-        return new PrivateKey(network, il, ir);
+        return new PrivateKey(network, parse256(il), ir);
     }
 
     private static byte[] getBytes(final String seed) {
@@ -81,39 +80,43 @@ public final class PrivateKey implements ToByteArray {
     }
 
     public PrivateKey cKDpriv(final int index) {
+        final HdKey parent = this.hdKey;
         final byte[] data = new byte[37];
         final ByteArrayWriter writer = new ByteArrayWriter(data);
 
         if (hardened(index)) {
             writer.concat((byte) 0);
-            writer.concat(hdKey.getKey(), 32);
+            writer.concat(ser256(parent.key(), 32));
         } else {
             writer.concat(publicKeyBuffer());
         }
         writer.concatSer32(index);
 
-        final byte[] hash = hmacSha512(hdKey.getChainCode(), data);
+        final byte[] I = hmacSha512(parent.getChainCode(), data);
         Arrays.fill(data, (byte) 0);
 
-        final byte[] il = Arrays.copyOf(hash, 32);
-        final byte[] ir = new byte[hash.length - 32];
-        System.arraycopy(hash, 32, ir, 0, ir.length);
-
-        final byte[] key = hdKey.getKey();
-        final BigInteger mod = parse256(il).add(parse256(key)).mod(n());
-
-        //TODO: Store key as BigInteger?
-        ser256(il, mod);
+        final byte[] Il = head32(I);
+        final byte[] Ir = tail32(I);
 
         return new PrivateKey(new HdKey.Builder()
-                .network(hdKey.getNetwork())
+                .network(parent.getNetwork())
                 .neutered(false)
-                .key(il)
-                .chainCode(ir)
-                .depth(hdKey.depth() + 1)
+                .key(parse256(Il).add(parent.key()).mod(n()))
+                .chainCode(Ir)
+                .depth(parent.depth() + 1)
                 .childNumber(index)
-                .fingerprint(hdKey.fingerPrint())
+                .fingerprint(parent.fingerPrint())
                 .build());
+    }
+
+    private static byte[] head32(final byte[] bytes) {
+        return Arrays.copyOf(bytes, 32);
+    }
+
+    private static byte[] tail32(final byte[] bytes) {
+        final byte[] result = new byte[bytes.length - 32];
+        System.arraycopy(bytes, 32, result, 0, result.length);
+        return result;
     }
 
     private static boolean hardened(final int i) {
@@ -121,7 +124,7 @@ public final class PrivateKey implements ToByteArray {
     }
 
     private byte[] publicKeyBuffer() {
-        return hdKey.getPoint();
+        return hdKey.point();
     }
 
     public PublicKey neuter() {

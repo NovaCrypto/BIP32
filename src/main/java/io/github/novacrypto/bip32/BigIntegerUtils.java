@@ -30,10 +30,12 @@ final class BigIntegerUtils {
         return new BigInteger(1, bytes);
     }
 
-    public static void ser256(final byte[] target, final BigInteger integer) {
+    static byte[] ser256(final BigInteger integer, final int length) {
         final byte[] modArr = integer.toByteArray();
+        final byte[] target = new byte[length];
         copyTail(modArr, target);
         Arrays.fill(modArr, (byte) 0);
+        return target;
     }
 
     private static void copyTail(final byte[] src, final byte[] dest) {
