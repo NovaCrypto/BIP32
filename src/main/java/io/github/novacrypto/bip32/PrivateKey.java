@@ -26,8 +26,8 @@ import io.github.novacrypto.toruntime.CheckedExceptionToRuntime;
 import java.math.BigInteger;
 import java.util.Arrays;
 
-import static io.github.novacrypto.bip32.BigIntegerUtils.ser256;
 import static io.github.novacrypto.bip32.BigIntegerUtils.parse256;
+import static io.github.novacrypto.bip32.BigIntegerUtils.ser256;
 import static io.github.novacrypto.bip32.HmacSha512.hmacSha512;
 import static io.github.novacrypto.bip32.Secp256k1BC.n;
 import static io.github.novacrypto.toruntime.CheckedExceptionToRuntime.toRuntime;
@@ -116,15 +116,19 @@ public final class PrivateKey implements ToByteArray {
                 .build());
     }
 
-    private static boolean hardened(final int i) {
-        return (i & 0x80000000) != 0;
+    public PublicKey cKDpub(final int index) {
+        return cKDpriv(index).neuter();
+    }
+
+    public PublicKey neuter() {
+        return PublicKey.from(hdKey);
     }
 
     private byte[] publicKeyBuffer() {
         return hdKey.getPoint();
     }
 
-    public PublicKey neuter() {
-        return PublicKey.from(hdKey);
+    private static boolean hardened(final int i) {
+        return (i & 0x80000000) != 0;
     }
 }

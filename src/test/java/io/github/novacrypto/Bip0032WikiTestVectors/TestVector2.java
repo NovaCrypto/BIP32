@@ -53,6 +53,13 @@ public final class TestVector2 {
     }
 
     @Test
+    public void chain_m_0_public_CKDpub_last() {
+        assertBase58("xpub69H7F5d8KSRgmmdJg2KhpAK8SR3DjMwAdkxj3ZuxV27CprR9LgpeyGmXUbC6wb7ERfvrnKZjXoUmmDznezpbZb7ap6r1D3tgFxHmwMkQTPH",
+                root
+                        .cKDpub(0));
+    }
+
+    @Test
     public void chain_m_0_private() {
         assertBase58("xprv9vHkqa6EV4sPZHYqZznhT2NPtPCjKuDKGY38FBWLvgaDx45zo9WQRUT3dKYnjwih2yJD9mkrocEZXo1ex8G81dwSM1fwqWpWkeS3v86pgKt",
                 root
@@ -66,6 +73,15 @@ public final class TestVector2 {
                         .cKDpriv(0)
                         .cKDpriv(hard(2147483647))
                         .neuter());
+    }
+
+    @Test
+    public void chain_m_0_2147483647h_CKDpub_last() {
+        assertBase58("xpub6ASAVgeehLbnwdqV6UKMHVzgqAG8Gr6riv3Fxxpj8ksbH9ebxaEyBLZ85ySDhKiLDBrQSARLq1uNRts8RuJiHjaDMBU4Zn9h8LZNnBC5y4a",
+                root
+                        .cKDpriv(0)
+                        .cKDpub(hard(2147483647))
+        );
     }
 
     @Test
@@ -87,6 +103,15 @@ public final class TestVector2 {
     }
 
     @Test
+    public void chain_m_0_2147483647h_1_public_CKDpub_last() {
+        assertBase58("xpub6DF8uhdarytz3FWdA8TvFSvvAh8dP3283MY7p2V4SeE2wyWmG5mg5EwVvmdMVCQcoNJxGoWaU9DCWh89LojfZ537wTfunKau47EL2dhHKon",
+                root
+                        .cKDpriv(0)
+                        .cKDpriv(hard(2147483647))
+                        .cKDpub(1));
+    }
+
+    @Test
     public void chain_m_0_2147483647h_1_private() {
         assertBase58("xprv9zFnWC6h2cLgpmSA46vutJzBcfJ8yaJGg8cX1e5StJh45BBciYTRXSd25UEPVuesF9yog62tGAQtHjXajPPdbRCHuWS6T8XA2ECKADdw4Ef",
                 root
@@ -104,6 +129,16 @@ public final class TestVector2 {
                         .cKDpriv(1)
                         .cKDpriv(hard(2147483646))
                         .neuter());
+    }
+
+    @Test
+    public void chain_m_0_2147483647h_1_2147483646h_public_CKDpub_last() {
+        assertBase58("xpub6ERApfZwUNrhLCkDtcHTcxd75RbzS1ed54G1LkBUHQVHQKqhMkhgbmJbZRkrgZw4koxb5JaHWkY4ALHY2grBGRjaDMzQLcgJvLJuZZvRcEL",
+                root
+                        .cKDpriv(0)
+                        .cKDpriv(hard(2147483647))
+                        .cKDpriv(1)
+                        .cKDpub(hard(2147483646)));
     }
 
     @Test
@@ -137,5 +172,16 @@ public final class TestVector2 {
                         .cKDpriv(1)
                         .cKDpriv(hard(2147483646))
                         .cKDpriv(2));
+    }
+
+    @Test
+    public void chain_m_0_2147483647h_1_2147483646h_2_public_CKDpub_last() {
+        assertBase58("xpub6FnCn6nSzZAw5Tw7cgR9bi15UV96gLZhjDstkXXxvCLsUXBGXPdSnLFbdpq8p9HmGsApME5hQTZ3emM2rnY5agb9rXpVGyy3bdW6EEgAtqt",
+                root
+                        .cKDpriv(0)
+                        .cKDpriv(hard(2147483647))
+                        .cKDpriv(1)
+                        .cKDpriv(hard(2147483646))
+                        .cKDpub(2));
     }
 }
