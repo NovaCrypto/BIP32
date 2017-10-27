@@ -37,6 +37,13 @@ import static io.github.novacrypto.toruntime.CheckedExceptionToRuntime.toRuntime
  */
 public final class PrivateKey implements ToByteArray {
 
+    private static final Derivation<PrivateKey> DERIVATION = new Derivation<>(new Derivation.Visitor<PrivateKey>() {
+        @Override
+        public PrivateKey visit(final PrivateKey parent, final int childIndex) {
+            return parent.cKDpriv(childIndex);
+        }
+    });
+
     private static final byte[] BITCOIN_SEED = getBytes("Bitcoin seed");
 
     private final HdKey hdKey;
@@ -74,6 +81,10 @@ public final class PrivateKey implements ToByteArray {
                 return seed.getBytes("UTF-8");
             }
         });
+    }
+
+    public static int hard(final int index) {
+        return index | 0x80000000;
     }
 
     public byte[] toByteArray() {
@@ -130,5 +141,9 @@ public final class PrivateKey implements ToByteArray {
 
     private static boolean hardened(final int i) {
         return (i & 0x80000000) != 0;
+    }
+
+    public PrivateKey derive(final String derivationPath) {
+        return DERIVATION.derive(this, derivationPath);
     }
 }

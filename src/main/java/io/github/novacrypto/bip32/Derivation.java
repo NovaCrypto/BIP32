@@ -19,28 +19,35 @@
  *  You can contact the authors via github issues.
  */
 
-package io.github.novacrypto.Bip0032WikiTestVectors;
+package io.github.novacrypto.bip32;
 
-import io.github.novacrypto.bip32.PrivateKey;
-import io.github.novacrypto.bip32.ToByteArray;
-import io.github.novacrypto.bip32.networks.Bitcoin;
+import static io.github.novacrypto.bip32.PrivateKey.hard;
 
-import static io.github.novacrypto.Asserts.assertBase58KeysEqual;
-import static io.github.novacrypto.Hex.toArray;
-import static io.github.novacrypto.base58.Base58.base58Encode;
+final class Derivation<T> {
 
-final class TestVectorHelpers {
-
-    static void assertBase58(String expectedBase58,
-                             ToByteArray toByteArray) {
-        assertBase58KeysEqual(expectedBase58,
-                base58Encode(toByteArray
-                        .toByteArray()).toString());
+    interface Visitor<T> {
+        T visit(final T parent, final int childIndex);
     }
 
-    static PrivateKey createMainNetRootFromSeed(String seed) {
-        return PrivateKey.fromSeed(toArray(
-                seed
-        ), Bitcoin.MAIN_NET);
+    private final Visitor<T> visitor;
+
+    Derivation(final Visitor<T> visitor) {
+        this.visitor = visitor;
+    }
+
+    T derive(final T startAt, final String derivationPath) {
+        final String[] split = derivationPath.split("/");
+        T current = startAt;
+        for (int i = 1; i < split.length; i++)
+            current = visitor.visit(current, toIndex(split[i]));
+        return current;
+    }
+
+    private static int toIndex(final String s) {
+        if (s.endsWith("'")) {
+            return hard(Integer.parseInt(s.substring(0, s.length() - 1)));
+        } else {
+            return Integer.parseInt(s);
+        }
     }
 }
