@@ -55,7 +55,7 @@ public final class PublicKey implements
     @Override
     public PublicKey cKDpub(final int index) {
         if (hardened(index))
-            throw new IllegalCPKCall("Cannot derive a hardened key from a public key");
+            throw new IllegalCKDCall("Cannot derive a hardened key from a public key");
 
         final HdKey parent = this.hdKey;
         final byte[] kPar = parent.getKey();

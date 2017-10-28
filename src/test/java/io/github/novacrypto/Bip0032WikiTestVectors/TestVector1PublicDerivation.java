@@ -21,7 +21,7 @@
 
 package io.github.novacrypto.Bip0032WikiTestVectors;
 
-import io.github.novacrypto.bip32.IllegalCPKCall;
+import io.github.novacrypto.bip32.IllegalCKDCall;
 import io.github.novacrypto.bip32.PrivateKey;
 import io.github.novacrypto.bip32.PublicKey;
 import org.junit.Test;
@@ -71,7 +71,7 @@ public final class TestVector1PublicDerivation {
     public void illegal_chain_m_0h_0h() {
         final PublicKey key = root.cKDpub(0);
         assertThatThrownBy(() -> key.cKDpub(hard(0)))
-                .isInstanceOf(IllegalCPKCall.class)
+                .isInstanceOf(IllegalCKDCall.class)
                 .hasMessage("Cannot derive a hardened key from a public key");
     }
 
