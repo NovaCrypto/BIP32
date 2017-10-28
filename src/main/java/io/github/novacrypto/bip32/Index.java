@@ -21,17 +21,16 @@
 
 package io.github.novacrypto.bip32;
 
-import org.junit.Test;
+public final class Index {
 
-public final class ConstructorCoverage {
+    Index() {
+    }
 
-    @Test
-    public void coverUtilClassConstructors() {
-        new BigIntegerUtils();
-        new Hash160();
-        new HmacSha512();
-        new Index();
-        new Secp256k1BC();
-        new Sha256();
+    public static int hard(final int index) {
+        return index | 0x80000000;
+    }
+
+    public static boolean hardened(final int i) {
+        return (i & 0x80000000) != 0;
     }
 }

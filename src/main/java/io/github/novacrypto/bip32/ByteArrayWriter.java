@@ -21,6 +21,8 @@
 
 package io.github.novacrypto.bip32;
 
+import java.util.Arrays;
+
 final class ByteArrayWriter {
 
     private final byte[] bytes;
@@ -41,6 +43,7 @@ final class ByteArrayWriter {
 
     /**
      * ser32(i): serialize a 32-bit unsigned integer i as a 4-byte sequence, most significant byte first.
+     *
      * @param i a 32-bit unsigned integer
      */
     void concatSer32(final int i) {
@@ -52,5 +55,16 @@ final class ByteArrayWriter {
 
     void concat(final byte b) {
         bytes[idx++] = b;
+    }
+
+
+    static byte[] tail32(final byte[] bytes64) {
+        final byte[] ir = new byte[bytes64.length - 32];
+        System.arraycopy(bytes64, 32, ir, 0, ir.length);
+        return ir;
+    }
+
+    static byte[] head32(final byte[] bytes64) {
+        return Arrays.copyOf(bytes64, 32);
     }
 }

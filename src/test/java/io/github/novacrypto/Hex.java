@@ -25,7 +25,7 @@ import java.math.BigInteger;
 
 public final class Hex {
 
-    static String toHex(byte[] array) {
+    public static String toHex(byte[] array) {
         final BigInteger bi = new BigInteger(1, array);
         final String hex = bi.toString(16);
         final int paddingLength = (array.length * 2) - hex.length();

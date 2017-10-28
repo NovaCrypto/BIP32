@@ -21,17 +21,13 @@
 
 package io.github.novacrypto.bip32;
 
-import org.junit.Test;
+public interface CKDpriv {
 
-public final class ConstructorCoverage {
-
-    @Test
-    public void coverUtilClassConstructors() {
-        new BigIntegerUtils();
-        new Hash160();
-        new HmacSha512();
-        new Index();
-        new Secp256k1BC();
-        new Sha256();
-    }
+    /**
+     * Calculates the private key of the child at index.
+     *
+     * @param index The child index to calculate.
+     * @return The private key of the child.
+     */
+    PrivateKey cKDpriv(final int index);
 }

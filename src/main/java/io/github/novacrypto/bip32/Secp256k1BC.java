@@ -23,11 +23,8 @@ package io.github.novacrypto.bip32;
 
 import org.spongycastle.asn1.x9.X9ECParameters;
 import org.spongycastle.crypto.ec.CustomNamedCurves;
-import org.spongycastle.math.ec.ECPoint;
 
 import java.math.BigInteger;
-
-import static io.github.novacrypto.bip32.BigIntegerUtils.parse256;
 
 final class Secp256k1BC {
 
@@ -37,9 +34,16 @@ final class Secp256k1BC {
         return CURVE.getN();
     }
 
-    static byte[] point(final byte[] pBytes) {
-        final BigInteger p = parse256(pBytes);
-        final ECPoint point2 = CURVE.getG().multiply(p);
-        return point2.getEncoded(true);
+    static byte[] pointSerP(final BigInteger p) {
+        return CURVE.getG()
+                .multiply(p)
+                .getEncoded(true);
+    }
+
+    static byte[] pointSerP(final BigInteger p, final byte[] toAdd) {
+        return CURVE.getG()
+                .multiply(p)
+                .add(CURVE.getCurve().decodePoint(toAdd))
+                .getEncoded(true);
     }
 }

@@ -39,21 +39,26 @@ final class Serializer {
         fingerprint = builder.fingerprint;
     }
 
-    byte[] serialize(final byte[] il, final byte[] ir) {
+    byte[] serialize(final byte[] key, final byte[] chainCode) {
+        if (chainCode.length != 32) throw new RuntimeException("Chain code must be 32 bytes");
+        if (neutered) {
+            if (key.length != 33) throw new RuntimeException("Key must be 33 bytes for neutered serialization");
+        } else {
+            if (key.length != 32) throw new RuntimeException("Key must be 32 bytes for non neutered serialization");
+        }
+
         final byte[] privateKey = new byte[82];
         final ByteArrayWriter writer = new ByteArrayWriter(privateKey);
         writer.concatSer32(getVersion());
         writer.concat((byte) depth);
         writer.concatSer32(fingerprint);
         writer.concatSer32(childNumber);
-        writer.concat(ir);
-        if (ir.length != 32) throw new RuntimeException("unexpected length");
+        writer.concat(chainCode);
         if (!neutered) {
-            writer.concat((byte) 0); //
-            writer.concat(il);
-            if (il.length != 32) throw new RuntimeException("unexpected length");
+            writer.concat((byte) 0);
+            writer.concat(key);
         } else {
-            writer.concat(il);
+            writer.concat(key);
         }
         final byte[] checksum = sha256(sha256(privateKey, 0, 78));
         writer.concat(checksum, 4);
@@ -83,6 +88,7 @@ final class Serializer {
         }
 
         Builder depth(final int depth) {
+            if (depth < 0 || depth > 255) throw new RuntimeException("Depth must be [0..255]");
             this.depth = depth;
             return this;
         }

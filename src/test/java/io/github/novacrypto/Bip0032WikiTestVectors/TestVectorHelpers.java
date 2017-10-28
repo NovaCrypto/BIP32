@@ -38,6 +38,13 @@ final class TestVectorHelpers {
                         .toByteArray()).toString());
     }
 
+    static void assertBase58(ToByteArray expected,
+                             ToByteArray actual) {
+        assertBase58(base58Encode(expected
+                        .toByteArray()).toString(),
+                actual);
+    }
+
     static PrivateKey createMainNetRootFromSeed(String seed) {
         return PrivateKey.fromSeed(toArray(
                 seed
