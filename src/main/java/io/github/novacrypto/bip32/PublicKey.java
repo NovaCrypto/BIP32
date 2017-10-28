@@ -21,17 +21,25 @@
 
 package io.github.novacrypto.bip32;
 
+import static io.github.novacrypto.bip32.BigIntegerUtils.parse256;
+import static io.github.novacrypto.bip32.ByteArrayWriter.head32;
+import static io.github.novacrypto.bip32.ByteArrayWriter.tail32;
+import static io.github.novacrypto.bip32.HmacSha512.hmacSha512;
+import static io.github.novacrypto.bip32.Index.hardened;
+
 /**
  * A BIP32 public key
  */
-public final class PublicKey implements ToByteArray {
+public final class PublicKey implements
+        CKDpub,
+        ToByteArray {
 
     static PublicKey from(final HdKey hdKey) {
         return new PublicKey(new HdKey.Builder()
                 .network(hdKey.getNetwork())
                 .neutered(true)
                 .key(hdKey.getPoint())
-                .fingerprint(hdKey.getParentFingerprint())
+                .parentFingerprint(hdKey.getParentFingerprint())
                 .depth(hdKey.depth())
                 .childNumber(hdKey.getChildNumber())
                 .chainCode(hdKey.getChainCode())
@@ -44,6 +52,37 @@ public final class PublicKey implements ToByteArray {
         this.hdKey = hdKey;
     }
 
+    @Override
+    public PublicKey cKDpub(final int index) {
+        if (hardened(index))
+            throw new IllegalCPKCall("Cannot derive a hardened key from a public key");
+
+        final HdKey parent = this.hdKey;
+        final byte[] kPar = parent.getKey();
+
+        final byte[] data = new byte[37];
+        final ByteArrayWriter writer = new ByteArrayWriter(data);
+        writer.concat(kPar, 33);
+        writer.concatSer32(index);
+
+        final byte[] I = hmacSha512(parent.getChainCode(), data);
+        final byte[] Il = head32(I);
+        final byte[] Ir = tail32(I);
+
+        final byte[] key = Secp256k1BC.pointSerP(parse256(Il), kPar);
+
+        return new PublicKey(new HdKey.Builder()
+                .network(parent.getNetwork())
+                .neutered(true)
+                .depth(parent.depth() + 1)
+                .parentFingerprint(parent.calculateFingerPrint())
+                .key(key)
+                .chainCode(Ir)
+                .childNumber(index)
+                .build());
+    }
+
+    @Override
     public byte[] toByteArray() {
         return hdKey.serialize();
     }

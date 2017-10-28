@@ -28,6 +28,8 @@ import java.util.Arrays;
 
 import static io.github.novacrypto.bip32.BigIntegerUtils.parse256;
 import static io.github.novacrypto.bip32.BigIntegerUtils.ser256;
+import static io.github.novacrypto.bip32.ByteArrayWriter.head32;
+import static io.github.novacrypto.bip32.ByteArrayWriter.tail32;
 import static io.github.novacrypto.bip32.HmacSha512.hmacSha512;
 import static io.github.novacrypto.bip32.Secp256k1BC.n;
 import static io.github.novacrypto.toruntime.CheckedExceptionToRuntime.toRuntime;
@@ -35,7 +37,10 @@ import static io.github.novacrypto.toruntime.CheckedExceptionToRuntime.toRuntime
 /**
  * A BIP32 private key
  */
-public final class PrivateKey implements ToByteArray {
+public final class PrivateKey implements
+        CKDpriv,
+        CKDpub,
+        ToByteArray {
 
     private static final Derivation<PrivateKey> DERIVATION = new Derivation<>(new Derivation.Visitor<PrivateKey>() {
         @Override
@@ -56,7 +61,7 @@ public final class PrivateKey implements ToByteArray {
                 .chainCode(chainCode)
                 .depth(0)
                 .childNumber(0)
-                .fingerprint(0)
+                .parentFingerprint(0)
                 .build());
     }
 
@@ -65,13 +70,12 @@ public final class PrivateKey implements ToByteArray {
     }
 
     public static PrivateKey fromSeed(final byte[] seed, final Network network) {
-        final byte[] hash = hmacSha512(BITCOIN_SEED, seed);
+        final byte[] I = hmacSha512(BITCOIN_SEED, seed);
 
-        final byte[] il = Arrays.copyOf(hash, 32);
-        final byte[] ir = new byte[hash.length - 32];
-        System.arraycopy(hash, 32, ir, 0, ir.length);
+        final byte[] Il = head32(I);
+        final byte[] Ir = tail32(I);
 
-        return new PrivateKey(network, il, ir);
+        return new PrivateKey(network, Il, Ir);
     }
 
     private static byte[] getBytes(final String seed) {
@@ -83,64 +87,53 @@ public final class PrivateKey implements ToByteArray {
         });
     }
 
-    public static int hard(final int index) {
-        return index | 0x80000000;
-    }
-
+    @Override
     public byte[] toByteArray() {
         return hdKey.serialize();
     }
 
+    @Override
     public PrivateKey cKDpriv(final int index) {
         final byte[] data = new byte[37];
         final ByteArrayWriter writer = new ByteArrayWriter(data);
 
-        if (hardened(index)) {
+        if (Index.hardened(index)) {
             writer.concat((byte) 0);
             writer.concat(hdKey.getKey(), 32);
         } else {
-            writer.concat(publicKeyBuffer());
+            writer.concat(hdKey.getPoint());
         }
         writer.concatSer32(index);
 
-        final byte[] hash = hmacSha512(hdKey.getChainCode(), data);
+        final byte[] I = hmacSha512(hdKey.getChainCode(), data);
         Arrays.fill(data, (byte) 0);
 
-        final byte[] il = Arrays.copyOf(hash, 32);
-        final byte[] ir = new byte[hash.length - 32];
-        System.arraycopy(hash, 32, ir, 0, ir.length);
+        final byte[] Il = head32(I);
+        final byte[] Ir = tail32(I);
 
         final byte[] key = hdKey.getKey();
-        final BigInteger mod = parse256(il).add(parse256(key)).mod(n());
+        final BigInteger mod = parse256(Il).add(parse256(key)).mod(n());
 
-        //TODO: Store key as BigInteger?
-        ser256(il, mod);
+        ser256(Il, mod);
 
         return new PrivateKey(new HdKey.Builder()
                 .network(hdKey.getNetwork())
                 .neutered(false)
-                .key(il)
-                .chainCode(ir)
+                .key(Il)
+                .chainCode(Ir)
                 .depth(hdKey.depth() + 1)
                 .childNumber(index)
-                .fingerprint(hdKey.fingerPrint())
+                .parentFingerprint(hdKey.calculateFingerPrint())
                 .build());
     }
 
+    @Override
     public PublicKey cKDpub(final int index) {
         return cKDpriv(index).neuter();
     }
 
     public PublicKey neuter() {
         return PublicKey.from(hdKey);
-    }
-
-    private byte[] publicKeyBuffer() {
-        return hdKey.getPoint();
-    }
-
-    private static boolean hardened(final int i) {
-        return (i & 0x80000000) != 0;
     }
 
     public PrivateKey derive(final CharSequence derivationPath) {

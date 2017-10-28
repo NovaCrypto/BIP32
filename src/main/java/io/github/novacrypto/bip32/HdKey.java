@@ -21,11 +21,13 @@
 
 package io.github.novacrypto.bip32;
 
+import static io.github.novacrypto.bip32.BigIntegerUtils.parse256;
 import static io.github.novacrypto.bip32.Hash160.hash160;
-import static io.github.novacrypto.bip32.Secp256k1BC.point;
+import static io.github.novacrypto.bip32.Secp256k1BC.pointSerP;
 
 final class HdKey {
 
+    private final boolean neutered;
     private final Network network;
     private final byte[] chainCode;
     private final byte[] key;
@@ -35,9 +37,10 @@ final class HdKey {
     private final int depth;
 
     private HdKey(final Builder builder) {
+        neutered = builder.neutered;
         network = builder.network;
         key = builder.key;
-        parentFingerprint = builder.fingerprint;
+        parentFingerprint = builder.parentFingerprint;
         childNumber = builder.childNumber;
         chainCode = builder.chainCode;
         depth = builder.depth;
@@ -46,7 +49,7 @@ final class HdKey {
                 .neutered(builder.neutered)
                 .depth(builder.depth)
                 .childNumber(builder.childNumber)
-                .fingerprint(builder.fingerprint)
+                .fingerprint(builder.parentFingerprint)
                 .build();
     }
 
@@ -55,7 +58,7 @@ final class HdKey {
     }
 
     byte[] getPoint() {
-        return point(key);
+        return pointSerP(parse256(key));
     }
 
     byte[] getKey() {
@@ -66,13 +69,17 @@ final class HdKey {
         return parentFingerprint;
     }
 
-    int fingerPrint() {
-        final byte[] point = getPoint();
+    int calculateFingerPrint() {
+        final byte[] point = getPublicBuffer();
         final byte[] o = hash160(point);
         return ((o[0] & 0xFF) << 24) |
                 ((o[1] & 0xFF) << 16) |
                 ((o[2] & 0xFF) << 8) |
                 (o[3] & 0xFF);
+    }
+
+    private byte[] getPublicBuffer() {
+        return neutered ? key : getPoint();
     }
 
     int depth() {
@@ -99,7 +106,7 @@ final class HdKey {
         private byte[] key;
         private int depth;
         private int childNumber;
-        private int fingerprint;
+        private int parentFingerprint;
 
         Builder network(final Network network) {
             this.network = network;
@@ -131,8 +138,8 @@ final class HdKey {
             return this;
         }
 
-        Builder fingerprint(final int fingerprint) {
-            this.fingerprint = fingerprint;
+        Builder parentFingerprint(final int parentFingerprint) {
+            this.parentFingerprint = parentFingerprint;
             return this;
         }
 

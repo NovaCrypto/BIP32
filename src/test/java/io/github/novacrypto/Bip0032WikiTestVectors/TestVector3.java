@@ -26,7 +26,7 @@ import org.junit.Test;
 
 import static io.github.novacrypto.Bip0032WikiTestVectors.TestVectorHelpers.assertBase58;
 import static io.github.novacrypto.Bip0032WikiTestVectors.TestVectorHelpers.createMainNetRootFromSeed;
-import static io.github.novacrypto.bip32.PrivateKey.hard;
+import static io.github.novacrypto.bip32.Index.hard;
 
 /**
  * These vectors test for the retention of leading zeros. See https://github.com/bitpay/bitcore-lib/issues/47 and

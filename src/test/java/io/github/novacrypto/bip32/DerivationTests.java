@@ -27,7 +27,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static io.github.novacrypto.bip32.PrivateKey.hard;
+import static io.github.novacrypto.bip32.Index.hard;
 import static org.junit.Assert.assertEquals;
 
 public final class DerivationTests {

@@ -26,7 +26,7 @@ import org.junit.Test;
 
 import static io.github.novacrypto.Bip0032WikiTestVectors.TestVectorHelpers.assertBase58;
 import static io.github.novacrypto.Bip0032WikiTestVectors.TestVectorHelpers.createMainNetRootFromSeed;
-import static io.github.novacrypto.bip32.PrivateKey.hard;
+import static io.github.novacrypto.bip32.Index.hard;
 
 public final class TestVector2 {
 
@@ -154,12 +154,6 @@ public final class TestVector2 {
     }
 
     @Test
-    public void chain_m_0_2147483647h_1_2147483646h_private_derive() {
-        assertBase58("xprvA1RpRA33e1JQ7ifknakTFpgNXPmW2YvmhqLQYMmrj4xJXXWYpDPS3xz7iAxn8L39njGVyuoseXzU6rcxFLJ8HFsTjSyQbLYnMpCqE2VbFWc",
-                root.derive("m/0/2147483647'/1/2147483646'"));
-    }
-
-    @Test
     public void chain_m_0_2147483647h_1_2147483646h_2_public() {
         assertBase58("xpub6FnCn6nSzZAw5Tw7cgR9bi15UV96gLZhjDstkXXxvCLsUXBGXPdSnLFbdpq8p9HmGsApME5hQTZ3emM2rnY5agb9rXpVGyy3bdW6EEgAtqt",
                 root
@@ -180,12 +174,6 @@ public final class TestVector2 {
                         .cKDpriv(1)
                         .cKDpriv(hard(2147483646))
                         .cKDpriv(2));
-    }
-
-    @Test
-    public void chain_m_0_2147483647h_1_2147483646h_2_private_derive() {
-        assertBase58("xprvA2nrNbFZABcdryreWet9Ea4LvTJcGsqrMzxHx98MMrotbir7yrKCEXw7nadnHM8Dq38EGfSh6dqA9QWTyefMLEcBYJUuekgW4BYPJcr9E7j",
-                root.derive("m/0/2147483647'/1/2147483646'/2"));
     }
 
     @Test

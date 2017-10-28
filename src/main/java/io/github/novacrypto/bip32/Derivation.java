@@ -21,7 +21,7 @@
 
 package io.github.novacrypto.bip32;
 
-import static io.github.novacrypto.bip32.PrivateKey.hard;
+import static io.github.novacrypto.bip32.Index.hard;
 
 final class Derivation<T> {
 
