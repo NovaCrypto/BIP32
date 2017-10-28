@@ -31,11 +31,7 @@ apply plugin: 'java'
 apply plugin: 'jacoco'
 
 repositories {
-    maven {
-        url 'https://dl.bintray.com/novacrypto/General'
-    }
     jcenter()
-    mavenCentral()
 }
 
 compileJava {
@@ -87,8 +83,7 @@ publishing {
 }
 
 // To upload a new version
-// ./gradlew clean
-// ./gradlew build bintrayUpload -Puser=user -Pkey=APIKEY
+// ./gradlew clean build bintrayUpload -Puser=user -Pkey=APIKEY
 bintray {
     user = project.ext.properties.user
     key = project.ext.properties.key
