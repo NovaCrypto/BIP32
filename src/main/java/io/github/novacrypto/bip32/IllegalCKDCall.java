@@ -21,8 +21,8 @@
 
 package io.github.novacrypto.bip32;
 
-public final class IllegalCPKCall extends RuntimeException {
-    IllegalCPKCall(final String message) {
+public final class IllegalCKDCall extends RuntimeException {
+    IllegalCKDCall(final String message) {
         super(message);
     }
 }
