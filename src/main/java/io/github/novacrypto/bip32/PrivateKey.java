@@ -143,7 +143,7 @@ public final class PrivateKey implements ToByteArray {
         return (i & 0x80000000) != 0;
     }
 
-    public PrivateKey derive(final String derivationPath) {
+    public PrivateKey derive(final CharSequence derivationPath) {
         return DERIVATION.derive(this, derivationPath);
     }
 }

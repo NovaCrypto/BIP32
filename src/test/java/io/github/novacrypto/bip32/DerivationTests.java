@@ -67,7 +67,7 @@ public final class DerivationTests {
         assertEquals(Arrays.asList(hard(123), 456), derive("m/123'/456"));
     }
 
-    private static List<Integer> derive(String derivationPath) {
+    private static List<Integer> derive(CharSequence derivationPath) {
         final Derivation<Integer[]> derivation = new Derivation<>(DerivationTests::concat);
         final Integer[] parts = derivation.derive(new Integer[0], derivationPath);
         return Arrays.asList(parts);

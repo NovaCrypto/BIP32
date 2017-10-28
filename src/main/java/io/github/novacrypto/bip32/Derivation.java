@@ -35,19 +35,27 @@ final class Derivation<T> {
         this.visitor = visitor;
     }
 
-    T derive(final T startAt, final String derivationPath) {
-        final String[] split = derivationPath.split("/");
+    T derive(final T startAt, final CharSequence derivationPath) {
+        final int length = derivationPath.length();
+        if (length == 1)
+            return startAt;
         T current = startAt;
-        for (int i = 1; i < split.length; i++)
-            current = visitor.visit(current, toIndex(split[i]));
-        return current;
-    }
-
-    private static int toIndex(final String s) {
-        if (s.endsWith("'")) {
-            return hard(Integer.parseInt(s.substring(0, s.length() - 1)));
-        } else {
-            return Integer.parseInt(s);
+        int buffer = 0;
+        for (int i = 2; i < length; i++) {
+            final char c = derivationPath.charAt(i);
+            switch (c) {
+                case '\'':
+                    buffer = hard(buffer);
+                    break;
+                case '/':
+                    current = visitor.visit(current, buffer);
+                    buffer = 0;
+                    break;
+                default:
+                    buffer *= 10;
+                    buffer += c - '0';
+            }
         }
+        return visitor.visit(current, buffer);
     }
 }
