@@ -28,4 +28,6 @@ public interface Network {
     int getPrivateVersion();
 
     int getPublicVersion();
+
+    byte p2pkhVersion();
 }

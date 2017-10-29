@@ -26,7 +26,6 @@ import org.junit.Test;
 
 import static io.github.novacrypto.Bip0032WikiTestVectors.TestVectorHelpers.assertBase58;
 import static io.github.novacrypto.Bip0032WikiTestVectors.TestVectorHelpers.createMainNetRootFromSeed;
-import static org.junit.Assert.assertSame;
 
 public final class TestVector2DeriveFromString {
 
