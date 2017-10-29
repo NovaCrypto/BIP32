@@ -27,7 +27,7 @@ import static io.github.novacrypto.bip32.ByteArrayWriter.tail32;
 import static io.github.novacrypto.bip32.Hash160.hash160;
 import static io.github.novacrypto.bip32.HmacSha512.hmacSha512;
 import static io.github.novacrypto.bip32.Index.hardened;
-import static io.github.novacrypto.bip32.Sha256.sha256;
+import static io.github.novacrypto.bip32.Sha256.sha256Twice;
 
 /**
  * A BIP32 public key
@@ -107,7 +107,7 @@ public final class PublicKey implements
         final ByteArrayWriter writer = new ByteArrayWriter(address);
         writer.concat(version);
         writer.concat(hash160(data));
-        writer.concat(sha256(sha256(address, 0, 21)), 4);
+        writer.concat(sha256Twice(address, 0, 21), 4);
         return address;
     }
 }
