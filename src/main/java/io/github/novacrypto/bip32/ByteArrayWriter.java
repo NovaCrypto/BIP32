@@ -67,4 +67,8 @@ final class ByteArrayWriter {
     static byte[] head32(final byte[] bytes64) {
         return Arrays.copyOf(bytes64, 32);
     }
+
+    void setPos(final int pos) {
+        idx = pos;
+    }
 }
