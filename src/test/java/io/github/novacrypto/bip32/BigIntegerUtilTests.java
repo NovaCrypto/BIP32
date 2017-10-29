@@ -21,29 +21,39 @@
 
 package io.github.novacrypto.bip32;
 
+import org.junit.Test;
+
 import java.math.BigInteger;
 import java.util.Arrays;
 
-final class BigIntegerUtils {
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.Assert.assertArrayEquals;
 
-    static BigInteger parse256(final byte[] bytes) {
-        return new BigInteger(1, bytes);
+public final class BigIntegerUtilTests {
+
+    @Test
+    public void canLeftPad() {
+        byte[] target = new byte[5];
+        Arrays.fill(target, (byte) 1);
+        BigIntegerUtils.ser256(target, BigInteger.ONE);
+        assertArrayEquals(new byte[]{0, 0, 0, 0, 1}, target);
     }
 
-    public static void ser256(final byte[] target, final BigInteger integer) {
-        if (integer.bitLength() > target.length * 8)
-            throw new RuntimeException("ser256 failed, cannot fit integer in buffer");
-        final byte[] modArr = integer.toByteArray();
-        Arrays.fill(target, (byte) 0);
-        copyTail(modArr, target);
-        Arrays.fill(modArr, (byte) 0);
-    }
-
-    private static void copyTail(final byte[] src, final byte[] dest) {
-        if (src.length < dest.length) {
-            System.arraycopy(src, 0, dest, dest.length - src.length, src.length);
-        } else {
-            System.arraycopy(src, src.length - dest.length, dest, 0, dest.length);
+    @Test
+    public void canFit() {
+        for (int i = 0; i < 255; i++) {
+            byte[] target = new byte[1];
+            Arrays.fill(target, (byte) 1);
+            BigIntegerUtils.ser256(target, BigInteger.valueOf(i));
+            assertArrayEquals(new byte[]{(byte) i}, target);
         }
+    }
+
+    @Test
+    public void cantFit() {
+        byte[] target = new byte[1];
+        assertThatThrownBy(() ->
+                BigIntegerUtils.ser256(target, BigInteger.valueOf(256)))
+                .hasMessage("ser256 failed, cannot fit integer in buffer");
     }
 }
