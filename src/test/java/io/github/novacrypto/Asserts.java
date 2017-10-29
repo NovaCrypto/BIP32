@@ -21,8 +21,9 @@
 
 package io.github.novacrypto;
 
-import static io.github.novacrypto.base58.Base58.base58Decode;
 import static io.github.novacrypto.Hex.toHex;
+import static io.github.novacrypto.base58.Base58.base58Decode;
+import static io.github.novacrypto.base58.Base58.base58Encode;
 import static org.junit.Assert.assertEquals;
 
 public final class Asserts {
@@ -33,7 +34,7 @@ public final class Asserts {
      * @param expectedKey Base58 string of expected key
      * @param actualKey   Base58 string of actual key
      */
-    public static void assertBase58KeysEqual(String expectedKey, String actualKey) {
+    public static void assertBase58KeysEqual(final String expectedKey, final String actualKey) {
         String failureMessage = "";
         if (!expectedKey.equals(actualKey)) {
             final String expectedDecoded = decodeKey(expectedKey);
@@ -50,7 +51,25 @@ public final class Asserts {
         assertEquals(failureMessage, expectedKey, actualKey);
     }
 
-    private static int indexOfFirstDifference(String a, String b) {
+    public static void assertBase58AddressEqual(final String expectedAddress, final byte[] actualAddressBytes) {
+        final String actualAddress = base58Encode(actualAddressBytes).toString();
+        String failureMessage = "";
+        if (!expectedAddress.equals(actualAddress)) {
+            final String expectedDecoded = decodeAddress(expectedAddress);
+            final String actualDecoded = decodeAddress(actualAddress);
+            final int index = indexOfFirstDifference(expectedDecoded, actualDecoded);
+            final String differencePointer = String.format("%1$" + (index + 1) + "s", "^");
+            failureMessage = String.format("\n" +
+                            "       version                  key                   checksum\n" +
+                            "Expected :%s\n" +
+                            "Actual   :%s\n" +
+                            "          %s",
+                    expectedDecoded, actualDecoded, differencePointer);
+        }
+        assertEquals(failureMessage, expectedAddress, actualAddress);
+    }
+
+    private static int indexOfFirstDifference(final String a, final String b) {
         final int length = Math.min(a.length(), b.length());
         for (int i = 0; i < length; i++) {
             if (a.charAt(i) != b.charAt(i)) return i;
@@ -58,11 +77,19 @@ public final class Asserts {
         return length;
     }
 
-    private static String decodeKey(String expectedBase58Key) {
-        final String s = toHex(base58Decode(expectedBase58Key));
-        assertEquals(s.length(), 164);
+    private static String decodeKey(final String key) {
+        final String s = toHex(base58Decode(key));
+        return breakString(s, 84, new int[]{4, 1, 4, 4, 32, 33, 4});
+    }
+
+    private static String decodeAddress(final String address) {
+        final String s = toHex(base58Decode(address));
+        return breakString(s, 25, new int[]{1, 20, 4});
+    }
+
+    private static String breakString(final String s, final int expectedLength, final int[] indexes) {
+        assertEquals(expectedLength * 2, s.length());
         StringBuilder sb = new StringBuilder();
-        int[] indexes = new int[]{4, 1, 4, 4, 32, 33, 4};
         int last = 0;
         for (int index : indexes) {
             final int current = last + index * 2;
@@ -70,7 +97,7 @@ public final class Asserts {
             sb.append(" ");
             last = current;
         }
-        assertEquals(164, last);
+        assertEquals(expectedLength * 2, last);
         return sb.toString();
     }
 }

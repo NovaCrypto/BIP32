@@ -34,5 +34,10 @@ public enum Litecoin implements Network {
         public int getPublicVersion() {
             return 0x0488b21e;
         }
+
+        @Override
+        public byte p2pkhVersion() {
+            return 0x30;
+        }
     }
 }
