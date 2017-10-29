@@ -6,7 +6,7 @@
 
 # Install
 
-Use either of these repositories:
+Repository:
 
 ```
 repositories {
@@ -20,7 +20,7 @@ Add dependency:
 
 ```
 dependencies {
-    compile 'io.github.novacrypto:BIP32:0.0.1@jar'
+    compile 'io.github.novacrypto:BIP32:0.0.2@jar'
 }
 
 ```
@@ -33,10 +33,18 @@ PrivateKey child = key.derive("m/0'/0);
 PublicKey childPub = child.neuter();
 ```
 
+Need a seed from mnemonic/passphrase? check out [NovaCrypto/Bip39](https://github.com/NovaCrypto/Bip39).
+
 # Serialize
 
 Using [NovaCrypto/Base58](https://github.com/NovaCrypto/Base58):
 
 ```
 Base58.base58Encode(key.toByteArray())
+```
+
+# Serialize address
+
+```
+String p2pkh = base58Encode(public.p2pkhAddress());
 ```
