@@ -27,15 +27,25 @@ import static io.github.novacrypto.bip32.Sha256.sha256;
 
 final class Hash160 {
 
+    private static final int RIPEMD160_DIGEST_SIZE = new RIPEMD160Digest().getDigestSize();
+
     static byte[] hash160(final byte[] bytes) {
         return ripemd160(sha256(bytes));
     }
 
+    static void hash160into(final byte[] target, final int offset, final byte[] bytes) {
+        ripemd160into(sha256(bytes), target, offset);
+    }
+
     private static byte[] ripemd160(final byte[] bytes) {
+        final byte[] output = new byte[RIPEMD160_DIGEST_SIZE];
+        ripemd160into(bytes, output, 0);
+        return output;
+    }
+
+    private static void ripemd160into(final byte[] bytes, final byte[] target, final int offset) {
         final RIPEMD160Digest digest = new RIPEMD160Digest();
         digest.update(bytes, 0, bytes.length);
-        final byte[] output = new byte[digest.getDigestSize()];
-        digest.doFinal(output, 0);
-        return output;
+        digest.doFinal(target, offset);
     }
 }

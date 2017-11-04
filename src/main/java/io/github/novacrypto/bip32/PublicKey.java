@@ -24,7 +24,7 @@ package io.github.novacrypto.bip32;
 import static io.github.novacrypto.bip32.BigIntegerUtils.parse256;
 import static io.github.novacrypto.bip32.ByteArrayWriter.head32;
 import static io.github.novacrypto.bip32.ByteArrayWriter.tail32;
-import static io.github.novacrypto.bip32.Hash160.hash160;
+import static io.github.novacrypto.bip32.Hash160.hash160into;
 import static io.github.novacrypto.bip32.HmacSha512.hmacSha512;
 import static io.github.novacrypto.bip32.Index.hardened;
 import static io.github.novacrypto.bip32.Sha256.sha256Twice;
@@ -95,18 +95,17 @@ public final class PublicKey implements
 
     public byte[] p2shAddress() {
         final byte[] script = new byte[22];
-        final ByteArrayWriter scriptWriter = new ByteArrayWriter(script);
-        scriptWriter.concat((byte) 0);
-        scriptWriter.concat((byte) 20);
-        scriptWriter.concat(hash160(hdKey.getKey()));
+        script[1] = (byte) 20;
+        hash160into(script, 2, hdKey.getKey());
         return encodeAddress(hdKey.getNetwork().p2shVersion(), script);
     }
 
-    private byte[] encodeAddress(final byte version, final byte[] data) {
+    private static byte[] encodeAddress(final byte version, final byte[] data) {
         final byte[] address = new byte[25];
         final ByteArrayWriter writer = new ByteArrayWriter(address);
         writer.concat(version);
-        writer.concat(hash160(data));
+        hash160into(address, 1, data);
+        writer.setPos(21);
         writer.concat(sha256Twice(address, 0, 21), 4);
         return address;
     }
