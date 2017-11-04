@@ -30,30 +30,24 @@ import org.junit.Test;
 
 import static io.github.novacrypto.Asserts.assertBase58AddressEqual;
 
-public final class Version1AddressEncodingTests {
+public final class P2SHAddressEncodingTests {
 
     @Test
-    public void m_0_bitcoin_mainnet() {
-        assertAddress("1MtBSZjf4b2cJbS688pWq67YHFwUzxn6N3",
-                "edge talent poet tortoise trumpet dose", "m/0", Bitcoin.MAIN_NET);
+    public void m_49h_0h_0h_0_0_bitcoin_mainnet() {
+        assertAddress("33iHU3tmRFrkA8sSg1AzjxBNXbCmMPq7CY",
+                "edge talent poet tortoise trumpet dose", "m/49'/0'/0'/0/0", Bitcoin.MAIN_NET);
     }
 
     @Test
-    public void m_0_bitcoin_testnet() {
-        assertAddress("n2Q8jcpdscTs5huhqhntf1Ks9FYBqifw16",
-                "edge talent poet tortoise trumpet dose", "m/0", Bitcoin.TEST_NET);
+    public void m_49h_0h_0h_0_0_bitcoin_testnet() {
+        assertAddress("2N2xMMnk8C6i3LSdUtAfeJxXPeczzKW7ecw",
+                "edge talent poet tortoise trumpet dose", "m/49'/1'/0'/0/0", Bitcoin.TEST_NET);
     }
 
     @Test
-    public void m_1_bitcoin_testnet() {
-        assertAddress("mxX3vB7goZq1BcEnhjexisNLXVFhd5VbcP",
-                "edge talent poet tortoise trumpet dose", "m/1", Bitcoin.TEST_NET);
-    }
-
-    @Test
-    public void m_0_litecoin_mainnet() {
-        assertAddress("Lg78hn3V9FGfZQ8FJGop77BJVUJm7TmuF3",
-                "edge talent poet tortoise trumpet dose", "m/0", Litecoin.MAIN_NET);
+    public void m_49h_0h_0h_0_0_litecoin_mainnet() {
+        assertAddress("MGnFY7fD3Ht9zWm6XU9SGAXEkDGzjiyy7P",
+                "edge talent poet tortoise trumpet dose", "m/49'/2'/0'/0/0", Litecoin.MAIN_NET);
     }
 
     private void assertAddress(
@@ -64,8 +58,6 @@ public final class Version1AddressEncodingTests {
         assertBase58AddressEqual(expectedAddress,
                 PrivateKey.fromSeed(new SeedCalculator().calculateSeed(
                         mnemonic, ""),
-                        network).derive(derivationPath).neuter().p2pkhAddress());
+                        network).derive(derivationPath).neuter().p2shAddress());
     }
-
-
 }
