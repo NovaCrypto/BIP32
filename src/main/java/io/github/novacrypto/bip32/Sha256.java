@@ -39,6 +39,13 @@ final class Sha256 {
         return digest.digest();
     }
 
+    static byte[] sha256Twice(final byte[] bytes, final int offset, final int length) {
+        final MessageDigest digest = sha256();
+        digest.update(bytes, offset, length);
+        digest.update(digest.digest());
+        return digest.digest();
+    }
+
     private static MessageDigest sha256() {
         return toRuntime(new CheckedExceptionToRuntime.Func<MessageDigest>() {
             @Override
