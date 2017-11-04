@@ -39,6 +39,11 @@ public enum Bitcoin implements Network {
         public byte p2pkhVersion() {
             return 0;
         }
+
+        @Override
+        public byte p2shVersion() {
+            return 0x05;
+        }
     },
 
     TEST_NET {
@@ -55,6 +60,11 @@ public enum Bitcoin implements Network {
         @Override
         public byte p2pkhVersion() {
             return 0x6f;
+        }
+
+        @Override
+        public byte p2shVersion() {
+            return (byte) 0xc4;
         }
     }
 }

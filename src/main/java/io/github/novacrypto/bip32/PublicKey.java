@@ -90,10 +90,23 @@ public final class PublicKey implements
     }
 
     public byte[] p2pkhAddress() {
+        return encodeAddress(hdKey.getNetwork().p2pkhVersion(), hdKey.getKey());
+    }
+
+    public byte[] p2shAddress() {
+        final byte[] script = new byte[22];
+        final ByteArrayWriter scriptWriter = new ByteArrayWriter(script);
+        scriptWriter.concat((byte) 0);
+        scriptWriter.concat((byte) 20);
+        scriptWriter.concat(hash160(hdKey.getKey()));
+        return encodeAddress(hdKey.getNetwork().p2shVersion(), script);
+    }
+
+    private byte[] encodeAddress(final byte version, final byte[] data) {
         final byte[] address = new byte[25];
         final ByteArrayWriter writer = new ByteArrayWriter(address);
-        writer.concat(hdKey.getNetwork().p2pkhVersion());
-        writer.concat(hash160(hdKey.getKey()));
+        writer.concat(version);
+        writer.concat(hash160(data));
         writer.concat(sha256(sha256(address, 0, 21)), 4);
         return address;
     }

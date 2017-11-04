@@ -30,4 +30,6 @@ public interface Network {
     int getPublicVersion();
 
     byte p2pkhVersion();
+
+    byte p2shVersion();
 }
