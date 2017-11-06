@@ -21,8 +21,7 @@
 
 package io.github.novacrypto.bip32;
 
-import static io.github.novacrypto.bip32.Sha256.sha256;
-import static io.github.novacrypto.bip32.Sha256.sha256Twice;
+import static io.github.novacrypto.hashing.Sha256.sha256Twice;
 
 final class Serializer {
 

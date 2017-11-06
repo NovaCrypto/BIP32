@@ -24,10 +24,10 @@ package io.github.novacrypto.bip32;
 import static io.github.novacrypto.bip32.BigIntegerUtils.parse256;
 import static io.github.novacrypto.bip32.ByteArrayWriter.head32;
 import static io.github.novacrypto.bip32.ByteArrayWriter.tail32;
-import static io.github.novacrypto.bip32.Hash160.hash160into;
 import static io.github.novacrypto.bip32.HmacSha512.hmacSha512;
 import static io.github.novacrypto.bip32.Index.hardened;
-import static io.github.novacrypto.bip32.Sha256.sha256Twice;
+import static io.github.novacrypto.hashing.Hash160.hash160into;
+import static io.github.novacrypto.hashing.Sha256.sha256Twice;
 
 /**
  * A BIP32 public key
@@ -102,11 +102,9 @@ public final class PublicKey implements
 
     private static byte[] encodeAddress(final byte version, final byte[] data) {
         final byte[] address = new byte[25];
-        final ByteArrayWriter writer = new ByteArrayWriter(address);
-        writer.concat(version);
+        address[0] = version;
         hash160into(address, 1, data);
-        writer.setPos(21);
-        writer.concat(sha256Twice(address, 0, 21), 4);
+        System.arraycopy(sha256Twice(address, 0, 21), 0, address, 21, 4);
         return address;
     }
 }

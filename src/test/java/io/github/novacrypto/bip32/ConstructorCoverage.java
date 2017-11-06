@@ -28,10 +28,8 @@ public final class ConstructorCoverage {
     @Test
     public void coverUtilClassConstructors() {
         new BigIntegerUtils();
-        new Hash160();
         new HmacSha512();
         new Index();
         new Secp256k1BC();
-        new Sha256();
     }
 }

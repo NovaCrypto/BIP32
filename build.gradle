@@ -19,68 +19,26 @@
  *  You can contact the authors via github issues.
  */
 
-plugins {
-    id 'com.jfrog.bintray' version '1.7.3'
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.0'
+        classpath 'com.github.ben-manes:gradle-versions-plugin:0.17.0'
+    }
 }
-apply plugin: 'maven-publish'
+
+apply plugin: 'java'
+apply from: 'bintray.gradle'
+
+// Generate a dependency version update report for release
+// ./gradlew dependencyUpdates -Drevision=release
+// https://github.com/ben-manes/gradle-versions-plugin
+apply plugin: 'com.github.ben-manes.versions'
 
 group 'io.github.novacrypto'
 version '0.0.2'
-
-apply plugin: 'java'
-apply plugin: 'jacoco'
-
-repositories {
-    jcenter()
-}
-
-compileJava {
-    sourceCompatibility = '1.7'
-    targetCompatibility = '1.7'
-}
-
-dependencies {
-    compile 'com.madgag.spongycastle:core:1.58.0.0@jar'
-    compile 'io.github.novacrypto:ToRuntime:0.9.0@jar'
-    testCompile 'junit:junit:4.11'
-    testCompile 'com.google.code.gson:gson:2.7'
-    testCompile 'org.assertj:assertj-core:3.8.0'
-    testCompile 'io.github.novacrypto:Base58:0.1.0@jar'
-    testCompile 'io.github.novacrypto:BIP39:0.1.2@jar'
-}
-
-task sourcesJar(type: Jar, dependsOn: classes) {
-    classifier = 'sources'
-    from sourceSets.main.allSource
-}
-
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
-    from javadoc.destinationDir
-}
-
-artifacts {
-    archives jar
-    archives sourcesJar
-    archives javadocJar
-}
-
-publishing {
-    publications {
-        MyPublication(MavenPublication) {
-            groupId group
-            artifactId 'BIP32'
-            version project.version
-            artifact("$buildDir/libs/bip32-${project.version}-sources.jar"){
-                classifier = 'sources'
-            }
-            artifact("$buildDir/libs/bip32-${project.version}-javadoc.jar"){
-                classifier = 'javadoc'
-            }
-            artifact("$buildDir/libs/bip32-${project.version}.jar")
-        }
-    }
-}
 
 // To upload a new version
 // ./gradlew clean build bintrayUpload -Puser=user -Pkey=APIKEY
@@ -94,15 +52,32 @@ bintray {
         userOrg = 'novacrypto'
         licenses = ['GPL-3.0']
         vcsUrl = 'https://github.com/NovaCrypto/BIP32.git'
-        version project.version
+        version {
+            name = project.version
+        }
     }
 }
 
-jacocoTestReport {
-    reports {
-        xml.enabled true
-        html.enabled false
+repositories {
+    maven {
+        url 'https://dl.bintray.com/novacrypto/Hashing/'
     }
+    jcenter()
 }
 
-check.dependsOn jacocoTestReport
+compileJava {
+    sourceCompatibility = '1.7'
+    targetCompatibility = '1.7'
+}
+
+dependencies {
+    compile 'com.madgag.spongycastle:core:1.58.0.0@jar'
+    compile 'io.github.novacrypto:Hash160:0.0.1@jar'
+    compile 'io.github.novacrypto:SHA256:0.0.1@jar'
+    compile 'io.github.novacrypto:ToRuntime:0.9.0@jar'
+    testCompile 'junit:junit:4.12'
+    testCompile 'com.google.code.gson:gson:2.8.2'
+    testCompile 'org.assertj:assertj-core:3.8.0'
+    testCompile 'io.github.novacrypto:Base58:0.1.1@jar'
+    testCompile 'io.github.novacrypto:BIP39:0.1.2@jar'
+}
