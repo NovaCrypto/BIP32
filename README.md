@@ -20,7 +20,7 @@ Add dependency:
 
 ```
 dependencies {
-    compile 'io.github.novacrypto:BIP32:0.0.2@jar'
+    compile 'io.github.novacrypto:BIP32:0.0.3@jar'
 }
 
 ```
@@ -45,6 +45,14 @@ Base58.base58Encode(key.toByteArray())
 
 # Serialize address
 
+## Pay to Public Key Hash
+
 ```
 String p2pkh = base58Encode(public.p2pkhAddress());
+```
+
+## Pay to Script Hash
+
+```
+String p2sh = base58Encode(public.p2shAddress());
 ```

@@ -50,7 +50,7 @@ publishing {
             artifact sourcesJar
             artifact javadocJar
             groupId group
-            artifactId project.name
+            artifactId 'BIP32'
             version project.version
         }
     }
