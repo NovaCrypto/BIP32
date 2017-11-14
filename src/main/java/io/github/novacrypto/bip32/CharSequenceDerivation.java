@@ -23,20 +23,14 @@ package io.github.novacrypto.bip32;
 
 import static io.github.novacrypto.bip32.Index.hard;
 
-final class CharSequenceDerivation<T> implements Derivation<T, CharSequence> {
-
-    private final Visitor<T> visitor;
-
-    CharSequenceDerivation(final Visitor<T> visitor) {
-        this.visitor = visitor;
-    }
+final class CharSequenceDerivation implements Derivation<CharSequence> {
 
     @Override
-    public T derive(final T startAt, final CharSequence derivationPath) {
+    public <T> T derive(final T root, final CharSequence derivationPath, final Visitor<T> visitor) {
         final int length = derivationPath.length();
         if (length == 1)
-            return startAt;
-        T current = startAt;
+            return root;
+        T current = root;
         int buffer = 0;
         for (int i = 2; i < length; i++) {
             final char c = derivationPath.charAt(i);

@@ -42,13 +42,15 @@ public final class PrivateKey implements
         CKDpub,
         ToByteArray {
 
-    private static final CharSequenceDerivation<PrivateKey> CHAR_SEQUENCE_PRIVATE_KEY_DERIVATION =
-            new CharSequenceDerivation<>(new Derivation.Visitor<PrivateKey>() {
-                @Override
-                public PrivateKey visit(final PrivateKey parent, final int childIndex) {
-                    return parent.cKDpriv(childIndex);
-                }
-            });
+    private static final Derivation.Visitor<PrivateKey> DERIVATION_VISITOR = new Derivation.Visitor<PrivateKey>() {
+        @Override
+        public PrivateKey visit(final PrivateKey parent, final int childIndex) {
+            return parent.cKDpriv(childIndex);
+        }
+    };
+
+    private static final CharSequenceDerivation CHAR_SEQUENCE_PRIVATE_KEY_DERIVATION =
+            new CharSequenceDerivation();
 
     private static final byte[] BITCOIN_SEED = getBytes("Bitcoin seed");
 
@@ -141,7 +143,7 @@ public final class PrivateKey implements
         return derive(derivationPath, CHAR_SEQUENCE_PRIVATE_KEY_DERIVATION);
     }
 
-    private <Path> PrivateKey derive(final Path derivationPath, final Derivation<PrivateKey, Path> derivation) {
-        return derivation.derive(this, derivationPath);
+    private <Path> PrivateKey derive(final Path derivationPath, final Derivation<Path> derivation) {
+        return derivation.derive(this, derivationPath, DERIVATION_VISITOR);
     }
 }

@@ -21,11 +21,27 @@
 
 package io.github.novacrypto.bip32;
 
-public interface Derivation<Node, Path> {
+public interface Derivation<Path> {
 
     interface Visitor<T> {
+        /**
+         * Finds the child at the given index on the parent.
+         *
+         * @param parent     The parent to find the child of
+         * @param childIndex The index of the child
+         * @return the {@link T} for the child
+         */
         T visit(final T parent, final int childIndex);
     }
 
-    Node derive(final Node startAt, final Path path);
+    /**
+     * Traverse the nodes from the root to find the node referenced by the path.
+     *
+     * @param root The root of the path
+     * @param path    The path to follow
+     * @param visitor Allows you to follow one link
+     * @param <Node>  The type of node we are visiting
+     * @return The final node found at the end of the path
+     */
+    <Node> Node derive(final Node root, final Path path, final Visitor<Node> visitor);
 }
