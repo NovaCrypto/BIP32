@@ -68,7 +68,7 @@ public final class DerivationTests {
     }
 
     private static List<Integer> derive(CharSequence derivationPath) {
-        final Derivation<Integer[]> derivation = new Derivation<>(DerivationTests::concat);
+        final CharSequenceDerivation<Integer[]> derivation = new CharSequenceDerivation<>(DerivationTests::concat);
         final Integer[] parts = derivation.derive(new Integer[0], derivationPath);
         return Arrays.asList(parts);
     }

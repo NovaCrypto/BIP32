@@ -21,41 +21,11 @@
 
 package io.github.novacrypto.bip32;
 
-import static io.github.novacrypto.bip32.Index.hard;
-
-final class Derivation<T> {
+public interface Derivation<Node, Path> {
 
     interface Visitor<T> {
         T visit(final T parent, final int childIndex);
     }
 
-    private final Visitor<T> visitor;
-
-    Derivation(final Visitor<T> visitor) {
-        this.visitor = visitor;
-    }
-
-    T derive(final T startAt, final CharSequence derivationPath) {
-        final int length = derivationPath.length();
-        if (length == 1)
-            return startAt;
-        T current = startAt;
-        int buffer = 0;
-        for (int i = 2; i < length; i++) {
-            final char c = derivationPath.charAt(i);
-            switch (c) {
-                case '\'':
-                    buffer = hard(buffer);
-                    break;
-                case '/':
-                    current = visitor.visit(current, buffer);
-                    buffer = 0;
-                    break;
-                default:
-                    buffer *= 10;
-                    buffer += c - '0';
-            }
-        }
-        return visitor.visit(current, buffer);
-    }
+    Node derive(final Node startAt, final Path path);
 }
