@@ -42,7 +42,7 @@ public final class PrivateKey implements
         CKDpub,
         ToByteArray {
 
-    private static final Derivation.Visitor<PrivateKey> DERIVATION_VISITOR = new Derivation.Visitor<PrivateKey>() {
+    public static final Derivation.Visitor<PrivateKey> DERIVATION_VISITOR = new Derivation.Visitor<PrivateKey>() {
         @Override
         public PrivateKey visit(final PrivateKey parent, final int childIndex) {
             return parent.cKDpriv(childIndex);
@@ -141,6 +141,14 @@ public final class PrivateKey implements
     }
 
     public <Path> PrivateKey derive(final Path derivationPath, final Derivation<Path> derivation) {
-        return derivation.derive(this, derivationPath, DERIVATION_VISITOR);
+        return derive(derivationPath, derivation, DERIVATION_VISITOR);
+    }
+
+    public PrivateKey derive(final CharSequence derivationPath, final Derivation.Visitor<PrivateKey> visitor) {
+        return derive(derivationPath, CharSequenceDerivation.INSTANCE, visitor);
+    }
+
+    public <Path> PrivateKey derive(final Path derivationPath, final Derivation<Path> derivation, final Derivation.Visitor<PrivateKey> visitor) {
+        return derivation.derive(this, derivationPath, visitor);
     }
 }
