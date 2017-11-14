@@ -25,6 +25,11 @@ import static io.github.novacrypto.bip32.Index.hard;
 
 final class CharSequenceDerivation implements Derivation<CharSequence> {
 
+    private CharSequenceDerivation() {
+    }
+
+    public final static Derivation<CharSequence> INSTANCE = new CharSequenceDerivation();
+
     @Override
     public <T> T derive(final T root, final CharSequence derivationPath, final Visitor<T> visitor) {
         final int length = derivationPath.length();

@@ -49,9 +49,6 @@ public final class PrivateKey implements
         }
     };
 
-    private static final CharSequenceDerivation CHAR_SEQUENCE_PRIVATE_KEY_DERIVATION =
-            new CharSequenceDerivation();
-
     private static final byte[] BITCOIN_SEED = getBytes("Bitcoin seed");
 
     private final HdKey hdKey;
@@ -140,10 +137,10 @@ public final class PrivateKey implements
     }
 
     public PrivateKey derive(final CharSequence derivationPath) {
-        return derive(derivationPath, CHAR_SEQUENCE_PRIVATE_KEY_DERIVATION);
+        return derive(derivationPath, CharSequenceDerivation.INSTANCE);
     }
 
-    private <Path> PrivateKey derive(final Path derivationPath, final Derivation<Path> derivation) {
+    public <Path> PrivateKey derive(final Path derivationPath, final Derivation<Path> derivation) {
         return derivation.derive(this, derivationPath, DERIVATION_VISITOR);
     }
 }
