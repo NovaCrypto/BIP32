@@ -31,6 +31,7 @@ import static io.github.novacrypto.bip32.BigIntegerUtils.ser256;
 import static io.github.novacrypto.bip32.ByteArrayWriter.head32;
 import static io.github.novacrypto.bip32.ByteArrayWriter.tail32;
 import static io.github.novacrypto.bip32.HmacSha512.hmacSha512;
+import static io.github.novacrypto.bip32.KeyCacheDecorator.newCacheOf;
 import static io.github.novacrypto.bip32.Secp256k1BC.n;
 import static io.github.novacrypto.toruntime.CheckedExceptionToRuntime.toRuntime;
 
@@ -38,16 +39,17 @@ import static io.github.novacrypto.toruntime.CheckedExceptionToRuntime.toRuntime
  * A BIP32 private key
  */
 public final class PrivateKey implements
+        Derive<PrivateKey>,
         CKDpriv,
         CKDpub,
         ToByteArray {
 
-    private static final Derivation<PrivateKey> DERIVATION = new Derivation<>(new Derivation.Visitor<PrivateKey>() {
+    private static final Derivation.Visitor<PrivateKey> DERIVATION_VISITOR = new Derivation.Visitor<PrivateKey>() {
         @Override
         public PrivateKey visit(final PrivateKey parent, final int childIndex) {
             return parent.cKDpriv(childIndex);
         }
-    });
+    };
 
     private static final byte[] BITCOIN_SEED = getBytes("Bitcoin seed");
 
@@ -136,7 +138,25 @@ public final class PrivateKey implements
         return PublicKey.from(hdKey);
     }
 
+    public Derive<PrivateKey> derive() {
+        return derive(DERIVATION_VISITOR);
+    }
+
+    public Derive<PrivateKey> deriveWithCache() {
+        return derive(newCacheOf(DERIVATION_VISITOR));
+    }
+
+    @Override
     public PrivateKey derive(final CharSequence derivationPath) {
-        return DERIVATION.derive(this, derivationPath);
+        return derive().derive(derivationPath);
+    }
+
+    @Override
+    public <Path> PrivateKey derive(final Path derivationPath, final Derivation<Path> derivation) {
+        return derive().derive(derivationPath, derivation);
+    }
+
+    private Derive<PrivateKey> derive(final Derivation.Visitor<PrivateKey> visitor) {
+        return new VisitorDeriver<>(visitor, this);
     }
 }

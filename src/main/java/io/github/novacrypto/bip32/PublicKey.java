@@ -26,6 +26,7 @@ import static io.github.novacrypto.bip32.ByteArrayWriter.head32;
 import static io.github.novacrypto.bip32.ByteArrayWriter.tail32;
 import static io.github.novacrypto.bip32.HmacSha512.hmacSha512;
 import static io.github.novacrypto.bip32.Index.hardened;
+import static io.github.novacrypto.bip32.KeyCacheDecorator.newCacheOf;
 import static io.github.novacrypto.hashing.Hash160.hash160into;
 import static io.github.novacrypto.hashing.Sha256.sha256Twice;
 
@@ -33,8 +34,16 @@ import static io.github.novacrypto.hashing.Sha256.sha256Twice;
  * A BIP32 public key
  */
 public final class PublicKey implements
+        Derive<PublicKey>,
         CKDpub,
         ToByteArray {
+
+    private static final Derivation.Visitor<PublicKey> DERIVATION_VISITOR = new Derivation.Visitor<PublicKey>() {
+        @Override
+        public PublicKey visit(final PublicKey parent, final int childIndex) {
+            return parent.cKDpub(childIndex);
+        }
+    };
 
     static PublicKey from(final HdKey hdKey) {
         return new PublicKey(new HdKey.Builder()
@@ -106,5 +115,27 @@ public final class PublicKey implements
         hash160into(address, 1, data);
         System.arraycopy(sha256Twice(address, 0, 21), 0, address, 21, 4);
         return address;
+    }
+
+    public Derive<PublicKey> derive() {
+        return derive(DERIVATION_VISITOR);
+    }
+
+    public Derive<PublicKey> deriveWithCache() {
+        return derive(newCacheOf(DERIVATION_VISITOR));
+    }
+
+    @Override
+    public PublicKey derive(final CharSequence derivationPath) {
+        return derive().derive(derivationPath);
+    }
+
+    @Override
+    public <Path> PublicKey derive(final Path derivationPath, final Derivation<Path> derivation) {
+        return derive().derive(derivationPath, derivation);
+    }
+
+    private Derive<PublicKey> derive(final Derivation.Visitor<PublicKey> visitor) {
+        return new VisitorDeriver<>(visitor, this);
     }
 }

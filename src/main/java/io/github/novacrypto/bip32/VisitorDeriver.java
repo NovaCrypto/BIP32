@@ -21,27 +21,23 @@
 
 package io.github.novacrypto.bip32;
 
-public interface Derivation<Path> {
+final class VisitorDeriver<Node> implements Derive<Node>{
 
-    interface Visitor<T> {
-        /**
-         * Finds the child at the given index on the parent.
-         *
-         * @param parent     The parent to find the child of
-         * @param childIndex The index of the child
-         * @return the {@link T} for the child
-         */
-        T visit(final T parent, final int childIndex);
+    private final Derivation.Visitor<Node> standardVisitor;
+    private final Node rootNode;
+
+    VisitorDeriver(final Derivation.Visitor<Node> standardVisitor, final Node rootNode) {
+        this.standardVisitor = standardVisitor;
+        this.rootNode = rootNode;
     }
 
-    /**
-     * Traverse the nodes from the root to find the node referenced by the path.
-     *
-     * @param root The root of the path
-     * @param path    The path to follow
-     * @param visitor Allows you to follow one link
-     * @param <Node>  The type of node we are visiting
-     * @return The final node found at the end of the path
-     */
-    <Node> Node derive(final Node root, final Path path, final Visitor<Node> visitor);
+    @Override
+    public Node derive(final CharSequence derivationPath) {
+        return derive(derivationPath, CharSequenceDerivation.INSTANCE);
+    }
+
+    @Override
+    public <Path> Node derive(final Path derivationPath, final Derivation<Path> derivation) {
+        return derivation.derive(rootNode, derivationPath, standardVisitor);
+    }
 }

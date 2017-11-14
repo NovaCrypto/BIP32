@@ -23,6 +23,7 @@ package io.github.novacrypto;
 
 import io.github.novacrypto.bip32.Network;
 import io.github.novacrypto.bip32.PrivateKey;
+import io.github.novacrypto.bip32.PublicKey;
 import io.github.novacrypto.bip32.networks.Bitcoin;
 import io.github.novacrypto.bip39.SeedCalculator;
 import org.junit.Test;
@@ -71,9 +72,12 @@ public final class DeriveNonHardenedTests {
     private void assertPublicKey(String expectedBase58Key, String mnemonic, String derivationPath, Bitcoin network) {
         final byte[] seed = new SeedCalculator().calculateSeed(mnemonic, "");
 
-        final byte[] bip32Root = findPublicKey(seed, network, derivationPath);
-        final String actualBip32Root = base58Encode(bip32Root).toString();
-        assertBase58KeysEqual(expectedBase58Key, actualBip32Root);
+        final byte[] bip32RootFromPrv = findPublicKeyByPrivate(seed, network, derivationPath);
+        final byte[] bip32RootFromPub = findPublicKeyByPublic(seed, network, derivationPath);
+        final String actualBip32RootFromPrv = base58Encode(bip32RootFromPrv).toString();
+        final String actualBip32RootFromPub = base58Encode(bip32RootFromPub).toString();
+        assertBase58KeysEqual(actualBip32RootFromPrv, actualBip32RootFromPub);
+        assertBase58KeysEqual(expectedBase58Key, actualBip32RootFromPub);
     }
 
     private void assertPrivateKey(String expectedBase58Key, String mnemonic, String derivationPath, Network network) {
@@ -88,18 +92,22 @@ public final class DeriveNonHardenedTests {
         return derivePrivate(seed, network, derivationPath).toByteArray();
     }
 
-    private byte[] findPublicKey(byte[] seed, Bitcoin network, String derivationPath) {
+    private byte[] findPublicKeyByPrivate(byte[] seed, Bitcoin network, String derivationPath) {
         return derivePrivate(seed, network, derivationPath)
                 .neuter()
                 .toByteArray();
     }
 
+    private byte[] findPublicKeyByPublic(byte[] seed, Bitcoin network, String derivationPath) {
+        return derivePublic(seed, network, derivationPath)
+                .toByteArray();
+    }
+
     private PrivateKey derivePrivate(byte[] seed, Network network, String derivationPath) {
-        PrivateKey privateKey = PrivateKey.fromSeed(seed, network);
-        for (String part : derivationPath.substring(2).split("/")) {
-            privateKey = privateKey
-                    .cKDpriv(Integer.parseInt(part));
-        }
-        return privateKey;
+        return PrivateKey.fromSeed(seed, network).derive(derivationPath);
+    }
+
+    private PublicKey derivePublic(byte[] seed, Network network, String derivationPath) {
+        return derivePrivate(seed, network, "m").neuter().derive(derivationPath);
     }
 }
