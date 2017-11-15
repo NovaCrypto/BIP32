@@ -21,7 +21,11 @@
 
 package io.github.novacrypto.bip32;
 
-final class VisitorDeriver<Node> implements Derive<Node>{
+import io.github.novacrypto.bip32.derivation.CharSequenceDerivation;
+import io.github.novacrypto.bip32.derivation.Derivation;
+import io.github.novacrypto.bip32.derivation.Derive;
+
+final class VisitorDeriver<Node> implements Derive<Node> {
 
     private final Derivation.Visitor<Node> standardVisitor;
     private final Node rootNode;

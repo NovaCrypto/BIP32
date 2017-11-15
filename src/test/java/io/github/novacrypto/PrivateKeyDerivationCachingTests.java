@@ -21,9 +21,9 @@
 
 package io.github.novacrypto;
 
-import io.github.novacrypto.bip32.CharSequenceDerivation;
-import io.github.novacrypto.bip32.Derive;
-import io.github.novacrypto.bip32.IntArrayDerivation;
+import io.github.novacrypto.bip32.derivation.CharSequenceDerivation;
+import io.github.novacrypto.bip32.derivation.Derive;
+import io.github.novacrypto.bip32.derivation.IntArrayDerivation;
 import io.github.novacrypto.bip32.PrivateKey;
 import io.github.novacrypto.bip32.networks.Bitcoin;
 import org.junit.Test;

@@ -21,6 +21,8 @@
 
 package io.github.novacrypto.bip32;
 
+import io.github.novacrypto.bip32.derivation.Derivation;
+
 import java.util.HashMap;
 import java.util.Map;
 

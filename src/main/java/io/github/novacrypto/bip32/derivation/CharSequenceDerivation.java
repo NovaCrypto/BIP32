@@ -19,7 +19,7 @@
  *  You can contact the authors via github issues.
  */
 
-package io.github.novacrypto.bip32;
+package io.github.novacrypto.bip32.derivation;
 
 import static io.github.novacrypto.bip32.Index.hard;
 

@@ -19,21 +19,25 @@
  *  You can contact the authors via github issues.
  */
 
-package io.github.novacrypto.bip32;
+package io.github.novacrypto.bip32.derivation;
 
-public final class IntArrayDerivation implements Derivation<int[]> {
+public interface Derive<Node> {
 
-    private IntArrayDerivation() {
-    }
+    /**
+     * Derive from a string path such as m/44'/0'/0'/0/1
+     *
+     * @param derivationPath Path
+     * @return Node at the path
+     */
+    Node derive(final CharSequence derivationPath);
 
-    public final static Derivation<int[]> INSTANCE = new IntArrayDerivation();
-
-    @Override
-    public <Node> Node derive(final Node root, final int[] path, final Visitor<Node> visitor) {
-        Node current = root;
-        for (final int childIndex : path) {
-            current = visitor.visit(current, childIndex);
-        }
-        return current;
-    }
+    /**
+     * Derive from a generic path using the {@link Derivation} supplied to extract the child indexes
+     *
+     * @param derivationPath Path
+     * @param derivation     The class that extracts the path elements
+     * @param <Path>         The generic type of the path
+     * @return Node at the path
+     */
+    <Path> Node derive(final Path derivationPath, final Derivation<Path> derivation);
 }

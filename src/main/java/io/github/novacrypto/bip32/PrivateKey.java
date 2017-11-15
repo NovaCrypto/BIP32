@@ -21,6 +21,8 @@
 
 package io.github.novacrypto.bip32;
 
+import io.github.novacrypto.bip32.derivation.Derivation;
+import io.github.novacrypto.bip32.derivation.Derive;
 import io.github.novacrypto.toruntime.CheckedExceptionToRuntime;
 
 import java.math.BigInteger;

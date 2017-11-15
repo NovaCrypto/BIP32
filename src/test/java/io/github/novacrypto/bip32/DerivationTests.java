@@ -21,6 +21,7 @@
 
 package io.github.novacrypto.bip32;
 
+import io.github.novacrypto.bip32.derivation.CharSequenceDerivation;
 import org.junit.Test;
 
 import java.util.Arrays;

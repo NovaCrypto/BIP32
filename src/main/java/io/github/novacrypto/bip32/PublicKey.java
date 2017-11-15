@@ -21,6 +21,9 @@
 
 package io.github.novacrypto.bip32;
 
+import io.github.novacrypto.bip32.derivation.Derivation;
+import io.github.novacrypto.bip32.derivation.Derive;
+
 import static io.github.novacrypto.bip32.BigIntegerUtils.parse256;
 import static io.github.novacrypto.bip32.ByteArrayWriter.head32;
 import static io.github.novacrypto.bip32.ByteArrayWriter.tail32;

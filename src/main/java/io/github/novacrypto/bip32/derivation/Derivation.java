@@ -19,25 +19,29 @@
  *  You can contact the authors via github issues.
  */
 
-package io.github.novacrypto.bip32;
+package io.github.novacrypto.bip32.derivation;
 
-public interface Derive<Node> {
+public interface Derivation<Path> {
+
+    interface Visitor<T> {
+        /**
+         * Finds the child at the given index on the parent.
+         *
+         * @param parent     The parent to find the child of
+         * @param childIndex The index of the child
+         * @return the {@link T} for the child
+         */
+        T visit(final T parent, final int childIndex);
+    }
 
     /**
-     * Derive from a string path such as m/44'/0'/0'/0/1
+     * Traverse the nodes from the root to find the node referenced by the path.
      *
-     * @param derivationPath Path
-     * @return Node at the path
+     * @param root The root of the path
+     * @param path    The path to follow
+     * @param visitor Allows you to follow one link
+     * @param <Node>  The type of node we are visiting
+     * @return The final node found at the end of the path
      */
-    Node derive(final CharSequence derivationPath);
-
-    /**
-     * Derive from a generic path using the {@link Derivation} supplied to extract the child indexes
-     *
-     * @param derivationPath Path
-     * @param derivation     The class that extracts the path elements
-     * @param <Path>         The generic type of the path
-     * @return Node at the path
-     */
-    <Path> Node derive(final Path derivationPath, final Derivation<Path> derivation);
+    <Node> Node derive(final Node root, final Path path, final Visitor<Node> visitor);
 }

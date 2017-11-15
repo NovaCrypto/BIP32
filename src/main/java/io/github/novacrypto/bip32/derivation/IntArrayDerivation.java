@@ -19,29 +19,21 @@
  *  You can contact the authors via github issues.
  */
 
-package io.github.novacrypto.bip32;
+package io.github.novacrypto.bip32.derivation;
 
-public interface Derivation<Path> {
+public final class IntArrayDerivation implements Derivation<int[]> {
 
-    interface Visitor<T> {
-        /**
-         * Finds the child at the given index on the parent.
-         *
-         * @param parent     The parent to find the child of
-         * @param childIndex The index of the child
-         * @return the {@link T} for the child
-         */
-        T visit(final T parent, final int childIndex);
+    private IntArrayDerivation() {
     }
 
-    /**
-     * Traverse the nodes from the root to find the node referenced by the path.
-     *
-     * @param root The root of the path
-     * @param path    The path to follow
-     * @param visitor Allows you to follow one link
-     * @param <Node>  The type of node we are visiting
-     * @return The final node found at the end of the path
-     */
-    <Node> Node derive(final Node root, final Path path, final Visitor<Node> visitor);
+    public final static Derivation<int[]> INSTANCE = new IntArrayDerivation();
+
+    @Override
+    public <Node> Node derive(final Node root, final int[] path, final Visitor<Node> visitor) {
+        Node current = root;
+        for (final int childIndex : path) {
+            current = visitor.visit(current, childIndex);
+        }
+        return current;
+    }
 }
