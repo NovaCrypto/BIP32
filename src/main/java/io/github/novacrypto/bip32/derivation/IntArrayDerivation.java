@@ -21,12 +21,8 @@
 
 package io.github.novacrypto.bip32.derivation;
 
-public final class IntArrayDerivation implements Derivation<int[]> {
-
-    private IntArrayDerivation() {
-    }
-
-    public final static Derivation<int[]> INSTANCE = new IntArrayDerivation();
+public enum IntArrayDerivation implements Derivation<int[]> {
+    INSTANCE;
 
     @Override
     public <Node> Node derive(final Node root, final int[] path, final Visitor<Node> visitor) {

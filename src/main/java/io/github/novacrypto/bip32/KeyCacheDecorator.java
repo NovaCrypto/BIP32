@@ -43,25 +43,20 @@ final class KeyCacheDecorator<Node> implements Derivation.Visitor<Node> {
     @Override
     public Node visit(final Node parent, final int childIndex) {
         final Map<Integer, Node> mapForParent = getMapOf(parent);
-        //noinspection SynchronizationOnLocalVariableOrMethodParameter
-        synchronized (mapForParent) {
-            Node child = mapForParent.get(childIndex);
-            if (child == null) {
-                child = derivationVisitor.visit(parent, childIndex);
-                mapForParent.put(childIndex, child);
-            }
-            return child;
+        Node child = mapForParent.get(childIndex);
+        if (child == null) {
+            child = derivationVisitor.visit(parent, childIndex);
+            mapForParent.put(childIndex, child);
         }
+        return child;
     }
 
     private Map<Integer, Node> getMapOf(final Node parentNode) {
-        synchronized (cache) {
-            HashMap<Integer, Node> mapForParent = cache.get(parentNode);
-            if (mapForParent == null) {
-                mapForParent = new HashMap<>();
-                cache.put(parentNode, mapForParent);
-            }
-            return mapForParent;
+        HashMap<Integer, Node> mapForParent = cache.get(parentNode);
+        if (mapForParent == null) {
+            mapForParent = new HashMap<>();
+            cache.put(parentNode, mapForParent);
         }
+        return mapForParent;
     }
 }
