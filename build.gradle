@@ -71,6 +71,7 @@ compileJava {
 }
 
 dependencies {
+    compile 'org.jetbrains:annotations:15.0'
     compile 'com.madgag.spongycastle:core:1.58.0.0@jar'
     compile 'io.github.novacrypto:Hash160:0.0.1@jar'
     compile 'io.github.novacrypto:SHA256:0.0.1@jar'

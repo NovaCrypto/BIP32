@@ -24,6 +24,7 @@ package io.github.novacrypto.bip32;
 import io.github.novacrypto.bip32.derivation.Derivation;
 import io.github.novacrypto.bip32.derivation.Derive;
 import io.github.novacrypto.toruntime.CheckedExceptionToRuntime;
+import org.jetbrains.annotations.NotNull;
 
 import java.math.BigInteger;
 import java.util.Arrays;
@@ -73,7 +74,7 @@ public final class PrivateKey implements
         this.hdKey = hdKey;
     }
 
-    public static PrivateKey fromSeed(final byte[] seed, final Network network) {
+    public static PrivateKey fromSeed(@NotNull final byte[] seed, @NotNull final Network network) {
         final byte[] I = hmacSha512(BITCOIN_SEED, seed);
 
         final byte[] Il = head32(I);
