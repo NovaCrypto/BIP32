@@ -34,7 +34,7 @@ final class KeyCacheDecorator<Node> implements Derivation.Visitor<Node> {
 
     private final Derivation.Visitor<Node> derivationVisitor;
 
-    private final Map<NodeKey, Node> cache = new HashMap<>();
+    private final Map<Node, HashMap<Integer, Node>> cache = new HashMap<>();
 
     private KeyCacheDecorator(final Derivation.Visitor<Node> derivationVisitor) {
         this.derivationVisitor = derivationVisitor;
@@ -42,37 +42,26 @@ final class KeyCacheDecorator<Node> implements Derivation.Visitor<Node> {
 
     @Override
     public Node visit(final Node parent, final int childIndex) {
-        final NodeKey key = new NodeKey(parent, childIndex);
-        final Node value = cache.get(key);
-        if (value != null) {
-            return value;
+        final Map<Integer, Node> mapForParent = getMapOf(parent);
+        //noinspection SynchronizationOnLocalVariableOrMethodParameter
+        synchronized (mapForParent) {
+            Node child = mapForParent.get(childIndex);
+            if (child == null) {
+                child = derivationVisitor.visit(parent, childIndex);
+                mapForParent.put(childIndex, child);
+            }
+            return child;
         }
-        final Node newValue = derivationVisitor.visit(parent, childIndex);
-        cache.put(key, newValue);
-        return newValue;
     }
 
-    private static class NodeKey {
-        private final Object parent;
-        private final int childIndex;
-        private final int hashcode;
-
-        NodeKey(final Object parent, final int childIndex) {
-            this.parent = parent;
-            this.childIndex = childIndex;
-            hashcode = parent.hashCode() * 31 + childIndex;
-        }
-
-        @Override
-        public boolean equals(final Object obj) {
-            if (!(obj instanceof NodeKey)) return false;
-            final NodeKey other = (NodeKey) obj;
-            return other.parent == parent && other.childIndex == childIndex;
-        }
-
-        @Override
-        public int hashCode() {
-            return hashcode;
+    private Map<Integer, Node> getMapOf(final Node parentNode) {
+        synchronized (cache) {
+            HashMap<Integer, Node> mapForParent = cache.get(parentNode);
+            if (mapForParent == null) {
+                mapForParent = new HashMap<>();
+                cache.put(parentNode, mapForParent);
+            }
+            return mapForParent;
         }
     }
 }
