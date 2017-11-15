@@ -21,6 +21,7 @@
 
 package io.github.novacrypto.bip32;
 
+import io.github.novacrypto.bip32.derivation.CharSequenceDerivation;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -68,8 +69,8 @@ public final class DerivationTests {
     }
 
     private static List<Integer> derive(CharSequence derivationPath) {
-        final Derivation<Integer[]> derivation = new Derivation<>(DerivationTests::concat);
-        final Integer[] parts = derivation.derive(new Integer[0], derivationPath);
+        final Integer[] parts = CharSequenceDerivation.INSTANCE
+                .derive(new Integer[0], derivationPath, DerivationTests::concat);
         return Arrays.asList(parts);
     }
 

@@ -19,27 +19,19 @@
  *  You can contact the authors via github issues.
  */
 
-package io.github.novacrypto.bip32;
+package io.github.novacrypto.bip32.derivation;
 
 import static io.github.novacrypto.bip32.Index.hard;
 
-final class Derivation<T> {
+public enum CharSequenceDerivation implements Derivation<CharSequence> {
+    INSTANCE;
 
-    interface Visitor<T> {
-        T visit(final T parent, final int childIndex);
-    }
-
-    private final Visitor<T> visitor;
-
-    Derivation(final Visitor<T> visitor) {
-        this.visitor = visitor;
-    }
-
-    T derive(final T startAt, final CharSequence derivationPath) {
+    @Override
+    public <T> T derive(final T root, final CharSequence derivationPath, final Visitor<T> visitor) {
         final int length = derivationPath.length();
         if (length == 1)
-            return startAt;
-        T current = startAt;
+            return root;
+        T current = root;
         int buffer = 0;
         for (int i = 2; i < length; i++) {
             final char c = derivationPath.charAt(i);

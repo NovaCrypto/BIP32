@@ -28,7 +28,7 @@ dependencies {
 # Usage
 
 ```
-PrivateKey key = PrivateKey.fromSeed(seed);
+PrivateKey key = PrivateKey.fromSeed(seed, Bitcoin.MAIN_NET);
 PrivateKey child = key.derive("m/0'/0);
 PublicKey childPub = child.neuter();
 ```
