@@ -28,6 +28,7 @@ import io.github.novacrypto.toruntime.CheckedExceptionToRuntime;
 import java.math.BigInteger;
 import java.util.Arrays;
 
+import static io.github.novacrypto.base58.Base58.base58Encode;
 import static io.github.novacrypto.bip32.BigIntegerUtils.parse256;
 import static io.github.novacrypto.bip32.BigIntegerUtils.ser256;
 import static io.github.novacrypto.bip32.ByteArrayWriter.head32;
@@ -44,7 +45,7 @@ public final class PrivateKey implements
         Derive<PrivateKey>,
         CKDpriv,
         CKDpub,
-        ToByteArray {
+        ExtendedKey {
 
     private static final Derivation.Visitor<PrivateKey> DERIVATION_VISITOR = new Derivation.Visitor<PrivateKey>() {
         @Override
@@ -92,8 +93,13 @@ public final class PrivateKey implements
     }
 
     @Override
-    public byte[] toByteArray() {
+    public byte[] extendedKeyByteArray() {
         return hdKey.serialize();
+    }
+
+    @Override
+    public String extendedBase58() {
+        return base58Encode(extendedKeyByteArray());
     }
 
     @Override

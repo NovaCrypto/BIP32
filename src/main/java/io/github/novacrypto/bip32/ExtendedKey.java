@@ -21,7 +21,9 @@
 
 package io.github.novacrypto.bip32;
 
-public interface ToByteArray {
+public interface ExtendedKey {
 
-    byte[] toByteArray();
+    String extendedBase58();
+
+    byte[] extendedKeyByteArray();
 }

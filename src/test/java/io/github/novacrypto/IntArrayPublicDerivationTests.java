@@ -21,14 +21,14 @@
 
 package io.github.novacrypto;
 
-import io.github.novacrypto.bip32.derivation.Derive;
-import io.github.novacrypto.bip32.derivation.IntArrayDerivation;
 import io.github.novacrypto.bip32.PrivateKey;
 import io.github.novacrypto.bip32.PublicKey;
+import io.github.novacrypto.bip32.derivation.Derive;
+import io.github.novacrypto.bip32.derivation.IntArrayDerivation;
 import io.github.novacrypto.bip32.networks.Bitcoin;
 import org.junit.Test;
 
-import static io.github.novacrypto.base58.Base58.base58Encode;
+import static io.github.novacrypto.Asserts.assertBase58KeysEqual;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
 
@@ -61,9 +61,9 @@ public final class IntArrayPublicDerivationTests {
 
     private static void assertEqualPaths(String derivationPath, int[] path) {
         final PublicKey privateKey = createPrivateKey().neuter();
-        assertEquals(
-                base58Encode(privateKey.derive(derivationPath).toByteArray()),
-                base58Encode(privateKey.derive(path, IntArrayDerivation.INSTANCE).toByteArray())
+        assertBase58KeysEqual(
+                privateKey.derive(derivationPath).extendedBase58(),
+                privateKey.derive(path, IntArrayDerivation.INSTANCE).extendedBase58()
         );
     }
 }

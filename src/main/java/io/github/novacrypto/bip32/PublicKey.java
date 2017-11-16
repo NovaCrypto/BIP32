@@ -24,6 +24,7 @@ package io.github.novacrypto.bip32;
 import io.github.novacrypto.bip32.derivation.Derivation;
 import io.github.novacrypto.bip32.derivation.Derive;
 
+import static io.github.novacrypto.base58.Base58.base58Encode;
 import static io.github.novacrypto.bip32.BigIntegerUtils.parse256;
 import static io.github.novacrypto.bip32.ByteArrayWriter.head32;
 import static io.github.novacrypto.bip32.ByteArrayWriter.tail32;
@@ -39,7 +40,7 @@ import static io.github.novacrypto.hashing.Sha256.sha256Twice;
 public final class PublicKey implements
         Derive<PublicKey>,
         CKDpub,
-        ToByteArray {
+        ExtendedKey {
 
     private static final Derivation.Visitor<PublicKey> DERIVATION_VISITOR = new Derivation.Visitor<PublicKey>() {
         @Override
@@ -97,27 +98,32 @@ public final class PublicKey implements
     }
 
     @Override
-    public byte[] toByteArray() {
+    public byte[] extendedKeyByteArray() {
         return hdKey.serialize();
     }
 
-    public byte[] p2pkhAddress() {
+    @Override
+    public String extendedBase58() {
+        return base58Encode(extendedKeyByteArray());
+    }
+
+    public String p2pkhAddress() {
         return encodeAddress(hdKey.getNetwork().p2pkhVersion(), hdKey.getKey());
     }
 
-    public byte[] p2shAddress() {
+    public String p2shAddress() {
         final byte[] script = new byte[22];
         script[1] = (byte) 20;
         hash160into(script, 2, hdKey.getKey());
         return encodeAddress(hdKey.getNetwork().p2shVersion(), script);
     }
 
-    private static byte[] encodeAddress(final byte version, final byte[] data) {
+    private static String encodeAddress(final byte version, final byte[] data) {
         final byte[] address = new byte[25];
         address[0] = version;
         hash160into(address, 1, data);
         System.arraycopy(sha256Twice(address, 0, 21), 0, address, 21, 4);
-        return address;
+        return base58Encode(address);
     }
 
     public Derive<PublicKey> derive() {

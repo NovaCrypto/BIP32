@@ -29,7 +29,6 @@ import io.github.novacrypto.bip39.SeedCalculator;
 import org.junit.Test;
 
 import static io.github.novacrypto.Asserts.assertBase58KeysEqual;
-import static io.github.novacrypto.base58.Base58.base58Encode;
 
 public final class DeriveNonHardenedTests {
 
@@ -72,10 +71,8 @@ public final class DeriveNonHardenedTests {
     private void assertPublicKey(String expectedBase58Key, String mnemonic, String derivationPath, Bitcoin network) {
         final byte[] seed = new SeedCalculator().calculateSeed(mnemonic, "");
 
-        final byte[] bip32RootFromPrv = findPublicKeyByPrivate(seed, network, derivationPath);
-        final byte[] bip32RootFromPub = findPublicKeyByPublic(seed, network, derivationPath);
-        final String actualBip32RootFromPrv = base58Encode(bip32RootFromPrv).toString();
-        final String actualBip32RootFromPub = base58Encode(bip32RootFromPub).toString();
+        final String actualBip32RootFromPrv = findPublicExtendedKeyByPrivate(seed, network, derivationPath);
+        final String actualBip32RootFromPub = findPublicExtendedKeyByPublic(seed, network, derivationPath);
         assertBase58KeysEqual(actualBip32RootFromPrv, actualBip32RootFromPub);
         assertBase58KeysEqual(expectedBase58Key, actualBip32RootFromPub);
     }
@@ -83,24 +80,23 @@ public final class DeriveNonHardenedTests {
     private void assertPrivateKey(String expectedBase58Key, String mnemonic, String derivationPath, Network network) {
         final byte[] seed = new SeedCalculator().calculateSeed(mnemonic, "");
 
-        final byte[] bip32Root = findPrivateKey(seed, network, derivationPath);
-        final String actualBip32Root = base58Encode(bip32Root).toString();
+        final String actualBip32Root = findPrivateExtendedKey(seed, network, derivationPath);
         assertBase58KeysEqual(expectedBase58Key, actualBip32Root);
     }
 
-    private byte[] findPrivateKey(byte[] seed, Network network, String derivationPath) {
-        return derivePrivate(seed, network, derivationPath).toByteArray();
+    private String findPrivateExtendedKey(byte[] seed, Network network, String derivationPath) {
+        return derivePrivate(seed, network, derivationPath).extendedBase58();
     }
 
-    private byte[] findPublicKeyByPrivate(byte[] seed, Bitcoin network, String derivationPath) {
+    private String findPublicExtendedKeyByPrivate(byte[] seed, Bitcoin network, String derivationPath) {
         return derivePrivate(seed, network, derivationPath)
                 .neuter()
-                .toByteArray();
+                .extendedBase58();
     }
 
-    private byte[] findPublicKeyByPublic(byte[] seed, Bitcoin network, String derivationPath) {
+    private String findPublicExtendedKeyByPublic(byte[] seed, Bitcoin network, String derivationPath) {
         return derivePublic(seed, network, derivationPath)
-                .toByteArray();
+                .extendedBase58();
     }
 
     private PrivateKey derivePrivate(byte[] seed, Network network, String derivationPath) {

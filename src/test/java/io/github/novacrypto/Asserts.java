@@ -23,7 +23,6 @@ package io.github.novacrypto;
 
 import static io.github.novacrypto.Hex.toHex;
 import static io.github.novacrypto.base58.Base58.base58Decode;
-import static io.github.novacrypto.base58.Base58.base58Encode;
 import static org.junit.Assert.assertEquals;
 
 public final class Asserts {
@@ -51,8 +50,7 @@ public final class Asserts {
         assertEquals(failureMessage, expectedKey, actualKey);
     }
 
-    public static void assertBase58AddressEqual(final String expectedAddress, final byte[] actualAddressBytes) {
-        final String actualAddress = base58Encode(actualAddressBytes).toString();
+    static void assertBase58AddressEqual(final String expectedAddress, final String actualAddress) {
         String failureMessage = "";
         if (!expectedAddress.equals(actualAddress)) {
             final String expectedDecoded = decodeAddress(expectedAddress);

@@ -58,14 +58,13 @@ public final class Bip32PublicRootTests {
     private void assertBip32Root(String expectedBip32Root, String mnemonic, Network network) {
         final byte[] seed = new SeedCalculator().calculateSeed(mnemonic, "");
 
-        final byte[] bip32Root = findBip32Root(seed, network);
-        final String actualBip32Root = base58Encode(bip32Root).toString();
+        final String actualBip32Root = findBip32Root(seed, network);
         assertBase58KeysEqual(expectedBip32Root, actualBip32Root);
     }
 
-    private byte[] findBip32Root(byte[] seed, Network network) {
+    private String findBip32Root(byte[] seed, Network network) {
         final PrivateKey privateKey = PrivateKey.fromSeed(seed, network);
         final PublicKey neutered = privateKey.neuter();
-        return neutered.toByteArray();
+        return neutered.extendedBase58();
     }
 }
