@@ -37,10 +37,14 @@ Need a seed from mnemonic/passphrase? check out [NovaCrypto/Bip39](https://githu
 
 # Serialize
 
-Using [NovaCrypto/Base58](https://github.com/NovaCrypto/Base58):
+```
+String extendedKey = key.extendedBase58();
+```
+
+Or manually using [NovaCrypto/Base58](https://github.com/NovaCrypto/Base58):
 
 ```
-Base58.base58Encode(key.toByteArray())
+String extendedKey = base58Encode(key.extendedKeyByteArray());
 ```
 
 # Serialize address
@@ -48,11 +52,11 @@ Base58.base58Encode(key.toByteArray())
 ## Pay to Public Key Hash
 
 ```
-String p2pkh = base58Encode(public.p2pkhAddress());
+String p2pkh = public.p2pkhAddress();
 ```
 
 ## Pay to Script Hash
 
 ```
-String p2sh = base58Encode(public.p2shAddress());
+String p2sh = public.p2shAddress();
 ```

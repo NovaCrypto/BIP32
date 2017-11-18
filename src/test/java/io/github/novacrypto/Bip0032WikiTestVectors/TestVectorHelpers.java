@@ -21,8 +21,8 @@
 
 package io.github.novacrypto.Bip0032WikiTestVectors;
 
+import io.github.novacrypto.bip32.ExtendedKey;
 import io.github.novacrypto.bip32.PrivateKey;
-import io.github.novacrypto.bip32.ToByteArray;
 import io.github.novacrypto.bip32.networks.Bitcoin;
 
 import static io.github.novacrypto.Asserts.assertBase58KeysEqual;
@@ -32,16 +32,16 @@ import static io.github.novacrypto.base58.Base58.base58Encode;
 final class TestVectorHelpers {
 
     static void assertBase58(String expectedBase58,
-                             ToByteArray toByteArray) {
+                             ExtendedKey extendedKey) {
         assertBase58KeysEqual(expectedBase58,
-                base58Encode(toByteArray
-                        .toByteArray()).toString());
+                extendedKey.extendedBase58());
+        assertBase58KeysEqual(expectedBase58,
+                base58Encode(extendedKey.extendedKeyByteArray()));
     }
 
-    static void assertBase58(ToByteArray expected,
-                             ToByteArray actual) {
-        assertBase58(base58Encode(expected
-                        .toByteArray()).toString(),
+    static void assertBase58(ExtendedKey expected,
+                             ExtendedKey actual) {
+        assertBase58(expected.extendedBase58(),
                 actual);
     }
 
