@@ -21,6 +21,8 @@
 
 package io.github.novacrypto.bip32;
 
+import io.github.novacrypto.bip32.derivation.CkdFunction;
+import io.github.novacrypto.bip32.derivation.CkdFunctionDerive;
 import io.github.novacrypto.bip32.derivation.Derivation;
 import io.github.novacrypto.bip32.derivation.Derive;
 
@@ -29,8 +31,8 @@ import static io.github.novacrypto.bip32.BigIntegerUtils.parse256;
 import static io.github.novacrypto.bip32.ByteArrayWriter.head32;
 import static io.github.novacrypto.bip32.ByteArrayWriter.tail32;
 import static io.github.novacrypto.bip32.HmacSha512.hmacSha512;
-import static io.github.novacrypto.bip32.Index.hardened;
-import static io.github.novacrypto.bip32.KeyCacheDecorator.newCacheOf;
+import static io.github.novacrypto.bip32.Index.isHardened;
+import static io.github.novacrypto.bip32.derivation.CkdFunctionResultCacheDecorator.newCacheOf;
 import static io.github.novacrypto.hashing.Hash160.hash160into;
 import static io.github.novacrypto.hashing.Sha256.sha256Twice;
 
@@ -42,9 +44,9 @@ public final class PublicKey implements
         CKDpub,
         ExtendedKey {
 
-    private static final Derivation.Visitor<PublicKey> DERIVATION_VISITOR = new Derivation.Visitor<PublicKey>() {
+    private static final CkdFunction<PublicKey> CKD_FUNCTION = new CkdFunction<PublicKey>() {
         @Override
-        public PublicKey visit(final PublicKey parent, final int childIndex) {
+        public PublicKey deriveChildKey(final PublicKey parent, final int childIndex) {
             return parent.cKDpub(childIndex);
         }
     };
@@ -69,7 +71,7 @@ public final class PublicKey implements
 
     @Override
     public PublicKey cKDpub(final int index) {
-        if (hardened(index))
+        if (isHardened(index))
             throw new IllegalCKDCall("Cannot derive a hardened key from a public key");
 
         final HdKey parent = this.hdKey;
@@ -127,11 +129,11 @@ public final class PublicKey implements
     }
 
     public Derive<PublicKey> derive() {
-        return derive(DERIVATION_VISITOR);
+        return derive(CKD_FUNCTION);
     }
 
     public Derive<PublicKey> deriveWithCache() {
-        return derive(newCacheOf(DERIVATION_VISITOR));
+        return derive(newCacheOf(CKD_FUNCTION));
     }
 
     @Override
@@ -144,7 +146,7 @@ public final class PublicKey implements
         return derive().derive(derivationPath, derivation);
     }
 
-    private Derive<PublicKey> derive(final Derivation.Visitor<PublicKey> visitor) {
-        return new VisitorDeriver<>(visitor, this);
+    private Derive<PublicKey> derive(final CkdFunction<PublicKey> ckdFunction) {
+        return new CkdFunctionDerive<>(ckdFunction, this);
     }
 }

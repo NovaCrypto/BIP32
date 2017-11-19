@@ -21,6 +21,8 @@
 
 package io.github.novacrypto.bip32;
 
+import io.github.novacrypto.bip32.derivation.CkdFunction;
+import io.github.novacrypto.bip32.derivation.CkdFunctionDerive;
 import io.github.novacrypto.bip32.derivation.Derivation;
 import io.github.novacrypto.bip32.derivation.Derive;
 import io.github.novacrypto.toruntime.CheckedExceptionToRuntime;
@@ -34,8 +36,9 @@ import static io.github.novacrypto.bip32.BigIntegerUtils.ser256;
 import static io.github.novacrypto.bip32.ByteArrayWriter.head32;
 import static io.github.novacrypto.bip32.ByteArrayWriter.tail32;
 import static io.github.novacrypto.bip32.HmacSha512.hmacSha512;
-import static io.github.novacrypto.bip32.KeyCacheDecorator.newCacheOf;
+import static io.github.novacrypto.bip32.Index.isHardened;
 import static io.github.novacrypto.bip32.Secp256k1BC.n;
+import static io.github.novacrypto.bip32.derivation.CkdFunctionResultCacheDecorator.newCacheOf;
 import static io.github.novacrypto.toruntime.CheckedExceptionToRuntime.toRuntime;
 
 /**
@@ -47,9 +50,9 @@ public final class PrivateKey implements
         CKDpub,
         ExtendedKey {
 
-    private static final Derivation.Visitor<PrivateKey> DERIVATION_VISITOR = new Derivation.Visitor<PrivateKey>() {
+    private static final CkdFunction<PrivateKey> CKD_FUNCTION = new CkdFunction<PrivateKey>() {
         @Override
-        public PrivateKey visit(final PrivateKey parent, final int childIndex) {
+        public PrivateKey deriveChildKey(final PrivateKey parent, final int childIndex) {
             return parent.cKDpriv(childIndex);
         }
     };
@@ -107,7 +110,7 @@ public final class PrivateKey implements
         final byte[] data = new byte[37];
         final ByteArrayWriter writer = new ByteArrayWriter(data);
 
-        if (Index.hardened(index)) {
+        if (isHardened(index)) {
             writer.concat((byte) 0);
             writer.concat(hdKey.getKey(), 32);
         } else {
@@ -147,11 +150,11 @@ public final class PrivateKey implements
     }
 
     public Derive<PrivateKey> derive() {
-        return derive(DERIVATION_VISITOR);
+        return derive(CKD_FUNCTION);
     }
 
     public Derive<PrivateKey> deriveWithCache() {
-        return derive(newCacheOf(DERIVATION_VISITOR));
+        return derive(newCacheOf(CKD_FUNCTION));
     }
 
     @Override
@@ -164,7 +167,7 @@ public final class PrivateKey implements
         return derive().derive(derivationPath, derivation);
     }
 
-    private Derive<PrivateKey> derive(final Derivation.Visitor<PrivateKey> visitor) {
-        return new VisitorDeriver<>(visitor, this);
+    private Derive<PrivateKey> derive(final CkdFunction<PrivateKey> ckdFunction) {
+        return new CkdFunctionDerive<>(ckdFunction, this);
     }
 }
