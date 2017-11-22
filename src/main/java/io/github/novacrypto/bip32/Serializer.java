@@ -40,11 +40,18 @@ final class Serializer {
     }
 
     byte[] serialize(final byte[] key, final byte[] chainCode) {
-        if (chainCode.length != 32) throw new RuntimeException("Chain code must be 32 bytes");
+        if (key == null)
+            throw new IllegalArgumentException("Key is null");
+        if (chainCode == null)
+            throw new IllegalArgumentException("Chain code is null");
+        if (chainCode.length != 32)
+            throw new IllegalArgumentException("Chain code must be 32 bytes");
         if (neutered) {
-            if (key.length != 33) throw new RuntimeException("Key must be 33 bytes for neutered serialization");
+            if (key.length != 33)
+                throw new IllegalArgumentException("Key must be 33 bytes for neutered serialization");
         } else {
-            if (key.length != 32) throw new RuntimeException("Key must be 32 bytes for non neutered serialization");
+            if (key.length != 32)
+                throw new IllegalArgumentException("Key must be 32 bytes for non neutered serialization");
         }
 
         final byte[] privateKey = new byte[82];
@@ -88,7 +95,8 @@ final class Serializer {
         }
 
         Builder depth(final int depth) {
-            if (depth < 0 || depth > 255) throw new RuntimeException("Depth must be [0..255]");
+            if (depth < 0 || depth > 255)
+                throw new IllegalArgumentException("Depth must be [0..255]");
             this.depth = depth;
             return this;
         }

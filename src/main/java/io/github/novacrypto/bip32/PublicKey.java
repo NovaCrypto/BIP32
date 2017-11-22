@@ -25,7 +25,9 @@ import io.github.novacrypto.bip32.derivation.CkdFunction;
 import io.github.novacrypto.bip32.derivation.CkdFunctionDerive;
 import io.github.novacrypto.bip32.derivation.Derivation;
 import io.github.novacrypto.bip32.derivation.Derive;
+import io.github.novacrypto.bip32.networks.Bitcoin;
 
+import static io.github.novacrypto.base58.Base58.base58Decode;
 import static io.github.novacrypto.base58.Base58.base58Encode;
 import static io.github.novacrypto.bip32.BigIntegerUtils.parse256;
 import static io.github.novacrypto.bip32.ByteArrayWriter.head32;
@@ -64,6 +66,23 @@ public final class PublicKey implements
     }
 
     private final HdKey hdKey;
+
+    public static PublicKey deserialize(final CharSequence base58) {
+        final byte[] data = base58Decode(base58);
+        final ByteArrayReader reader = new ByteArrayReader(data);
+        final int ser32 = reader.readSer32();
+        return new PublicKey(new HdKey
+                .Builder()
+                .network(Bitcoin.MAIN_NET)
+                .depth(reader.read())
+                .parentFingerprint(reader.readSer32())
+                .childNumber(reader.readSer32())
+                .chainCode(reader.readRange(32))
+                .key(reader.readRange(33))
+                .neutered(true)
+                .build()
+        );
+    }
 
     private PublicKey(final HdKey hdKey) {
         this.hdKey = hdKey;

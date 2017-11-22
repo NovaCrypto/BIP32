@@ -21,6 +21,8 @@
 
 package io.github.novacrypto.bip32;
 
+import java.util.Arrays;
+
 import static io.github.novacrypto.bip32.BigIntegerUtils.parse256;
 import static io.github.novacrypto.bip32.Secp256k1BC.pointSerP;
 import static io.github.novacrypto.hashing.Hash160.hash160;
@@ -39,7 +41,7 @@ final class HdKey {
     private HdKey(final Builder builder) {
         neutered = builder.neutered;
         network = builder.network;
-        key = builder.key;
+        key = builder.keyAtRightLength();
         parentFingerprint = builder.parentFingerprint;
         childNumber = builder.childNumber;
         chainCode = builder.chainCode;
@@ -145,6 +147,13 @@ final class HdKey {
 
         HdKey build() {
             return new HdKey(this);
+        }
+
+        private byte[] keyAtRightLength() {
+            if (!neutered && key.length == 33) {
+                return Arrays.copyOfRange(key, 1, 33);
+            }
+            return key;
         }
     }
 }
