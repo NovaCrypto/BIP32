@@ -77,7 +77,7 @@ public final class Asserts {
 
     private static String decodeKey(final String key) {
         final String s = toHex(base58Decode(key));
-        return breakString(s, 84, new int[]{4, 1, 4, 4, 32, 33, 4});
+        return breakString(s, 82, new int[]{4, 1, 4, 4, 32, 33, 4});
     }
 
     private static String decodeAddress(final String address) {

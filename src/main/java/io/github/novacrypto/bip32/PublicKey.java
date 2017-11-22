@@ -44,6 +44,14 @@ public final class PublicKey implements
         CKDpub,
         ExtendedKey {
 
+    public static Deserializer<PublicKey> deserializer() {
+        return PublicKeyDeserializer.DEFAULT;
+    }
+
+    public static Deserializer<PublicKey> deserializer(final Networks networks) {
+        return new PublicKeyDeserializer(networks);
+    }
+
     private static final CkdFunction<PublicKey> CKD_FUNCTION = new CkdFunction<PublicKey>() {
         @Override
         public PublicKey deriveChildKey(final PublicKey parent, final int childIndex) {
@@ -65,7 +73,7 @@ public final class PublicKey implements
 
     private final HdKey hdKey;
 
-    private PublicKey(final HdKey hdKey) {
+    PublicKey(final HdKey hdKey) {
         this.hdKey = hdKey;
     }
 

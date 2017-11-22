@@ -29,10 +29,29 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 public final class SerializerBadDataTests {
 
     @Test
+    public void cantSerializeNullChainCode() {
+        final Serializer serializer = new Serializer.Builder()
+                .build();
+        assertThatThrownBy(() -> serializer.serialize(new byte[32], null))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Chain code is null");
+    }
+
+    @Test
+    public void cantSerializeNullKey() {
+        final Serializer serializer = new Serializer.Builder()
+                .build();
+        assertThatThrownBy(() -> serializer.serialize(null, new byte[32]))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Key is null");
+    }
+
+    @Test
     public void cantSerializeIfChainCodeIsWrongLength() {
         final Serializer serializer = new Serializer.Builder()
                 .build();
         assertThatThrownBy(() -> serializer.serialize(new byte[32], new byte[33]))
+                .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("Chain code must be 32 bytes");
     }
 
@@ -42,6 +61,7 @@ public final class SerializerBadDataTests {
                 .neutered(false)
                 .build();
         assertThatThrownBy(() -> serializer.serialize(new byte[33], new byte[32]))
+                .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("Key must be 32 bytes for non neutered serialization");
     }
 
@@ -51,6 +71,7 @@ public final class SerializerBadDataTests {
                 .neutered(true)
                 .build();
         assertThatThrownBy(() -> serializer.serialize(new byte[32], new byte[32]))
+                .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("Key must be 33 bytes for neutered serialization");
     }
 
@@ -58,6 +79,7 @@ public final class SerializerBadDataTests {
     public void cantCreateSerializerIfDepthIsNegative() {
         final Serializer.Builder builder = new Serializer.Builder();
         assertThatThrownBy(() -> builder.depth(-1))
+                .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("Depth must be [0..255]");
     }
 
@@ -65,6 +87,7 @@ public final class SerializerBadDataTests {
     public void cantCreateSerializerIfDepthIsAbove255() {
         final Serializer.Builder builder = new Serializer.Builder();
         assertThatThrownBy(() -> builder.depth(256))
+                .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("Depth must be [0..255]");
     }
 

@@ -19,30 +19,23 @@
  *  You can contact the authors via github issues.
  */
 
-package io.github.novacrypto.bip32.networks;
+package io.github.novacrypto.bip32;
 
-import io.github.novacrypto.bip32.Network;
+public interface Deserializer<T> {
 
-public enum Litecoin implements Network {
-    MAIN_NET {
-        @Override
-        public int getPrivateVersion() {
-            return 0x019d9cfe;
-        }
+    /**
+     * Deserializes the data into a {@link T}.
+     *
+     * @param extendedBase58Key Base58 CharSequence containing the serialized extended key.
+     * @return The {@link T}
+     */
+    T deserialize(CharSequence extendedBase58Key);
 
-        @Override
-        public int getPublicVersion() {
-            return 0x019da462;
-        }
-
-        @Override
-        public byte p2pkhVersion() {
-            return 0x30;
-        }
-
-        @Override
-        public byte p2shVersion() {
-            return 0x32;
-        }
-    }
+    /**
+     * Deserializes the data into a {@link T}.
+     *
+     * @param extendedKeyData Byte array containing the serialized extended key.
+     * @return The {@link T}
+     */
+    T deserialize(byte[] extendedKeyData);
 }
