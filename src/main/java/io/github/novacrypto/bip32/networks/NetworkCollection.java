@@ -42,4 +42,13 @@ public final class NetworkCollection implements Networks {
         }
         throw new UnknownNetworkException(String.format("Can't find network that matches private version 0x%x", privateVersion));
     }
+
+    @Override
+    public Network findByPublicVersion(final int publicVersion) {
+        for (final Network network : networks) {
+            if (network.getPublicVersion() == publicVersion)
+                return network;
+        }
+        throw new UnknownNetworkException(String.format("Can't find network that matches public version 0x%x", publicVersion));
+    }
 }

@@ -27,12 +27,12 @@ public enum Litecoin implements Network {
     MAIN_NET {
         @Override
         public int getPrivateVersion() {
-            return 0x488ade4;
+            return 0x019d9cfe;
         }
 
         @Override
         public int getPublicVersion() {
-            return 0x0488b21e;
+            return 0x019da462;
         }
 
         @Override

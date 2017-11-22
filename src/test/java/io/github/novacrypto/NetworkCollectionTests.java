@@ -38,10 +38,26 @@ public final class NetworkCollectionTests {
     }
 
     @Test
+    public void canFindByPublic() {
+        final NetworkCollection collection = new NetworkCollection(Bitcoin.MAIN_NET);
+        assertSame(Bitcoin.MAIN_NET,
+                collection.findByPublicVersion(Bitcoin.MAIN_NET.getPublicVersion())
+        );
+    }
+
+    @Test
     public void canFindByPrivateTwoEntries() {
         final NetworkCollection collection = new NetworkCollection(Bitcoin.MAIN_NET, Bitcoin.TEST_NET);
         assertSame(Bitcoin.TEST_NET,
                 collection.findByPrivateVersion(Bitcoin.TEST_NET.getPrivateVersion())
+        );
+    }
+
+    @Test
+    public void canFindByPublicTwoEntries() {
+        final NetworkCollection collection = new NetworkCollection(Bitcoin.MAIN_NET, Bitcoin.TEST_NET);
+        assertSame(Bitcoin.TEST_NET,
+                collection.findByPublicVersion(Bitcoin.TEST_NET.getPublicVersion())
         );
     }
 
@@ -56,6 +72,16 @@ public final class NetworkCollectionTests {
     }
 
     @Test
+    public void throwsWhenCantFindByPublic() {
+        final NetworkCollection collection = new NetworkCollection(Bitcoin.MAIN_NET);
+        assertThatThrownBy(() ->
+                collection.findByPublicVersion(Bitcoin.TEST_NET.getPublicVersion())
+        )
+                .isInstanceOf(UnknownNetworkException.class)
+                .hasMessage("Can't find network that matches public version 0x43587cf");
+    }
+
+    @Test
     public void throwsWhenCantFindByPrivateAlternativeMessageExpected() {
         final NetworkCollection collection = new NetworkCollection(Bitcoin.TEST_NET);
         assertThatThrownBy(() ->
@@ -63,6 +89,16 @@ public final class NetworkCollectionTests {
         )
                 .isInstanceOf(UnknownNetworkException.class)
                 .hasMessage("Can't find network that matches private version 0x488ade4");
+    }
+
+    @Test
+    public void throwsWhenCantFindByPublicAlternativeMessageExpected() {
+        final NetworkCollection collection = new NetworkCollection(Bitcoin.TEST_NET);
+        assertThatThrownBy(() ->
+                collection.findByPublicVersion(Bitcoin.MAIN_NET.getPublicVersion())
+        )
+                .isInstanceOf(UnknownNetworkException.class)
+                .hasMessage("Can't find network that matches public version 0x488b21e");
     }
 
     @Test

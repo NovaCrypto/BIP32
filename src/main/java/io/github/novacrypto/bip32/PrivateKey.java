@@ -25,7 +25,7 @@ import io.github.novacrypto.bip32.derivation.CkdFunction;
 import io.github.novacrypto.bip32.derivation.CkdFunctionDerive;
 import io.github.novacrypto.bip32.derivation.Derivation;
 import io.github.novacrypto.bip32.derivation.Derive;
-import io.github.novacrypto.bip32.networks.Bitcoin;
+import io.github.novacrypto.bip32.networks.DefaultNetworks;
 import io.github.novacrypto.toruntime.CheckedExceptionToRuntime;
 
 import java.math.BigInteger;
@@ -79,13 +79,17 @@ public final class PrivateKey implements
         this.hdKey = hdKey;
     }
 
+
     public static PrivateKey deserialize(final CharSequence extendedBase58) {
+        return deserialize(extendedBase58, DefaultNetworks.INSTANCE);
+    }
+
+    public static PrivateKey deserialize(final CharSequence extendedBase58, final Networks networks) {
         final byte[] data = base58Decode(extendedBase58);
         final ByteArrayReader reader = new ByteArrayReader(data);
-        final int ser32 = reader.readSer32();
         return new PrivateKey(new HdKey
                 .Builder()
-                .network(Bitcoin.MAIN_NET)
+                .network(networks.findByPrivateVersion(reader.readSer32()))
                 .depth(reader.read())
                 .parentFingerprint(reader.readSer32())
                 .childNumber(reader.readSer32())

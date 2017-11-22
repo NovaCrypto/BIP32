@@ -28,6 +28,7 @@ import io.github.novacrypto.bip32.networks.Litecoin;
 import io.github.novacrypto.bip39.SeedCalculator;
 import org.junit.Test;
 
+import static io.github.novacrypto.Asserts.assertBase58KeysEqual;
 import static org.junit.Assert.assertEquals;
 
 public final class Bip32PrivateRootTests {
@@ -42,7 +43,7 @@ public final class Bip32PrivateRootTests {
     @Test
     public void bip32RootLitecoinMainnet() {
         assertBip32Root(
-                "xprv9s21ZrQH143K49A3PVsMF6DG6RryWeoBaJw1eAmBTn5anZum4AhQDRYH29DMvQ6BY8HWc1jB4vxWPVoD6mmCcN3L3Wf3fq5pQCAA4suatkG",
+                "Ltpv71G8qDifUiNeu7ocqPuyPWS1HhKqbeUWzHxZbf9cTRffoNgdvoTxaGEvyukNo7jNTErngXNhE1fANzvHVtkBFUQg15cDyn8rCan48MF5YP6",
                 "edge talent poet tortoise trumpet dose", Litecoin.MAIN_NET);
     }
 
@@ -57,7 +58,7 @@ public final class Bip32PrivateRootTests {
         final byte[] seed = new SeedCalculator().calculateSeed(mnemonic, "");
 
         final String actualBip32Root = findBip32Root(seed, network);
-        assertEquals(expectedBip32Root, actualBip32Root);
+        assertBase58KeysEqual(expectedBip32Root, actualBip32Root);
     }
 
     private String findBip32Root(byte[] seed, Network network) {

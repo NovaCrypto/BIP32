@@ -25,6 +25,7 @@ import io.github.novacrypto.bip32.Network;
 import io.github.novacrypto.bip32.PrivateKey;
 import io.github.novacrypto.bip32.PublicKey;
 import io.github.novacrypto.bip32.networks.Bitcoin;
+import io.github.novacrypto.bip32.networks.NetworkCollection;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -44,6 +45,7 @@ public final class DeserializeKeysTests {
 
     private final PublicKey publicKey;
     private final String publicKeyBase58;
+    private final Network network;
 
     @Parameters
     public static Collection<Object[]> data() {
@@ -59,6 +61,7 @@ public final class DeserializeKeysTests {
     }
 
     public DeserializeKeysTests(CharSequence path, Network network) {
+        this.network = network;
         PrivateKey root = PrivateKey.fromSeed(new byte[0], network);
         privateKey = root.derive(path);
         publicKey = privateKey.neuter();
@@ -73,6 +76,12 @@ public final class DeserializeKeysTests {
     }
 
     @Test
+    public void canDeserializePrivateWithCustomNetworks() {
+        PrivateKey actual = PrivateKey.deserialize(privateKeyBase58, new NetworkCollection(network));
+        assertBase58KeysEqual(privateKeyBase58, actual.extendedBase58());
+    }
+
+    @Test
     public void canDeserializePrivateAndProduceAddresses() {
         PublicKey actual = PrivateKey.deserialize(privateKeyBase58).neuter();
         assertBase58AddressEqual(publicKey.p2pkhAddress(), actual.p2pkhAddress());
@@ -82,6 +91,12 @@ public final class DeserializeKeysTests {
     @Test
     public void canDeserializePublic() {
         PublicKey actual = PublicKey.deserialize(publicKeyBase58);
+        assertBase58KeysEqual(publicKeyBase58, actual.extendedBase58());
+    }
+
+    @Test
+    public void canDeserializePublicWithCustomNetworks() {
+        PublicKey actual = PublicKey.deserialize(publicKeyBase58, new NetworkCollection(network));
         assertBase58KeysEqual(publicKeyBase58, actual.extendedBase58());
     }
 

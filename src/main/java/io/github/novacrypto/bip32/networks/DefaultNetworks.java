@@ -25,7 +25,7 @@ import io.github.novacrypto.bip32.Network;
 import io.github.novacrypto.bip32.Networks;
 
 public enum DefaultNetworks implements Networks {
-    INSTANCE(new NetworkCollection(Bitcoin.MAIN_NET));
+    INSTANCE(new NetworkCollection(Bitcoin.MAIN_NET, Litecoin.MAIN_NET, Bitcoin.TEST_NET));
 
     private final Networks networks;
 
@@ -37,5 +37,10 @@ public enum DefaultNetworks implements Networks {
     @Override
     public Network findByPrivateVersion(final int privateVersion) {
         return networks.findByPrivateVersion(privateVersion);
+    }
+
+    @Override
+    public Network findByPublicVersion(final int publicVersion) {
+        return networks.findByPublicVersion(publicVersion);
     }
 }

@@ -44,7 +44,7 @@ public final class Bip32PublicRootTests {
     @Test
     public void bip32RootLitecoinMainnet() {
         assertBip32Root(
-                "xpub661MyMwAqRbcGdEWVXQMcE9zeThTv7X2wXrcSZAo27cZfNEubi1emDrksQppSupTfsNcsu9cyHP7pxEraUrYinxcMjgNLcH4N6Kagd1jrrc",
+                "Ltub2SSUS19CirucWzWT61QMU6GDjG22fu3B4p4bGduuPcTGPjsiFiWPasMCEHLr7KDiG5nCU2YApK2Vw3byVNwzZik2esZq1J36rb5vbCeXoSK",
                 "edge talent poet tortoise trumpet dose", Litecoin.MAIN_NET);
     }
 
