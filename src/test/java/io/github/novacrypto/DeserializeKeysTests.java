@@ -36,6 +36,7 @@ import java.util.Collection;
 
 import static io.github.novacrypto.Asserts.assertBase58AddressEqual;
 import static io.github.novacrypto.Asserts.assertBase58KeysEqual;
+import static io.github.novacrypto.base58.Base58.base58Decode;
 
 @RunWith(Parameterized.class)
 public final class DeserializeKeysTests {
@@ -82,6 +83,18 @@ public final class DeserializeKeysTests {
     }
 
     @Test
+    public void canDeserializePrivateByByteArray() {
+        PrivateKey actual = PrivateKey.deserialize(base58Decode(privateKeyBase58));
+        assertBase58KeysEqual(privateKeyBase58, actual.extendedBase58());
+    }
+
+    @Test
+    public void canDeserializePrivateByByteArrayWithCustomNetworks() {
+        PrivateKey actual = PrivateKey.deserialize(base58Decode(privateKeyBase58), new NetworkCollection(network));
+        assertBase58KeysEqual(privateKeyBase58, actual.extendedBase58());
+    }
+
+    @Test
     public void canDeserializePrivateAndProduceAddresses() {
         PublicKey actual = PrivateKey.deserialize(privateKeyBase58).neuter();
         assertBase58AddressEqual(publicKey.p2pkhAddress(), actual.p2pkhAddress());
@@ -97,6 +110,18 @@ public final class DeserializeKeysTests {
     @Test
     public void canDeserializePublicWithCustomNetworks() {
         PublicKey actual = PublicKey.deserialize(publicKeyBase58, new NetworkCollection(network));
+        assertBase58KeysEqual(publicKeyBase58, actual.extendedBase58());
+    }
+
+    @Test
+    public void canDeserializePublicByByteArray() {
+        PublicKey actual = PublicKey.deserialize(base58Decode(publicKeyBase58));
+        assertBase58KeysEqual(publicKeyBase58, actual.extendedBase58());
+    }
+
+    @Test
+    public void canDeserializePublicByByteArrayWithCustomNetworks() {
+        PublicKey actual = PublicKey.deserialize(base58Decode(publicKeyBase58), new NetworkCollection(network));
         assertBase58KeysEqual(publicKeyBase58, actual.extendedBase58());
     }
 

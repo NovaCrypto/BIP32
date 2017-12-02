@@ -85,7 +85,14 @@ public final class PrivateKey implements
     }
 
     public static PrivateKey deserialize(final CharSequence extendedBase58, final Networks networks) {
-        final byte[] data = base58Decode(extendedBase58);
+        return deserialize(base58Decode(extendedBase58), networks);
+    }
+
+    public static PrivateKey deserialize(final byte[] data) {
+        return deserialize(data, DefaultNetworks.INSTANCE);
+    }
+
+    public static PrivateKey deserialize(final byte[] data, final Networks networks) {
         final ByteArrayReader reader = new ByteArrayReader(data);
         return new PrivateKey(new HdKey
                 .Builder()

@@ -73,7 +73,14 @@ public final class PublicKey implements
     }
 
     public static PublicKey deserialize(final CharSequence base58, final Networks networks) {
-        final byte[] data = base58Decode(base58);
+        return deserialize(base58Decode(base58), networks);
+    }
+
+    public static PublicKey deserialize(final byte[] data) {
+        return deserialize(data, DefaultNetworks.INSTANCE);
+    }
+
+    public static PublicKey deserialize(final byte[] data, final Networks networks) {
         final ByteArrayReader reader = new ByteArrayReader(data);
         return new PublicKey(new HdKey
                 .Builder()
