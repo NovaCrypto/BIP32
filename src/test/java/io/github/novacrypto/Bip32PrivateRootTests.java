@@ -29,7 +29,6 @@ import io.github.novacrypto.bip39.SeedCalculator;
 import org.junit.Test;
 
 import static io.github.novacrypto.Asserts.assertBase58KeysEqual;
-import static org.junit.Assert.assertEquals;
 
 public final class Bip32PrivateRootTests {
 

@@ -25,7 +25,7 @@ import io.github.novacrypto.bip32.networks.DefaultNetworks;
 
 import static io.github.novacrypto.base58.Base58.base58Decode;
 
-public final class PublicKeyDeserializer implements Deserializer<PublicKey> {
+final class PublicKeyDeserializer implements Deserializer<PublicKey> {
 
     static final PublicKeyDeserializer DEFAULT = new PublicKeyDeserializer(DefaultNetworks.INSTANCE);
 

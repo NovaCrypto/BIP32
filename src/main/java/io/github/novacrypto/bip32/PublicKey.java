@@ -25,9 +25,7 @@ import io.github.novacrypto.bip32.derivation.CkdFunction;
 import io.github.novacrypto.bip32.derivation.CkdFunctionDerive;
 import io.github.novacrypto.bip32.derivation.Derivation;
 import io.github.novacrypto.bip32.derivation.Derive;
-import io.github.novacrypto.bip32.networks.DefaultNetworks;
 
-import static io.github.novacrypto.base58.Base58.base58Decode;
 import static io.github.novacrypto.base58.Base58.base58Encode;
 import static io.github.novacrypto.bip32.BigIntegerUtils.parse256;
 import static io.github.novacrypto.bip32.ByteArrayWriter.head32;
@@ -46,11 +44,11 @@ public final class PublicKey implements
         CKDpub,
         ExtendedKey {
 
-    public static PublicKeyDeserializer deserializer() {
+    public static Deserializer<PublicKey> deserializer() {
         return PublicKeyDeserializer.DEFAULT;
     }
 
-    public static PublicKeyDeserializer deserializer(final Networks networks) {
+    public static Deserializer<PublicKey> deserializer(final Networks networks) {
         return new PublicKeyDeserializer(networks);
     }
 
@@ -74,7 +72,6 @@ public final class PublicKey implements
     }
 
     private final HdKey hdKey;
-
 
     PublicKey(final HdKey hdKey) {
         this.hdKey = hdKey;

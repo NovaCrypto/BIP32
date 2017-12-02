@@ -25,13 +25,11 @@ import io.github.novacrypto.bip32.derivation.CkdFunction;
 import io.github.novacrypto.bip32.derivation.CkdFunctionDerive;
 import io.github.novacrypto.bip32.derivation.Derivation;
 import io.github.novacrypto.bip32.derivation.Derive;
-import io.github.novacrypto.bip32.networks.DefaultNetworks;
 import io.github.novacrypto.toruntime.CheckedExceptionToRuntime;
 
 import java.math.BigInteger;
 import java.util.Arrays;
 
-import static io.github.novacrypto.base58.Base58.base58Decode;
 import static io.github.novacrypto.base58.Base58.base58Encode;
 import static io.github.novacrypto.bip32.BigIntegerUtils.parse256;
 import static io.github.novacrypto.bip32.BigIntegerUtils.ser256;
@@ -52,11 +50,11 @@ public final class PrivateKey implements
         CKDpub,
         ExtendedKey {
 
-    public static PrivateKeyDeserializer deserializer() {
+    public static Deserializer<PrivateKey> deserializer() {
         return PrivateKeyDeserializer.DEFAULT;
     }
 
-    public static PrivateKeyDeserializer deserializer(final Networks networks) {
+    public static Deserializer<PrivateKey> deserializer(final Networks networks) {
         return new PrivateKeyDeserializer(networks);
     }
 
