@@ -46,6 +46,14 @@ public final class PublicKey implements
         CKDpub,
         ExtendedKey {
 
+    public static PublicKeyDeserializer deserializer() {
+        return PublicKeyDeserializer.DEFAULT;
+    }
+
+    public static PublicKeyDeserializer deserializer(final Networks networks) {
+        return new PublicKeyDeserializer(networks);
+    }
+
     private static final CkdFunction<PublicKey> CKD_FUNCTION = new CkdFunction<PublicKey>() {
         @Override
         public PublicKey deriveChildKey(final PublicKey parent, final int childIndex) {
@@ -68,34 +76,7 @@ public final class PublicKey implements
     private final HdKey hdKey;
 
 
-    public static PublicKey deserialize(final CharSequence base58) {
-        return deserialize(base58, DefaultNetworks.INSTANCE);
-    }
-
-    public static PublicKey deserialize(final CharSequence base58, final Networks networks) {
-        return deserialize(base58Decode(base58), networks);
-    }
-
-    public static PublicKey deserialize(final byte[] data) {
-        return deserialize(data, DefaultNetworks.INSTANCE);
-    }
-
-    public static PublicKey deserialize(final byte[] data, final Networks networks) {
-        final ByteArrayReader reader = new ByteArrayReader(data);
-        return new PublicKey(new HdKey
-                .Builder()
-                .network(networks.findByPublicVersion(reader.readSer32()))
-                .depth(reader.read())
-                .parentFingerprint(reader.readSer32())
-                .childNumber(reader.readSer32())
-                .chainCode(reader.readRange(32))
-                .key(reader.readRange(33))
-                .neutered(true)
-                .build()
-        );
-    }
-
-    private PublicKey(final HdKey hdKey) {
+    PublicKey(final HdKey hdKey) {
         this.hdKey = hdKey;
     }
 

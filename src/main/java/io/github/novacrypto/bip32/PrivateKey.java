@@ -52,6 +52,14 @@ public final class PrivateKey implements
         CKDpub,
         ExtendedKey {
 
+    public static PrivateKeyDeserializer deserializer() {
+        return PrivateKeyDeserializer.DEFAULT;
+    }
+
+    public static PrivateKeyDeserializer deserializer(final Networks networks) {
+        return new PrivateKeyDeserializer(networks);
+    }
+
     private static final CkdFunction<PrivateKey> CKD_FUNCTION = new CkdFunction<PrivateKey>() {
         @Override
         public PrivateKey deriveChildKey(final PrivateKey parent, final int childIndex) {
@@ -75,36 +83,8 @@ public final class PrivateKey implements
                 .build());
     }
 
-    private PrivateKey(final HdKey hdKey) {
+    PrivateKey(final HdKey hdKey) {
         this.hdKey = hdKey;
-    }
-
-
-    public static PrivateKey deserialize(final CharSequence extendedBase58) {
-        return deserialize(extendedBase58, DefaultNetworks.INSTANCE);
-    }
-
-    public static PrivateKey deserialize(final CharSequence extendedBase58, final Networks networks) {
-        return deserialize(base58Decode(extendedBase58), networks);
-    }
-
-    public static PrivateKey deserialize(final byte[] data) {
-        return deserialize(data, DefaultNetworks.INSTANCE);
-    }
-
-    public static PrivateKey deserialize(final byte[] data, final Networks networks) {
-        final ByteArrayReader reader = new ByteArrayReader(data);
-        return new PrivateKey(new HdKey
-                .Builder()
-                .network(networks.findByPrivateVersion(reader.readSer32()))
-                .depth(reader.read())
-                .parentFingerprint(reader.readSer32())
-                .childNumber(reader.readSer32())
-                .chainCode(reader.readRange(32))
-                .key(reader.readRange(33))
-                .neutered(false)
-                .build()
-        );
     }
 
     public static PrivateKey fromSeed(final byte[] seed, final Network network) {
