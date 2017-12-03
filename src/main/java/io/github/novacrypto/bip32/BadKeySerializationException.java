@@ -21,16 +21,9 @@
 
 package io.github.novacrypto.bip32;
 
-import org.junit.Test;
+public final class BadKeySerializationException extends RuntimeException {
 
-public final class ConstructorCoverage {
-
-    @Test
-    public void coverUtilClassConstructors() {
-        new BigIntegerUtils();
-        new HmacSha512();
-        new Index();
-        new Secp256k1BC();
-        new Checksum();
+    BadKeySerializationException(final String message) {
+        super(message);
     }
 }

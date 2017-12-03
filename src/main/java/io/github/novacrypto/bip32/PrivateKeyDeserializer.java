@@ -24,6 +24,7 @@ package io.github.novacrypto.bip32;
 import io.github.novacrypto.bip32.networks.DefaultNetworks;
 
 import static io.github.novacrypto.base58.Base58.base58Decode;
+import static io.github.novacrypto.bip32.Checksum.confirmExtendedKeyChecksum;
 
 final class PrivateKeyDeserializer implements Deserializer<PrivateKey> {
 
@@ -42,6 +43,7 @@ final class PrivateKeyDeserializer implements Deserializer<PrivateKey> {
 
     @Override
     public PrivateKey deserialize(final byte[] extendedKeyData) {
+        confirmExtendedKeyChecksum(extendedKeyData);
         final ByteArrayReader reader = new ByteArrayReader(extendedKeyData);
         return new PrivateKey(new HdKey
                 .Builder()
@@ -50,9 +52,16 @@ final class PrivateKeyDeserializer implements Deserializer<PrivateKey> {
                 .parentFingerprint(reader.readSer32())
                 .childNumber(reader.readSer32())
                 .chainCode(reader.readRange(32))
-                .key(reader.readRange(33))
+                .key(getKey(reader))
                 .neutered(false)
                 .build()
         );
+    }
+
+    private byte[] getKey(final ByteArrayReader reader) {
+        if (reader.read() != 0) {
+            throw new BadKeySerializationException("Expected 0 padding at position 45");
+        }
+        return reader.readRange(32);
     }
 }

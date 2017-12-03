@@ -21,16 +21,19 @@
 
 package io.github.novacrypto.bip32;
 
-import org.junit.Test;
+import static io.github.novacrypto.hashing.Sha256.sha256Twice;
 
-public final class ConstructorCoverage {
+final class Checksum {
 
-    @Test
-    public void coverUtilClassConstructors() {
-        new BigIntegerUtils();
-        new HmacSha512();
-        new Index();
-        new Secp256k1BC();
-        new Checksum();
+    static void confirmExtendedKeyChecksum(final byte[] extendedKeyData) {
+        final byte[] expected = checksum(extendedKeyData);
+        for (int i = 0; i < 4; i++) {
+            if (extendedKeyData[78 + i] != expected[i])
+                throw new BadKeySerializationException("Checksum error");
+        }
+    }
+
+    static byte[] checksum(final byte[] privateKey) {
+        return sha256Twice(privateKey, 0, 78);
     }
 }

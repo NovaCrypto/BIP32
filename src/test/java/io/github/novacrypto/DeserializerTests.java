@@ -21,6 +21,7 @@
 
 package io.github.novacrypto;
 
+import io.github.novacrypto.bip32.BadKeySerializationException;
 import io.github.novacrypto.bip32.Deserializer;
 import io.github.novacrypto.bip32.PrivateKey;
 import io.github.novacrypto.bip32.PublicKey;
@@ -29,14 +30,17 @@ import io.github.novacrypto.bip32.networks.NetworkCollection;
 import io.github.novacrypto.bip32.networks.UnknownNetworkException;
 import org.junit.Test;
 
+import static io.github.novacrypto.base58.Base58.base58Decode;
+import static io.github.novacrypto.hashing.Sha256.sha256Twice;
 import static org.assertj.core.api.Java6Assertions.assertThatThrownBy;
 import static org.junit.Assert.assertSame;
 
 public final class DeserializerTests {
+    private static final String testNetPrivate = "tprv8h32u4uFFpteVm9KA3TJ1QGypPx3AnzQzgp94ViSwtfhBS3vJ8QyxZHXiPi55QpK6fhyB2P8GZJsuersFDEQCABbqLewrA7obiz5jKURc6F";
+    private static final String testNetPublic = "tpubDDj53UwVQCaKPEB73h7tQow6PRTyL8BKZzQvM1kkNAU61vJgvXEa93uPtWpsvaMNenwzJztGA9owTgD6rin6PASKDiZHMJCefsEChkEeVWe";
 
     @Test
     public void deserializePrivateThrowsExceptionWhenNetworkNotFound() {
-        final String testNetPrivate = "tprv8h32u4uFFpteVm9KA3TJ1QGypPx3AnzQzgp94ViSwtfhBS3vJ8QyxZHXiPi55QpK6fhyB2P8GZJsuersFDEQCABbqLewrA7obiz5jKURc6F";
         final Deserializer<PrivateKey> deserializer = PrivateKey.deserializer(new NetworkCollection(Bitcoin.MAIN_NET));
         assertThatThrownBy(() ->
                 deserializer.deserialize(testNetPrivate)
@@ -45,11 +49,27 @@ public final class DeserializerTests {
 
     @Test
     public void deserializePublicThrowsExceptionWhenNetworkNotFound() {
-        final String testNetPublic = "tpubDDj53UwVQCaKPEB73h7tQow6PRTyL8BKZzQvM1kkNAU61vJgvXEa93uPtWpsvaMNenwzJztGA9owTgD6rin6PASKDiZHMJCefsEChkEeVWe";
         final Deserializer<PublicKey> deserializer = PublicKey.deserializer(new NetworkCollection(Bitcoin.MAIN_NET));
         assertThatThrownBy(() ->
                 deserializer.deserialize(testNetPublic)
         ).isInstanceOf(UnknownNetworkException.class);
+    }
+
+    @Test
+    public void deserializeBadPrivateKeyWhenPaddingExpectedAtPosition45BeforeKeyBytes() {
+        final byte[] bytes = base58Decode(testNetPrivate);
+        bytes[45] = 1;
+        rewriteChecksum(bytes);
+        final Deserializer<PrivateKey> deserializer = PrivateKey.deserializer();
+        assertThatThrownBy(() ->
+                deserializer.deserialize(bytes)
+        ).isInstanceOf(BadKeySerializationException.class)
+                .hasMessage("Expected 0 padding at position 45");
+    }
+
+    private void rewriteChecksum(byte[] bytes) {
+        final byte[] checksum = sha256Twice(bytes, 0, 78);
+        System.arraycopy(checksum, 0, bytes, 78, 4);
     }
 
     @Test
@@ -60,5 +80,37 @@ public final class DeserializerTests {
     @Test
     public void publicKeyDeserializerIsConstant() {
         assertSame(PublicKey.deserializer(), PublicKey.deserializer());
+    }
+
+    @Test
+    public void anyChangeResultsInChecksumFailurePublicKey() {
+        final byte[] bytes = base58Decode(testNetPublic);
+        for (int i = 0; i < bytes.length; i++) {
+            final byte[] copy = cloneWithMutationAt(bytes, i);
+            final Deserializer<PublicKey> deserializer = PublicKey.deserializer();
+            assertThatThrownBy(() ->
+                    deserializer.deserialize(copy)
+            ).isInstanceOf(BadKeySerializationException.class)
+                    .hasMessage("Checksum error");
+        }
+    }
+
+    @Test
+    public void anyChangeResultsInChecksumFailurePrivateKey() {
+        final byte[] bytes = base58Decode(testNetPrivate);
+        for (int i = 0; i < bytes.length; i++) {
+            final byte[] copy = cloneWithMutationAt(bytes, i);
+            final Deserializer<PrivateKey> deserializer = PrivateKey.deserializer();
+            assertThatThrownBy(() ->
+                    deserializer.deserialize(copy)
+            ).isInstanceOf(BadKeySerializationException.class)
+                    .hasMessage("Checksum error");
+        }
+    }
+
+    private static byte[] cloneWithMutationAt(byte[] bytes, int i) {
+        final byte[] copy = bytes.clone();
+        copy[i] = (byte) ~copy[i];
+        return copy;
     }
 }

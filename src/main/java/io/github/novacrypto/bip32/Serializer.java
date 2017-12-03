@@ -21,6 +21,7 @@
 
 package io.github.novacrypto.bip32;
 
+import static io.github.novacrypto.bip32.Checksum.checksum;
 import static io.github.novacrypto.hashing.Sha256.sha256Twice;
 
 final class Serializer {
@@ -67,8 +68,7 @@ final class Serializer {
         } else {
             writer.concat(key);
         }
-        final byte[] checksum = sha256Twice(privateKey, 0, 78);
-        writer.concat(checksum, 4);
+        writer.concat(checksum(privateKey), 4);
         return privateKey;
     }
 

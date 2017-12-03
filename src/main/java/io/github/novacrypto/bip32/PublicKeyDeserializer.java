@@ -24,6 +24,7 @@ package io.github.novacrypto.bip32;
 import io.github.novacrypto.bip32.networks.DefaultNetworks;
 
 import static io.github.novacrypto.base58.Base58.base58Decode;
+import static io.github.novacrypto.bip32.Checksum.confirmExtendedKeyChecksum;
 
 final class PublicKeyDeserializer implements Deserializer<PublicKey> {
 
@@ -42,6 +43,7 @@ final class PublicKeyDeserializer implements Deserializer<PublicKey> {
 
     @Override
     public PublicKey deserialize(final byte[] extendedKeyData) {
+        confirmExtendedKeyChecksum(extendedKeyData);
         final ByteArrayReader reader = new ByteArrayReader(extendedKeyData);
         return new PublicKey(new HdKey
                 .Builder()
