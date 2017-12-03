@@ -23,6 +23,12 @@ package io.github.novacrypto.bip32;
 
 public interface ExtendedKey {
 
+    Network network();
+
+    int depth();
+
+    int childNumber();
+
     String extendedBase58();
 
     byte[] extendedKeyByteArray();
