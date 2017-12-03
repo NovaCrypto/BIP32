@@ -31,5 +31,6 @@ public final class ConstructorCoverage {
         new HmacSha512();
         new Index();
         new Secp256k1BC();
+        new Checksum();
     }
 }

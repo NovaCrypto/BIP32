@@ -29,7 +29,6 @@ import io.github.novacrypto.bip32.networks.Bitcoin;
 import org.junit.Test;
 
 import static io.github.novacrypto.Asserts.assertBase58KeysEqual;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
 
 public final class IntArrayPublicDerivationTests {

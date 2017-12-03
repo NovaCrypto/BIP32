@@ -22,27 +22,25 @@
 package io.github.novacrypto.bip32.networks;
 
 import io.github.novacrypto.bip32.Network;
+import io.github.novacrypto.bip32.Networks;
 
-public enum Litecoin implements Network {
-    MAIN_NET {
-        @Override
-        public int getPrivateVersion() {
-            return 0x019d9cfe;
-        }
+public enum DefaultNetworks implements Networks {
+    INSTANCE(new NetworkCollection(Bitcoin.MAIN_NET, Litecoin.MAIN_NET, Bitcoin.TEST_NET));
 
-        @Override
-        public int getPublicVersion() {
-            return 0x019da462;
-        }
+    private final Networks networks;
 
-        @Override
-        public byte p2pkhVersion() {
-            return 0x30;
-        }
+    DefaultNetworks(final Networks networks) {
 
-        @Override
-        public byte p2shVersion() {
-            return 0x32;
-        }
+        this.networks = networks;
+    }
+
+    @Override
+    public Network findByPrivateVersion(final int privateVersion) {
+        return networks.findByPrivateVersion(privateVersion);
+    }
+
+    @Override
+    public Network findByPublicVersion(final int publicVersion) {
+        return networks.findByPublicVersion(publicVersion);
     }
 }

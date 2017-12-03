@@ -21,28 +21,8 @@
 
 package io.github.novacrypto.bip32.networks;
 
-import io.github.novacrypto.bip32.Network;
-
-public enum Litecoin implements Network {
-    MAIN_NET {
-        @Override
-        public int getPrivateVersion() {
-            return 0x019d9cfe;
-        }
-
-        @Override
-        public int getPublicVersion() {
-            return 0x019da462;
-        }
-
-        @Override
-        public byte p2pkhVersion() {
-            return 0x30;
-        }
-
-        @Override
-        public byte p2shVersion() {
-            return 0x32;
-        }
+public final class UnknownNetworkException extends RuntimeException {
+    UnknownNetworkException(final String message) {
+        super(message);
     }
 }

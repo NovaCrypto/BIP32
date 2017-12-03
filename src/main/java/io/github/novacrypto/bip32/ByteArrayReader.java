@@ -23,47 +23,36 @@ package io.github.novacrypto.bip32;
 
 import java.util.Arrays;
 
-final class ByteArrayWriter {
+final class ByteArrayReader {
 
     private final byte[] bytes;
     private int idx = 0;
 
-    ByteArrayWriter(final byte[] target) {
-        this.bytes = target;
+    ByteArrayReader(final byte[] source) {
+        this.bytes = source;
     }
 
-    void concat(final byte[] bytesSource, final int length) {
-        System.arraycopy(bytesSource, 0, bytes, idx, length);
+    byte[] readRange(final int length) {
+        final byte[] range = Arrays.copyOfRange(this.bytes, idx, idx + length);
         idx += length;
-    }
-
-    void concat(final byte[] bytesSource) {
-        concat(bytesSource, bytesSource.length);
+        return range;
     }
 
     /**
-     * ser32(i): serialize a 32-bit unsigned integer i as a 4-byte sequence, most significant byte first.
-     *
-     * @param i a 32-bit unsigned integer
+     * deserialize a 32-bit unsigned integer i as a 4-byte sequence, most significant byte first.
      */
-    void concatSer32(final int i) {
-        concat((byte) (i >> 24));
-        concat((byte) (i >> 16));
-        concat((byte) (i >> 8));
-        concat((byte) (i));
+    int readSer32() {
+        int result = read();
+        result <<= 8;
+        result |= read();
+        result <<= 8;
+        result |= read();
+        result <<= 8;
+        result |= read();
+        return result;
     }
 
-    void concat(final byte b) {
-        bytes[idx++] = b;
-    }
-
-    static byte[] tail32(final byte[] bytes64) {
-        final byte[] ir = new byte[bytes64.length - 32];
-        System.arraycopy(bytes64, 32, ir, 0, ir.length);
-        return ir;
-    }
-
-    static byte[] head32(final byte[] bytes64) {
-        return Arrays.copyOf(bytes64, 32);
+    int read() {
+        return 0xff & bytes[idx++];
     }
 }

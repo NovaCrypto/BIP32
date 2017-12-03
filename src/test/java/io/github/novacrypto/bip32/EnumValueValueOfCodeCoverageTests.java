@@ -24,6 +24,7 @@ package io.github.novacrypto.bip32;
 import io.github.novacrypto.bip32.derivation.CharSequenceDerivation;
 import io.github.novacrypto.bip32.derivation.IntArrayDerivation;
 import io.github.novacrypto.bip32.networks.Bitcoin;
+import io.github.novacrypto.bip32.networks.DefaultNetworks;
 import io.github.novacrypto.bip32.networks.Litecoin;
 import org.junit.Test;
 
@@ -41,5 +42,6 @@ public final class EnumValueValueOfCodeCoverageTests {
         superficialEnumCodeCoverage(Litecoin.class);
         superficialEnumCodeCoverage(CharSequenceDerivation.class);
         superficialEnumCodeCoverage(IntArrayDerivation.class);
+        superficialEnumCodeCoverage(DefaultNetworks.class);
     }
 }

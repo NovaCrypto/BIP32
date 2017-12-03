@@ -19,30 +19,21 @@
  *  You can contact the authors via github issues.
  */
 
-package io.github.novacrypto.bip32.networks;
+package io.github.novacrypto.bip32;
 
-import io.github.novacrypto.bip32.Network;
+import static io.github.novacrypto.hashing.Sha256.sha256Twice;
 
-public enum Litecoin implements Network {
-    MAIN_NET {
-        @Override
-        public int getPrivateVersion() {
-            return 0x019d9cfe;
+final class Checksum {
+
+    static void confirmExtendedKeyChecksum(final byte[] extendedKeyData) {
+        final byte[] expected = checksum(extendedKeyData);
+        for (int i = 0; i < 4; i++) {
+            if (extendedKeyData[78 + i] != expected[i])
+                throw new BadKeySerializationException("Checksum error");
         }
+    }
 
-        @Override
-        public int getPublicVersion() {
-            return 0x019da462;
-        }
-
-        @Override
-        public byte p2pkhVersion() {
-            return 0x30;
-        }
-
-        @Override
-        public byte p2shVersion() {
-            return 0x32;
-        }
+    static byte[] checksum(final byte[] privateKey) {
+        return sha256Twice(privateKey, 0, 78);
     }
 }
