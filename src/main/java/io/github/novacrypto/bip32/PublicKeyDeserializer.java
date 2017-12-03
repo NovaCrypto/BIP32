@@ -23,6 +23,8 @@ package io.github.novacrypto.bip32;
 
 import io.github.novacrypto.bip32.networks.DefaultNetworks;
 
+import java.util.Arrays;
+
 import static io.github.novacrypto.base58.Base58.base58Decode;
 import static io.github.novacrypto.bip32.Checksum.confirmExtendedKeyChecksum;
 
@@ -38,7 +40,12 @@ final class PublicKeyDeserializer implements Deserializer<PublicKey> {
 
     @Override
     public PublicKey deserialize(final CharSequence extendedBase58Key) {
-        return deserialize(base58Decode(extendedBase58Key));
+        final byte[] extendedKeyData = base58Decode(extendedBase58Key);
+        try {
+            return deserialize(extendedKeyData);
+        } finally {
+            Arrays.fill(extendedKeyData, (byte) 0);
+        }
     }
 
     @Override
