@@ -178,4 +178,19 @@ public final class PrivateKey implements
     private Derive<PrivateKey> derive(final CkdFunction<PrivateKey> ckdFunction) {
         return new CkdFunctionDerive<>(ckdFunction, this);
     }
+
+    @Override
+    public Network network() {
+        return hdKey.getNetwork();
+    }
+
+    @Override
+    public int depth() {
+        return hdKey.depth();
+    }
+
+    @Override
+    public int childNumber() {
+        return hdKey.getChildNumber();
+    }
 }
