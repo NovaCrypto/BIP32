@@ -10,6 +10,7 @@ Repository:
 
 ```
 repositories {
+    jcenter()
     maven {
         url 'https://dl.bintray.com/novacrypto/BIP/'
     }
