@@ -21,7 +21,7 @@ Add dependency:
 
 ```
 dependencies {
-    compile 'io.github.novacrypto:BIP32:0.0.7'
+    compile 'io.github.novacrypto:BIP32:0.0.8'
 }
 
 ```
