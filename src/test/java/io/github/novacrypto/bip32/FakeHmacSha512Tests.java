@@ -28,7 +28,7 @@ import org.junit.runner.RunWith;
 import java.math.BigInteger;
 import java.util.Arrays;
 
-import static io.github.novacrypto.bip32.FakeHmacSha512.fakeHmacResponses;
+import static io.github.novacrypto.bip32.FakeHmacSha512.fakeHmacSha512Responses;
 import static io.github.novacrypto.bip32.FakeHmacSha512.toHeadOf64Bytes;
 import static io.github.novacrypto.bip32.HmacSha512.hmacSha512;
 import static io.github.novacrypto.bip32.Secp256k1SC.n;
@@ -41,7 +41,7 @@ public final class FakeHmacSha512Tests {
     public void canFakeHmacResponses() {
         byte[] one = new byte[100];
         byte[] two = new byte[100];
-        fakeHmacResponses(one, two);
+        fakeHmacSha512Responses(one, two);
         assertSame(one, hmacSha512(new byte[0], new byte[0]));
         assertSame(two, hmacSha512(new byte[0], new byte[0]));
     }

@@ -32,7 +32,14 @@ import static org.junit.Assert.assertEquals;
 
 final class FakeHmacSha512 {
 
-    static void fakeHmacResponses(byte[]... responses) {
+    static void fakeHmacSha512Responses(BigInteger... responses) {
+        byte[][] valuesOfI = new byte[responses.length][];
+        for (int i = 0; i < responses.length; i++)
+            valuesOfI[i] = toHeadOf64Bytes(responses[i]);
+        fakeHmacSha512Responses(valuesOfI);
+    }
+
+    static void fakeHmacSha512Responses(byte[]... responses) {
         new MockUp<HmacSha512>() {
             private int i = 0;
 
@@ -55,5 +62,12 @@ final class FakeHmacSha512 {
         byte[] i64 = new byte[64];
         System.arraycopy(i32, 0, i64, 0, 32);
         return i64;
+    }
+
+    static byte[][] toHeadOf64BytesArray(BigInteger... iLs) {
+        byte[][] valuesOfI = new byte[iLs.length][];
+        for (int i = 0; i < iLs.length; i++)
+            valuesOfI[i] = toHeadOf64Bytes(iLs[i]);
+        return valuesOfI;
     }
 }
