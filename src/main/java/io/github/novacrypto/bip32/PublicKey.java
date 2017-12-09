@@ -25,6 +25,9 @@ import io.github.novacrypto.bip32.derivation.CkdFunction;
 import io.github.novacrypto.bip32.derivation.CkdFunctionDerive;
 import io.github.novacrypto.bip32.derivation.Derivation;
 import io.github.novacrypto.bip32.derivation.Derive;
+import org.spongycastle.math.ec.ECPoint;
+
+import java.math.BigInteger;
 
 import static io.github.novacrypto.base58.Base58.base58Encode;
 import static io.github.novacrypto.bip32.BigIntegerUtils.parse256;
@@ -32,6 +35,7 @@ import static io.github.novacrypto.bip32.ByteArrayWriter.head32;
 import static io.github.novacrypto.bip32.ByteArrayWriter.tail32;
 import static io.github.novacrypto.bip32.HmacSha512.hmacSha512;
 import static io.github.novacrypto.bip32.Index.isHardened;
+import static io.github.novacrypto.bip32.Secp256k1BC.n;
 import static io.github.novacrypto.bip32.derivation.CkdFunctionResultCacheDecorator.newCacheOf;
 import static io.github.novacrypto.hashing.Hash160.hash160into;
 import static io.github.novacrypto.hashing.Sha256.sha256Twice;
@@ -94,7 +98,13 @@ public final class PublicKey implements
         final byte[] Il = head32(I);
         final byte[] Ir = tail32(I);
 
-        final byte[] key = Secp256k1BC.pointSerP(parse256(Il), kPar);
+        final BigInteger parse256_Il = parse256(Il);
+        final ECPoint ki = Secp256k1BC.pointAndAdd(parse256_Il, kPar);
+
+        if (parse256_Il.compareTo(n()) >= 0 || ki.isInfinity()) {
+            return cKDpub(index + 1);
+        }
+        final byte[] key = ki.getEncoded(true);
 
         return new PublicKey(new HdKey.Builder()
                 .network(parent.getNetwork())
