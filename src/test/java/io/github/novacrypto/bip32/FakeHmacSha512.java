@@ -21,29 +21,39 @@
 
 package io.github.novacrypto.bip32;
 
+import mockit.Invocation;
+import mockit.Mock;
+import mockit.MockUp;
+
 import java.math.BigInteger;
 import java.util.Arrays;
 
-final class BigIntegerUtils {
+import static org.junit.Assert.assertEquals;
 
-    static BigInteger parse256(final byte[] bytes) {
-        return new BigInteger(1, bytes);
+final class FakeHmacSha512 {
+
+    static void fakeHmacResponses(byte[]... responses) {
+        new MockUp<HmacSha512>() {
+            private int i = 0;
+
+            @Mock
+            public byte[] hmacSha512(Invocation inv, final byte[] byteKey, final byte[] seed) {
+                if (i > responses.length - 1) {
+                    return inv.proceed(byteKey, seed);
+                }
+                return responses[i++];
+            }
+        };
     }
 
-    static void ser256(final byte[] target, final BigInteger integer) {
-        if (integer.bitLength() > target.length * 8)
-            throw new RuntimeException("ser256 failed, cannot fit integer in buffer");
-        final byte[] modArr = integer.toByteArray();
-        Arrays.fill(target, (byte) 0);
-        copyTail(modArr, target);
-        Arrays.fill(modArr, (byte) 0);
-    }
-
-    private static void copyTail(final byte[] src, final byte[] dest) {
-        if (src.length < dest.length) {
-            System.arraycopy(src, 0, dest, dest.length - src.length, src.length);
-        } else {
-            System.arraycopy(src, src.length - dest.length, dest, 0, dest.length);
-        }
+    static byte[] toHeadOf64Bytes(BigInteger i) {
+        byte[] iBytes = i.toByteArray();
+        assertEquals(0, iBytes[0]);
+        assertEquals(33, iBytes.length);
+        byte[] i32 = Arrays.copyOfRange(iBytes, 1, 33);
+        assertEquals(32, i32.length);
+        byte[] i64 = new byte[64];
+        System.arraycopy(i32, 0, i64, 0, 32);
+        return i64;
     }
 }
