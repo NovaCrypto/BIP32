@@ -35,6 +35,7 @@ import static io.github.novacrypto.bip32.ByteArrayWriter.head32;
 import static io.github.novacrypto.bip32.ByteArrayWriter.tail32;
 import static io.github.novacrypto.bip32.HmacSha512.hmacSha512;
 import static io.github.novacrypto.bip32.Index.isHardened;
+import static io.github.novacrypto.bip32.Secp256k1SC.gMultiplyAndAddPoint;
 import static io.github.novacrypto.bip32.Secp256k1SC.n;
 import static io.github.novacrypto.bip32.Secp256k1SC.pointSerP;
 import static io.github.novacrypto.bip32.derivation.CkdFunctionResultCacheDecorator.newCacheOf;
@@ -100,7 +101,7 @@ public final class PublicKey implements
         final byte[] Ir = tail32(I);
 
         final BigInteger parse256_Il = parse256(Il);
-        final ECPoint ki = Secp256k1SC.gMultiplyAndAddPoint(parse256_Il, kPar);
+        final ECPoint ki = gMultiplyAndAddPoint(parse256_Il, kPar);
 
         if (parse256_Il.compareTo(n()) >= 0 || ki.isInfinity()) {
             return cKDpub(index + 1);

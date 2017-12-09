@@ -31,6 +31,7 @@ import java.math.BigInteger;
 import static io.github.novacrypto.bip32.FakeHmacSha512.fakeHmacResponses;
 import static io.github.novacrypto.bip32.FakeHmacSha512.toHeadOf64Bytes;
 import static io.github.novacrypto.bip32.FakeSecp256k1SC.fakeGMultiplyAndAddPointNextInfinity;
+import static io.github.novacrypto.bip32.Secp256k1SC.n;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -64,22 +65,22 @@ public final class PublicKeyEdgeCases {
 
     @Test
     public void when_parse256_Il_equal_n_returns_next() {
-        assertKeyIsOfIndex(0, 1, Secp256k1SC.n());
+        assertKeyIsOfIndex(0, 1, n());
     }
 
     @Test
     public void when_parse256_Il_equal_n_returns_next_alternative_indexes() {
-        assertKeyIsOfIndex(9, 10, Secp256k1SC.n());
+        assertKeyIsOfIndex(9, 10, n());
     }
 
     @Test
     public void when_parse256_Il_greater_n_returns_next_child() {
-        assertKeyIsOfIndex(0, 1, Secp256k1SC.n().add(BigInteger.ONE));
+        assertKeyIsOfIndex(0, 1, n().add(BigInteger.ONE));
     }
 
     @Test
     public void when_parse256_Il_greater_n_returns_next_child_alternative_indexes() {
-        assertKeyIsOfIndex(1000, 1001, Secp256k1SC.n().add(BigInteger.ONE));
+        assertKeyIsOfIndex(1000, 1001, n().add(BigInteger.ONE));
     }
 
     @Test

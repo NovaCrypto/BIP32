@@ -29,6 +29,7 @@ import org.junit.runner.RunWith;
 import java.math.BigInteger;
 
 import static io.github.novacrypto.bip32.FakeSecp256k1SC.fakeGMultiplyAndAddPointNextInfinity;
+import static io.github.novacrypto.bip32.Secp256k1SC.gMultiplyAndAddPoint;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -39,13 +40,13 @@ public final class FakeCurveTests {
     @Test
     public void canFakeInfinity() {
         fakeGMultiplyAndAddPointNextInfinity();
-        assertTrue(Secp256k1SC.gMultiplyAndAddPoint(BigInteger.ONE, encodedPoint).isInfinity());
+        assertTrue(gMultiplyAndAddPoint(BigInteger.ONE, encodedPoint).isInfinity());
     }
 
     @Test
     public void nextIsNotInfinity() {
         fakeGMultiplyAndAddPointNextInfinity();
-        assertTrue(Secp256k1SC.gMultiplyAndAddPoint(BigInteger.ONE, encodedPoint).isInfinity());
-        assertFalse(Secp256k1SC.gMultiplyAndAddPoint(BigInteger.ONE, encodedPoint).isInfinity());
+        assertTrue(gMultiplyAndAddPoint(BigInteger.ONE, encodedPoint).isInfinity());
+        assertFalse(gMultiplyAndAddPoint(BigInteger.ONE, encodedPoint).isInfinity());
     }
 }
