@@ -37,7 +37,7 @@ import static io.github.novacrypto.bip32.ByteArrayWriter.head32;
 import static io.github.novacrypto.bip32.ByteArrayWriter.tail32;
 import static io.github.novacrypto.bip32.HmacSha512.hmacSha512;
 import static io.github.novacrypto.bip32.Index.isHardened;
-import static io.github.novacrypto.bip32.Secp256k1BC.n;
+import static io.github.novacrypto.bip32.Secp256k1SC.n;
 import static io.github.novacrypto.bip32.derivation.CkdFunctionResultCacheDecorator.newCacheOf;
 import static io.github.novacrypto.toruntime.CheckedExceptionToRuntime.toRuntime;
 
@@ -133,9 +133,14 @@ public final class PrivateKey implements
         final byte[] Ir = tail32(I);
 
         final byte[] key = hdKey.getKey();
-        final BigInteger mod = parse256(Il).add(parse256(key)).mod(n());
+        final BigInteger parse256_Il = parse256(Il);
+        final BigInteger ki = parse256_Il.add(parse256(key)).mod(n());
 
-        ser256(Il, mod);
+        if (parse256_Il.compareTo(n()) >= 0 || ki.equals(BigInteger.ZERO)) {
+            return cKDpriv(index + 1);
+        }
+
+        ser256(Il, ki);
 
         return new PrivateKey(new HdKey.Builder()
                 .network(hdKey.getNetwork())

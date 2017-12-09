@@ -21,29 +21,32 @@
 
 package io.github.novacrypto.bip32;
 
+import mockit.Invocation;
+import mockit.Mock;
+import mockit.MockUp;
+import org.spongycastle.math.ec.ECPoint;
+
 import java.math.BigInteger;
-import java.util.Arrays;
 
-final class BigIntegerUtils {
+import static io.github.novacrypto.bip32.Secp256k1SC.CURVE;
 
-    static BigInteger parse256(final byte[] bytes) {
-        return new BigInteger(1, bytes);
+final class FakeSecp256k1SC {
+
+    static void fakeGMultiplyAndAddPoint(ECPoint... responses) {
+        new MockUp<Secp256k1SC>() {
+            private int i = 0;
+
+            @Mock
+            public ECPoint gMultiplyAndAddPoint(final Invocation inv, final BigInteger p, final byte[] toAdd) {
+                if (i > responses.length - 1) {
+                    return inv.proceed(p, toAdd);
+                }
+                return responses[i++];
+            }
+        };
     }
 
-    static void ser256(final byte[] target, final BigInteger integer) {
-        if (integer.bitLength() > target.length * 8)
-            throw new RuntimeException("ser256 failed, cannot fit integer in buffer");
-        final byte[] modArr = integer.toByteArray();
-        Arrays.fill(target, (byte) 0);
-        copyTail(modArr, target);
-        Arrays.fill(modArr, (byte) 0);
-    }
-
-    private static void copyTail(final byte[] src, final byte[] dest) {
-        if (src.length < dest.length) {
-            System.arraycopy(src, 0, dest, dest.length - src.length, src.length);
-        } else {
-            System.arraycopy(src, src.length - dest.length, dest, 0, dest.length);
-        }
+    static void fakeGMultiplyAndAddPointNextInfinity() {
+        fakeGMultiplyAndAddPoint(CURVE.getCurve().getInfinity());
     }
 }

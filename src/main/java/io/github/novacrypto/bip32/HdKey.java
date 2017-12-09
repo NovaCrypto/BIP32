@@ -22,7 +22,7 @@
 package io.github.novacrypto.bip32;
 
 import static io.github.novacrypto.bip32.BigIntegerUtils.parse256;
-import static io.github.novacrypto.bip32.Secp256k1BC.pointSerP;
+import static io.github.novacrypto.bip32.Secp256k1SC.pointSerP_gMultiply;
 import static io.github.novacrypto.hashing.Hash160.hash160;
 
 final class HdKey {
@@ -58,7 +58,7 @@ final class HdKey {
     }
 
     byte[] getPoint() {
-        return pointSerP(parse256(key));
+        return pointSerP_gMultiply(parse256(key));
     }
 
     byte[] getKey() {

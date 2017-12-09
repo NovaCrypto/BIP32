@@ -30,7 +30,7 @@ public final class ConstructorCoverage {
         new BigIntegerUtils();
         new HmacSha512();
         new Index();
-        new Secp256k1BC();
+        new Secp256k1SC();
         new Checksum();
     }
 }
