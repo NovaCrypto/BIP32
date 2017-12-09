@@ -37,7 +37,7 @@ import static io.github.novacrypto.bip32.ByteArrayWriter.head32;
 import static io.github.novacrypto.bip32.ByteArrayWriter.tail32;
 import static io.github.novacrypto.bip32.HmacSha512.hmacSha512;
 import static io.github.novacrypto.bip32.Index.isHardened;
-import static io.github.novacrypto.bip32.Secp256k1BC.n;
+import static io.github.novacrypto.bip32.Secp256k1SC.n;
 import static io.github.novacrypto.bip32.derivation.CkdFunctionResultCacheDecorator.newCacheOf;
 import static io.github.novacrypto.toruntime.CheckedExceptionToRuntime.toRuntime;
 

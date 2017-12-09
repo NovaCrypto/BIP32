@@ -28,9 +28,9 @@ import org.junit.runner.RunWith;
 
 import java.math.BigInteger;
 
-import static io.github.novacrypto.bip32.FakeCurve.fakeNextInfinity;
 import static io.github.novacrypto.bip32.FakeHmacSha512.fakeHmacResponses;
 import static io.github.novacrypto.bip32.FakeHmacSha512.toHeadOf64Bytes;
+import static io.github.novacrypto.bip32.FakeSecp256k1SC.fakeGMultiplyAndAddPointNextInfinity;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -57,29 +57,29 @@ public final class PublicKeyEdgeCases {
     private void assertKeyIsOfIndexWhenKiIsInifity(int requestedIndex, int expectedIndex) {
         PublicKey publicKey = givenPublicKey();
         String expected = publicKey.cKDpub(expectedIndex).extendedBase58();
-        fakeNextInfinity();
+        fakeGMultiplyAndAddPointNextInfinity();
         String actual = publicKey.cKDpub(requestedIndex).extendedBase58();
         assertEquals(expected, actual);
     }
 
     @Test
     public void when_parse256_Il_equal_n_returns_next() {
-        assertKeyIsOfIndex(0, 1, Secp256k1BC.n());
+        assertKeyIsOfIndex(0, 1, Secp256k1SC.n());
     }
 
     @Test
     public void when_parse256_Il_equal_n_returns_next_alternative_indexes() {
-        assertKeyIsOfIndex(9, 10, Secp256k1BC.n());
+        assertKeyIsOfIndex(9, 10, Secp256k1SC.n());
     }
 
     @Test
     public void when_parse256_Il_greater_n_returns_next_child() {
-        assertKeyIsOfIndex(0, 1, Secp256k1BC.n().add(BigInteger.ONE));
+        assertKeyIsOfIndex(0, 1, Secp256k1SC.n().add(BigInteger.ONE));
     }
 
     @Test
     public void when_parse256_Il_greater_n_returns_next_child_alternative_indexes() {
-        assertKeyIsOfIndex(1000, 1001, Secp256k1BC.n().add(BigInteger.ONE));
+        assertKeyIsOfIndex(1000, 1001, Secp256k1SC.n().add(BigInteger.ONE));
     }
 
     @Test

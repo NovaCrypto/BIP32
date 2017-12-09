@@ -46,14 +46,14 @@ public final class FakeHmacSha512Tests {
 
     @Test
     public void canCreate64BytesBasedOnN() {
-        BigInteger n = Secp256k1BC.n();
+        BigInteger n = Secp256k1SC.n();
         byte[] n64 = toHeadOf64Bytes(n);
         assertEquals(n, new BigInteger(1, Arrays.copyOfRange(n64, 0, 32)));
     }
 
     @Test
     public void canCreate64BytesBasedOnNPlus1() {
-        BigInteger nPlus1 = Secp256k1BC.n().add(BigInteger.ONE);
+        BigInteger nPlus1 = Secp256k1SC.n().add(BigInteger.ONE);
         byte[] nPlus1_64 = toHeadOf64Bytes(nPlus1);
         assertEquals(nPlus1, new BigInteger(1, Arrays.copyOfRange(nPlus1_64, 0, 32)));
     }

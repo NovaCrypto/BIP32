@@ -21,30 +21,29 @@
 
 package io.github.novacrypto.bip32;
 
-import mockit.Invocation;
-import mockit.Mock;
-import mockit.MockUp;
+import org.spongycastle.asn1.x9.X9ECParameters;
+import org.spongycastle.crypto.ec.CustomNamedCurves;
 import org.spongycastle.math.ec.ECPoint;
 
 import java.math.BigInteger;
 
-final class FakeCurve {
+final class Secp256k1SC {
 
-    static void fakeCurve(ECPoint... responses) {
-        new MockUp<Secp256k1BC>() {
-            private int i = 0;
+    static final X9ECParameters CURVE = CustomNamedCurves.getByName("secp256k1");
 
-            @Mock
-            public ECPoint pointAndAdd(final Invocation inv, final BigInteger p, final byte[] toAdd) {
-                if (i > responses.length - 1) {
-                    return inv.proceed(p, toAdd);
-                }
-                return responses[i++];
-            }
-        };
+    static BigInteger n() {
+        return CURVE.getN();
     }
 
-    static void fakeNextInfinity() {
-        fakeCurve(Secp256k1BC.CURVE.getCurve().getInfinity());
+    static byte[] pointSerP(final BigInteger p) {
+        return CURVE.getG()
+                .multiply(p)
+                .getEncoded(true);
+    }
+
+    static ECPoint gMultiplyAndAddPoint(final BigInteger p, final byte[] toAdd) {
+        return CURVE.getG()
+                .multiply(p)
+                .add(CURVE.getCurve().decodePoint(toAdd));
     }
 }
