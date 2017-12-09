@@ -36,6 +36,7 @@ import static io.github.novacrypto.bip32.ByteArrayWriter.tail32;
 import static io.github.novacrypto.bip32.HmacSha512.hmacSha512;
 import static io.github.novacrypto.bip32.Index.isHardened;
 import static io.github.novacrypto.bip32.Secp256k1SC.n;
+import static io.github.novacrypto.bip32.Secp256k1SC.pointSerP;
 import static io.github.novacrypto.bip32.derivation.CkdFunctionResultCacheDecorator.newCacheOf;
 import static io.github.novacrypto.hashing.Hash160.hash160into;
 import static io.github.novacrypto.hashing.Sha256.sha256Twice;
@@ -104,7 +105,8 @@ public final class PublicKey implements
         if (parse256_Il.compareTo(n()) >= 0 || ki.isInfinity()) {
             return cKDpub(index + 1);
         }
-        final byte[] key = ki.getEncoded(true);
+
+        final byte[] key = pointSerP(ki);
 
         return new PublicKey(new HdKey.Builder()
                 .network(parent.getNetwork())

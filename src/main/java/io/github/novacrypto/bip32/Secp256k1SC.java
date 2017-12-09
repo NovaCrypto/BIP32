@@ -35,15 +35,24 @@ final class Secp256k1SC {
         return CURVE.getN();
     }
 
-    static byte[] pointSerP(final BigInteger p) {
-        return CURVE.getG()
-                .multiply(p)
-                .getEncoded(true);
+    static byte[] pointSerP(final ECPoint point) {
+        return point.getEncoded(true);
+    }
+
+    static byte[] pointSerP_gMultiply(final BigInteger p) {
+        return pointSerP(gMultiply(p));
     }
 
     static ECPoint gMultiplyAndAddPoint(final BigInteger p, final byte[] toAdd) {
+        return gMultiply(p).add(decode(toAdd));
+    }
+
+    private static ECPoint decode(final byte[] toAdd) {
+        return CURVE.getCurve().decodePoint(toAdd);
+    }
+
+    private static ECPoint gMultiply(BigInteger p) {
         return CURVE.getG()
-                .multiply(p)
-                .add(CURVE.getCurve().decodePoint(toAdd));
+                .multiply(p);
     }
 }
