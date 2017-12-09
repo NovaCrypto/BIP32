@@ -28,6 +28,8 @@ import org.spongycastle.math.ec.ECPoint;
 
 import java.math.BigInteger;
 
+import static io.github.novacrypto.bip32.Secp256k1SC.CURVE;
+
 final class FakeSecp256k1SC {
 
     static void fakeGMultiplyAndAddPoint(ECPoint... responses) {
@@ -45,6 +47,6 @@ final class FakeSecp256k1SC {
     }
 
     static void fakeGMultiplyAndAddPointNextInfinity() {
-        fakeGMultiplyAndAddPoint(Secp256k1SC.CURVE.getCurve().getInfinity());
+        fakeGMultiplyAndAddPoint(CURVE.getCurve().getInfinity());
     }
 }
