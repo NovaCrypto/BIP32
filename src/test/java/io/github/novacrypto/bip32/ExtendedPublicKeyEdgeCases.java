@@ -44,10 +44,10 @@ import static org.junit.Assert.assertEquals;
  * improbable scenario.
  */
 @RunWith(JMockit.class)
-public final class PublicKeyEdgeCases {
+public final class ExtendedPublicKeyEdgeCases {
 
     private void assertKeyIsOfIndex(int requestedIndex, int expectedIndex, BigInteger... il) {
-        PublicKey publicKey = givenPublicKey();
+        ExtendedPublicKey publicKey = givenPublicKey();
         String expected = publicKey.cKDpub(expectedIndex).extendedBase58();
         fakeHmacSha512Responses(toHeadOf64BytesArray(il));
         String actual = publicKey.cKDpub(requestedIndex).extendedBase58();
@@ -55,7 +55,7 @@ public final class PublicKeyEdgeCases {
     }
 
     private void assertKeyIsOfIndexWhenKiIsInifity(int requestedIndex, int expectedIndex) {
-        PublicKey publicKey = givenPublicKey();
+        ExtendedPublicKey publicKey = givenPublicKey();
         String expected = publicKey.cKDpub(expectedIndex).extendedBase58();
         fakeGMultiplyAndAddPointNextInfinity();
         String actual = publicKey.cKDpub(requestedIndex).extendedBase58();
@@ -97,7 +97,7 @@ public final class PublicKeyEdgeCases {
         assertKeyIsOfIndexWhenKiIsInifity(100, 101);
     }
 
-    private static PublicKey givenPublicKey() {
-        return PrivateKey.fromSeed(new byte[0], Bitcoin.MAIN_NET).neuter();
+    private static ExtendedPublicKey givenPublicKey() {
+        return ExtendedPrivateKey.fromSeed(new byte[0], Bitcoin.MAIN_NET).neuter();
     }
 }

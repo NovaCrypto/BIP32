@@ -22,7 +22,7 @@
 package io.github.novacrypto;
 
 import io.github.novacrypto.bip32.Network;
-import io.github.novacrypto.bip32.PrivateKey;
+import io.github.novacrypto.bip32.ExtendedPrivateKey;
 import io.github.novacrypto.bip32.networks.Bitcoin;
 import io.github.novacrypto.bip39.SeedCalculator;
 import org.junit.Test;
@@ -50,7 +50,7 @@ public final class ProblemAddresses {
             final String derivationPath,
             final Network network) {
         assertBase58AddressEqual(expectedAddress,
-                PrivateKey.fromSeed(new SeedCalculator().calculateSeed(
+                ExtendedPrivateKey.fromSeed(new SeedCalculator().calculateSeed(
                         mnemonic, passphrase),
                         network).derive(derivationPath).neuter().p2pkhAddress());
     }

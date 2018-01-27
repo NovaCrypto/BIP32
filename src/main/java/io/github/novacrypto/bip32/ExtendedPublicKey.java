@@ -45,28 +45,28 @@ import static io.github.novacrypto.hashing.Sha256.sha256Twice;
 /**
  * A BIP32 public key
  */
-public final class PublicKey implements
-        Derive<PublicKey>,
+public final class ExtendedPublicKey implements
+        Derive<ExtendedPublicKey>,
         CKDpub,
         ExtendedKey {
 
-    public static Deserializer<PublicKey> deserializer() {
-        return PublicKeyDeserializer.DEFAULT;
+    public static Deserializer<ExtendedPublicKey> deserializer() {
+        return ExtendedPublicKeyDeserializer.DEFAULT;
     }
 
-    public static Deserializer<PublicKey> deserializer(final Networks networks) {
-        return new PublicKeyDeserializer(networks);
+    public static Deserializer<ExtendedPublicKey> deserializer(final Networks networks) {
+        return new ExtendedPublicKeyDeserializer(networks);
     }
 
-    private static final CkdFunction<PublicKey> CKD_FUNCTION = new CkdFunction<PublicKey>() {
+    private static final CkdFunction<ExtendedPublicKey> CKD_FUNCTION = new CkdFunction<ExtendedPublicKey>() {
         @Override
-        public PublicKey deriveChildKey(final PublicKey parent, final int childIndex) {
+        public ExtendedPublicKey deriveChildKey(final ExtendedPublicKey parent, final int childIndex) {
             return parent.cKDpub(childIndex);
         }
     };
 
-    static PublicKey from(final HdKey hdKey) {
-        return new PublicKey(new HdKey.Builder()
+    static ExtendedPublicKey from(final HdKey hdKey) {
+        return new ExtendedPublicKey(new HdKey.Builder()
                 .network(hdKey.getNetwork())
                 .neutered(true)
                 .key(hdKey.getPoint())
@@ -79,12 +79,12 @@ public final class PublicKey implements
 
     private final HdKey hdKey;
 
-    PublicKey(final HdKey hdKey) {
+    ExtendedPublicKey(final HdKey hdKey) {
         this.hdKey = hdKey;
     }
 
     @Override
-    public PublicKey cKDpub(final int index) {
+    public ExtendedPublicKey cKDpub(final int index) {
         if (isHardened(index))
             throw new IllegalCKDCall("Cannot derive a hardened key from a public key");
 
@@ -109,7 +109,7 @@ public final class PublicKey implements
 
         final byte[] key = pointSerP(ki);
 
-        return new PublicKey(new HdKey.Builder()
+        return new ExtendedPublicKey(new HdKey.Builder()
                 .network(parent.getNetwork())
                 .neutered(true)
                 .depth(parent.depth() + 1)
@@ -149,25 +149,25 @@ public final class PublicKey implements
         return base58Encode(address);
     }
 
-    public Derive<PublicKey> derive() {
+    public Derive<ExtendedPublicKey> derive() {
         return derive(CKD_FUNCTION);
     }
 
-    public Derive<PublicKey> deriveWithCache() {
+    public Derive<ExtendedPublicKey> deriveWithCache() {
         return derive(newCacheOf(CKD_FUNCTION));
     }
 
     @Override
-    public PublicKey derive(final CharSequence derivationPath) {
+    public ExtendedPublicKey derive(final CharSequence derivationPath) {
         return derive().derive(derivationPath);
     }
 
     @Override
-    public <Path> PublicKey derive(final Path derivationPath, final Derivation<Path> derivation) {
+    public <Path> ExtendedPublicKey derive(final Path derivationPath, final Derivation<Path> derivation) {
         return derive().derive(derivationPath, derivation);
     }
 
-    private Derive<PublicKey> derive(final CkdFunction<PublicKey> ckdFunction) {
+    private Derive<ExtendedPublicKey> derive(final CkdFunction<ExtendedPublicKey> ckdFunction) {
         return new CkdFunctionDerive<>(ckdFunction, this);
     }
 

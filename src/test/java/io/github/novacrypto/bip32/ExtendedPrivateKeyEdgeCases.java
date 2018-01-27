@@ -43,14 +43,14 @@ import static org.junit.Assert.assertEquals;
  * improbable scenario.
  */
 @RunWith(JMockit.class)
-public final class PrivateKeyEdgeCases {
+public final class ExtendedPrivateKeyEdgeCases {
 
     private void assertKeyIsOfIndex(int requestedIndex, int expectedIndex, BigInteger... il) {
         assertKeyIsOfIndex(requestedIndex, expectedIndex, toHeadOf64BytesArray(il));
     }
 
     private void assertKeyIsOfIndex(int requestedIndex, int expectedIndex, byte[]... I) {
-        PrivateKey privateKey = givenPrivateKey();
+        ExtendedPrivateKey privateKey = givenPrivateKey();
         String expected = privateKey.cKDpriv(expectedIndex).extendedBase58();
         fakeHmacSha512Responses(I);
         String actual = privateKey.cKDpriv(requestedIndex).extendedBase58();
@@ -96,7 +96,7 @@ public final class PrivateKeyEdgeCases {
                         .toByteArray());
     }
 
-    private static PrivateKey givenPrivateKey() {
-        return PrivateKey.fromSeed(new byte[0], Bitcoin.MAIN_NET);
+    private static ExtendedPrivateKey givenPrivateKey() {
+        return ExtendedPrivateKey.fromSeed(new byte[0], Bitcoin.MAIN_NET);
     }
 }

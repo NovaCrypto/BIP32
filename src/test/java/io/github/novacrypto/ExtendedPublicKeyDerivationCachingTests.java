@@ -22,8 +22,8 @@
 package io.github.novacrypto;
 
 import io.github.novacrypto.bip32.IllegalCKDCall;
-import io.github.novacrypto.bip32.PrivateKey;
-import io.github.novacrypto.bip32.PublicKey;
+import io.github.novacrypto.bip32.ExtendedPrivateKey;
+import io.github.novacrypto.bip32.ExtendedPublicKey;
 import io.github.novacrypto.bip32.derivation.CharSequenceDerivation;
 import io.github.novacrypto.bip32.derivation.Derive;
 import io.github.novacrypto.bip32.derivation.IntArrayDerivation;
@@ -35,7 +35,7 @@ import static io.github.novacrypto.bip32.Index.hard;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
 
-public final class PublicKeyDerivationCachingTests {
+public final class ExtendedPublicKeyDerivationCachingTests {
 
     @Test
     public void root() {
@@ -64,23 +64,23 @@ public final class PublicKeyDerivationCachingTests {
 
     @Test
     public void noCacheHitOnParent() {
-        final Derive<PublicKey> privateKey = createPrivateKey().neuter().deriveWithCache();
+        final Derive<ExtendedPublicKey> privateKey = createPrivateKey().neuter().deriveWithCache();
         assertCached("m/0", new int[]{0}, privateKey);
         assertCached("m/1", new int[]{1}, privateKey);
     }
 
     private static void assertEqualPathsSame(String derivationPath, int[] path) {
-        final PublicKey publicKey = createPrivateKey().neuter();
+        final ExtendedPublicKey publicKey = createPrivateKey().neuter();
         assertEqualPathNotSameNoCache(derivationPath, path, publicKey);
         assertEqualPathNotSameNoCache(derivationPath, path, publicKey.derive());
         assertCached(derivationPath, path, publicKey.deriveWithCache());
     }
 
-    private static PrivateKey createPrivateKey() {
-        return PrivateKey.fromSeed(new byte[1], Bitcoin.MAIN_NET);
+    private static ExtendedPrivateKey createPrivateKey() {
+        return ExtendedPrivateKey.fromSeed(new byte[1], Bitcoin.MAIN_NET);
     }
 
-    private static void assertEqualPathNotSameNoCache(String derivationPath, int[] path, Derive<PublicKey> rootNonCache) {
+    private static void assertEqualPathNotSameNoCache(String derivationPath, int[] path, Derive<ExtendedPublicKey> rootNonCache) {
         assertBase58KeysEqual(
                 rootNonCache.derive(derivationPath).extendedBase58(),
                 rootNonCache.derive(derivationPath, CharSequenceDerivation.INSTANCE).extendedBase58()
@@ -95,7 +95,7 @@ public final class PublicKeyDerivationCachingTests {
         );
     }
 
-    private static void assertCached(String derivationPath, int[] path, Derive<PublicKey> rootCache) {
+    private static void assertCached(String derivationPath, int[] path, Derive<ExtendedPublicKey> rootCache) {
         assertBase58KeysEqual(
                 rootCache.derive(derivationPath).extendedBase58(),
                 rootCache.derive(derivationPath, CharSequenceDerivation.INSTANCE).extendedBase58()

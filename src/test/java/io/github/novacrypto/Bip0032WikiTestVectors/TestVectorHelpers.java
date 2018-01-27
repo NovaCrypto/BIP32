@@ -22,7 +22,7 @@
 package io.github.novacrypto.Bip0032WikiTestVectors;
 
 import io.github.novacrypto.bip32.ExtendedKey;
-import io.github.novacrypto.bip32.PrivateKey;
+import io.github.novacrypto.bip32.ExtendedPrivateKey;
 import io.github.novacrypto.bip32.networks.Bitcoin;
 
 import static io.github.novacrypto.Asserts.assertBase58KeysEqual;
@@ -45,8 +45,8 @@ final class TestVectorHelpers {
                 actual);
     }
 
-    static PrivateKey createMainNetRootFromSeed(String seed) {
-        return PrivateKey.fromSeed(toArray(
+    static ExtendedPrivateKey createMainNetRootFromSeed(String seed) {
+        return ExtendedPrivateKey.fromSeed(toArray(
                 seed
         ), Bitcoin.MAIN_NET);
     }

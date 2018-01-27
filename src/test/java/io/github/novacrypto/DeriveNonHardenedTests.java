@@ -22,8 +22,8 @@
 package io.github.novacrypto;
 
 import io.github.novacrypto.bip32.Network;
-import io.github.novacrypto.bip32.PrivateKey;
-import io.github.novacrypto.bip32.PublicKey;
+import io.github.novacrypto.bip32.ExtendedPrivateKey;
+import io.github.novacrypto.bip32.ExtendedPublicKey;
 import io.github.novacrypto.bip32.networks.Bitcoin;
 import io.github.novacrypto.bip39.SeedCalculator;
 import org.junit.Test;
@@ -99,11 +99,11 @@ public final class DeriveNonHardenedTests {
                 .extendedBase58();
     }
 
-    private PrivateKey derivePrivate(byte[] seed, Network network, String derivationPath) {
-        return PrivateKey.fromSeed(seed, network).derive(derivationPath);
+    private ExtendedPrivateKey derivePrivate(byte[] seed, Network network, String derivationPath) {
+        return ExtendedPrivateKey.fromSeed(seed, network).derive(derivationPath);
     }
 
-    private PublicKey derivePublic(byte[] seed, Network network, String derivationPath) {
+    private ExtendedPublicKey derivePublic(byte[] seed, Network network, String derivationPath) {
         return derivePrivate(seed, network, "m").neuter().derive(derivationPath);
     }
 }

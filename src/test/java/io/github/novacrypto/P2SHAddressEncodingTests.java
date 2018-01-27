@@ -22,7 +22,7 @@
 package io.github.novacrypto;
 
 import io.github.novacrypto.bip32.Network;
-import io.github.novacrypto.bip32.PrivateKey;
+import io.github.novacrypto.bip32.ExtendedPrivateKey;
 import io.github.novacrypto.bip32.networks.Bitcoin;
 import io.github.novacrypto.bip32.networks.Litecoin;
 import io.github.novacrypto.bip39.SeedCalculator;
@@ -56,7 +56,7 @@ public final class P2SHAddressEncodingTests {
             final String derivationPath,
             final Network network) {
         assertBase58AddressEqual(expectedAddress,
-                PrivateKey.fromSeed(new SeedCalculator().calculateSeed(
+                ExtendedPrivateKey.fromSeed(new SeedCalculator().calculateSeed(
                         mnemonic, ""),
                         network).derive(derivationPath).neuter().p2shAddress());
     }

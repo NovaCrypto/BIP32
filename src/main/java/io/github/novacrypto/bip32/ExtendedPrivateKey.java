@@ -44,23 +44,23 @@ import static io.github.novacrypto.toruntime.CheckedExceptionToRuntime.toRuntime
 /**
  * A BIP32 private key
  */
-public final class PrivateKey implements
-        Derive<PrivateKey>,
+public final class ExtendedPrivateKey implements
+        Derive<ExtendedPrivateKey>,
         CKDpriv,
         CKDpub,
         ExtendedKey {
 
-    public static Deserializer<PrivateKey> deserializer() {
-        return PrivateKeyDeserializer.DEFAULT;
+    public static Deserializer<ExtendedPrivateKey> deserializer() {
+        return ExtendedPrivateKeyDeserializer.DEFAULT;
     }
 
-    public static Deserializer<PrivateKey> deserializer(final Networks networks) {
-        return new PrivateKeyDeserializer(networks);
+    public static Deserializer<ExtendedPrivateKey> deserializer(final Networks networks) {
+        return new ExtendedPrivateKeyDeserializer(networks);
     }
 
-    private static final CkdFunction<PrivateKey> CKD_FUNCTION = new CkdFunction<PrivateKey>() {
+    private static final CkdFunction<ExtendedPrivateKey> CKD_FUNCTION = new CkdFunction<ExtendedPrivateKey>() {
         @Override
-        public PrivateKey deriveChildKey(final PrivateKey parent, final int childIndex) {
+        public ExtendedPrivateKey deriveChildKey(final ExtendedPrivateKey parent, final int childIndex) {
             return parent.cKDpriv(childIndex);
         }
     };
@@ -69,7 +69,7 @@ public final class PrivateKey implements
 
     private final HdKey hdKey;
 
-    private PrivateKey(final Network network, final byte[] key, final byte[] chainCode) {
+    private ExtendedPrivateKey(final Network network, final byte[] key, final byte[] chainCode) {
         this(new HdKey.Builder()
                 .network(network)
                 .neutered(false)
@@ -81,17 +81,17 @@ public final class PrivateKey implements
                 .build());
     }
 
-    PrivateKey(final HdKey hdKey) {
+    ExtendedPrivateKey(final HdKey hdKey) {
         this.hdKey = hdKey;
     }
 
-    public static PrivateKey fromSeed(final byte[] seed, final Network network) {
+    public static ExtendedPrivateKey fromSeed(final byte[] seed, final Network network) {
         final byte[] I = hmacSha512(BITCOIN_SEED, seed);
 
         final byte[] Il = head32(I);
         final byte[] Ir = tail32(I);
 
-        return new PrivateKey(network, Il, Ir);
+        return new ExtendedPrivateKey(network, Il, Ir);
     }
 
     private static byte[] getBytes(final String seed) {
@@ -114,7 +114,7 @@ public final class PrivateKey implements
     }
 
     @Override
-    public PrivateKey cKDpriv(final int index) {
+    public ExtendedPrivateKey cKDpriv(final int index) {
         final byte[] data = new byte[37];
         final ByteArrayWriter writer = new ByteArrayWriter(data);
 
@@ -142,7 +142,7 @@ public final class PrivateKey implements
 
         ser256(Il, ki);
 
-        return new PrivateKey(new HdKey.Builder()
+        return new ExtendedPrivateKey(new HdKey.Builder()
                 .network(hdKey.getNetwork())
                 .neutered(false)
                 .key(Il)
@@ -154,33 +154,33 @@ public final class PrivateKey implements
     }
 
     @Override
-    public PublicKey cKDpub(final int index) {
+    public ExtendedPublicKey cKDpub(final int index) {
         return cKDpriv(index).neuter();
     }
 
-    public PublicKey neuter() {
-        return PublicKey.from(hdKey);
+    public ExtendedPublicKey neuter() {
+        return ExtendedPublicKey.from(hdKey);
     }
 
-    public Derive<PrivateKey> derive() {
+    public Derive<ExtendedPrivateKey> derive() {
         return derive(CKD_FUNCTION);
     }
 
-    public Derive<PrivateKey> deriveWithCache() {
+    public Derive<ExtendedPrivateKey> deriveWithCache() {
         return derive(newCacheOf(CKD_FUNCTION));
     }
 
     @Override
-    public PrivateKey derive(final CharSequence derivationPath) {
+    public ExtendedPrivateKey derive(final CharSequence derivationPath) {
         return derive().derive(derivationPath);
     }
 
     @Override
-    public <Path> PrivateKey derive(final Path derivationPath, final Derivation<Path> derivation) {
+    public <Path> ExtendedPrivateKey derive(final Path derivationPath, final Derivation<Path> derivation) {
         return derive().derive(derivationPath, derivation);
     }
 
-    private Derive<PrivateKey> derive(final CkdFunction<PrivateKey> ckdFunction) {
+    private Derive<ExtendedPrivateKey> derive(final CkdFunction<ExtendedPrivateKey> ckdFunction) {
         return new CkdFunctionDerive<>(ckdFunction, this);
     }
 

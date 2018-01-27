@@ -21,7 +21,7 @@
 
 package io.github.novacrypto.Bip0032WikiTestVectors;
 
-import io.github.novacrypto.bip32.PrivateKey;
+import io.github.novacrypto.bip32.ExtendedPrivateKey;
 import org.junit.Test;
 
 import static io.github.novacrypto.Bip0032WikiTestVectors.TestVectorHelpers.assertBase58;
@@ -30,7 +30,7 @@ import static io.github.novacrypto.bip32.Index.hard;
 
 public final class TestVector1 {
 
-    private final PrivateKey root = createMainNetRootFromSeed("000102030405060708090a0b0c0d0e0f");
+    private final ExtendedPrivateKey root = createMainNetRootFromSeed("000102030405060708090a0b0c0d0e0f");
 
     @Test
     public void m_private() {

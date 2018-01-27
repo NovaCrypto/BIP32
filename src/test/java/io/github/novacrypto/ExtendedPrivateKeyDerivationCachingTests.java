@@ -21,7 +21,7 @@
 
 package io.github.novacrypto;
 
-import io.github.novacrypto.bip32.PrivateKey;
+import io.github.novacrypto.bip32.ExtendedPrivateKey;
 import io.github.novacrypto.bip32.derivation.CharSequenceDerivation;
 import io.github.novacrypto.bip32.derivation.Derive;
 import io.github.novacrypto.bip32.derivation.IntArrayDerivation;
@@ -33,7 +33,7 @@ import static io.github.novacrypto.bip32.Index.hard;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
 
-public final class PrivateKeyDerivationCachingTests {
+public final class ExtendedPrivateKeyDerivationCachingTests {
 
     @Test
     public void root() {
@@ -62,23 +62,23 @@ public final class PrivateKeyDerivationCachingTests {
 
     @Test
     public void noCacheHitOnParent() {
-        final Derive<PrivateKey> privateKey = createPrivateKey().deriveWithCache();
+        final Derive<ExtendedPrivateKey> privateKey = createPrivateKey().deriveWithCache();
         assertCached("m/0", new int[]{0}, privateKey);
         assertCached("m/1", new int[]{1}, privateKey);
     }
 
     private static void assertEqualPathsSame(String derivationPath, int[] path) {
-        final PrivateKey privateKey = createPrivateKey();
+        final ExtendedPrivateKey privateKey = createPrivateKey();
         assertNotCached(derivationPath, path, privateKey);
         assertNotCached(derivationPath, path, privateKey.derive());
         assertCached(derivationPath, path, privateKey.deriveWithCache());
     }
 
-    private static PrivateKey createPrivateKey() {
-        return PrivateKey.fromSeed(new byte[1], Bitcoin.MAIN_NET);
+    private static ExtendedPrivateKey createPrivateKey() {
+        return ExtendedPrivateKey.fromSeed(new byte[1], Bitcoin.MAIN_NET);
     }
 
-    private static void assertNotCached(String derivationPath, int[] path, Derive<PrivateKey> rootNonCache) {
+    private static void assertNotCached(String derivationPath, int[] path, Derive<ExtendedPrivateKey> rootNonCache) {
         assertBase58KeysEqual(
                 rootNonCache.derive(derivationPath).extendedBase58(),
                 rootNonCache.derive(derivationPath, CharSequenceDerivation.INSTANCE).extendedBase58()
@@ -93,7 +93,7 @@ public final class PrivateKeyDerivationCachingTests {
         );
     }
 
-    private static void assertCached(String derivationPath, int[] path, Derive<PrivateKey> rootCache) {
+    private static void assertCached(String derivationPath, int[] path, Derive<ExtendedPrivateKey> rootCache) {
         assertBase58KeysEqual(
                 rootCache.derive(derivationPath).extendedBase58(),
                 rootCache.derive(derivationPath, CharSequenceDerivation.INSTANCE).extendedBase58()
