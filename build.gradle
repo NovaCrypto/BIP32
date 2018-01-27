@@ -38,7 +38,7 @@ apply from: 'bintray.gradle'
 apply plugin: 'com.github.ben-manes.versions'
 
 group 'io.github.novacrypto'
-version '0.0.8'
+version '0.0.9'
 
 // To upload a new version
 // ./gradlew clean build bintrayUpload -Puser=user -Pkey=APIKEY
@@ -82,7 +82,7 @@ dependencies {
     compile 'io.github.novacrypto:BIP32derivation:0.0.2@jar'
     testCompile 'junit:junit:4.12'
     testCompile 'com.google.code.gson:gson:2.8.2'
-    testCompile 'org.assertj:assertj-core:3.8.0'
+    testCompile 'org.assertj:assertj-core:3.9.0'
     testCompile 'io.github.novacrypto:BIP39:0.1.7@jar'
-    testCompile 'org.jmockit:jmockit:1.37'
+    testCompile 'org.jmockit:jmockit:1.38'
 }
