@@ -28,18 +28,18 @@ import java.util.Arrays;
 import static io.github.novacrypto.base58.Base58.base58Decode;
 import static io.github.novacrypto.bip32.Checksum.confirmExtendedKeyChecksum;
 
-final class PublicKeyDeserializer implements Deserializer<PublicKey> {
+final class ExtendedPublicKeyDeserializer implements Deserializer<ExtendedPublicKey> {
 
-    static final PublicKeyDeserializer DEFAULT = new PublicKeyDeserializer(DefaultNetworks.INSTANCE);
+    static final ExtendedPublicKeyDeserializer DEFAULT = new ExtendedPublicKeyDeserializer(DefaultNetworks.INSTANCE);
 
     private final Networks networks;
 
-    PublicKeyDeserializer(final Networks networks) {
+    ExtendedPublicKeyDeserializer(final Networks networks) {
         this.networks = networks;
     }
 
     @Override
-    public PublicKey deserialize(final CharSequence extendedBase58Key) {
+    public ExtendedPublicKey deserialize(final CharSequence extendedBase58Key) {
         final byte[] extendedKeyData = base58Decode(extendedBase58Key);
         try {
             return deserialize(extendedKeyData);
@@ -49,10 +49,10 @@ final class PublicKeyDeserializer implements Deserializer<PublicKey> {
     }
 
     @Override
-    public PublicKey deserialize(final byte[] extendedKeyData) {
+    public ExtendedPublicKey deserialize(final byte[] extendedKeyData) {
         confirmExtendedKeyChecksum(extendedKeyData);
         final ByteArrayReader reader = new ByteArrayReader(extendedKeyData);
-        return new PublicKey(new HdKey
+        return new ExtendedPublicKey(new HdKey
                 .Builder()
                 .network(networks.findByPublicVersion(reader.readSer32()))
                 .depth(reader.read())

@@ -21,8 +21,8 @@
 
 package io.github.novacrypto;
 
-import io.github.novacrypto.bip32.PrivateKey;
-import io.github.novacrypto.bip32.PublicKey;
+import io.github.novacrypto.bip32.ExtendedPrivateKey;
+import io.github.novacrypto.bip32.ExtendedPublicKey;
 import io.github.novacrypto.bip32.derivation.Derive;
 import io.github.novacrypto.bip32.derivation.IntArrayDerivation;
 import io.github.novacrypto.bip32.networks.Bitcoin;
@@ -50,16 +50,16 @@ public final class IntArrayPublicDerivationTests {
 
     @Test
     public void deriveIsNotCached() {
-        final Derive<PublicKey> privateKey = createPrivateKey().neuter().derive();
+        final Derive<ExtendedPublicKey> privateKey = createPrivateKey().neuter().derive();
         assertNotSame(privateKey.derive("m/0"), privateKey.derive(new int[]{0}, IntArrayDerivation.INSTANCE));
     }
 
-    private static PrivateKey createPrivateKey() {
-        return PrivateKey.fromSeed(new byte[1], Bitcoin.MAIN_NET);
+    private static ExtendedPrivateKey createPrivateKey() {
+        return ExtendedPrivateKey.fromSeed(new byte[1], Bitcoin.MAIN_NET);
     }
 
     private static void assertEqualPaths(String derivationPath, int[] path) {
-        final PublicKey privateKey = createPrivateKey().neuter();
+        final ExtendedPublicKey privateKey = createPrivateKey().neuter();
         assertBase58KeysEqual(
                 privateKey.derive(derivationPath).extendedBase58(),
                 privateKey.derive(path, IntArrayDerivation.INSTANCE).extendedBase58()

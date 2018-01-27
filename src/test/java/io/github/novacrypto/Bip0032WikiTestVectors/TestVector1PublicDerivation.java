@@ -22,8 +22,8 @@
 package io.github.novacrypto.Bip0032WikiTestVectors;
 
 import io.github.novacrypto.bip32.IllegalCKDCall;
-import io.github.novacrypto.bip32.PrivateKey;
-import io.github.novacrypto.bip32.PublicKey;
+import io.github.novacrypto.bip32.ExtendedPrivateKey;
+import io.github.novacrypto.bip32.ExtendedPublicKey;
 import org.junit.Test;
 
 import static io.github.novacrypto.Bip0032WikiTestVectors.TestVectorHelpers.assertBase58;
@@ -33,7 +33,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public final class TestVector1PublicDerivation {
 
-    private final PrivateKey root = createMainNetRootFromSeed("000102030405060708090a0b0c0d0e0f");
+    private final ExtendedPrivateKey root = createMainNetRootFromSeed("000102030405060708090a0b0c0d0e0f");
 
     @Test
     public void chain_m_0h_1_2h_2_public() {
@@ -69,7 +69,7 @@ public final class TestVector1PublicDerivation {
 
     @Test
     public void illegal_chain_m_0h_0h() {
-        final PublicKey key = root.cKDpub(0);
+        final ExtendedPublicKey key = root.cKDpub(0);
         assertThatThrownBy(() -> key.cKDpub(hard(0)))
                 .isInstanceOf(IllegalCKDCall.class)
                 .hasMessage("Cannot derive a hardened key from a public key");

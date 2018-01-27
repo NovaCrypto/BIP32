@@ -29,5 +29,5 @@ public interface CKDpub {
      * @param index The child index to calculate.
      * @return The public key of the child.
      */
-    PublicKey cKDpub(final int index);
+    ExtendedPublicKey cKDpub(final int index);
 }

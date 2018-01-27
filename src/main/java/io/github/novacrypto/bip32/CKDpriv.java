@@ -29,5 +29,5 @@ public interface CKDpriv {
      * @param index The child index to calculate.
      * @return The private key of the child.
      */
-    PrivateKey cKDpriv(final int index);
+    ExtendedPrivateKey cKDpriv(final int index);
 }

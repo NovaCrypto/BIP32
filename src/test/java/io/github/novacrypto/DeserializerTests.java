@@ -23,8 +23,8 @@ package io.github.novacrypto;
 
 import io.github.novacrypto.bip32.BadKeySerializationException;
 import io.github.novacrypto.bip32.Deserializer;
-import io.github.novacrypto.bip32.PrivateKey;
-import io.github.novacrypto.bip32.PublicKey;
+import io.github.novacrypto.bip32.ExtendedPrivateKey;
+import io.github.novacrypto.bip32.ExtendedPublicKey;
 import io.github.novacrypto.bip32.networks.Bitcoin;
 import io.github.novacrypto.bip32.networks.NetworkCollection;
 import io.github.novacrypto.bip32.networks.UnknownNetworkException;
@@ -41,7 +41,7 @@ public final class DeserializerTests {
 
     @Test
     public void deserializePrivateThrowsExceptionWhenNetworkNotFound() {
-        final Deserializer<PrivateKey> deserializer = PrivateKey.deserializer(new NetworkCollection(Bitcoin.MAIN_NET));
+        final Deserializer<ExtendedPrivateKey> deserializer = ExtendedPrivateKey.deserializer(new NetworkCollection(Bitcoin.MAIN_NET));
         assertThatThrownBy(() ->
                 deserializer.deserialize(testNetPrivate)
         ).isInstanceOf(UnknownNetworkException.class);
@@ -49,7 +49,7 @@ public final class DeserializerTests {
 
     @Test
     public void deserializePublicThrowsExceptionWhenNetworkNotFound() {
-        final Deserializer<PublicKey> deserializer = PublicKey.deserializer(new NetworkCollection(Bitcoin.MAIN_NET));
+        final Deserializer<ExtendedPublicKey> deserializer = ExtendedPublicKey.deserializer(new NetworkCollection(Bitcoin.MAIN_NET));
         assertThatThrownBy(() ->
                 deserializer.deserialize(testNetPublic)
         ).isInstanceOf(UnknownNetworkException.class);
@@ -60,7 +60,7 @@ public final class DeserializerTests {
         final byte[] bytes = base58Decode(testNetPrivate);
         bytes[45] = 1;
         rewriteChecksum(bytes);
-        final Deserializer<PrivateKey> deserializer = PrivateKey.deserializer();
+        final Deserializer<ExtendedPrivateKey> deserializer = ExtendedPrivateKey.deserializer();
         assertThatThrownBy(() ->
                 deserializer.deserialize(bytes)
         ).isInstanceOf(BadKeySerializationException.class)
@@ -74,12 +74,12 @@ public final class DeserializerTests {
 
     @Test
     public void privateKeyDeserializerIsConstant() {
-        assertSame(PrivateKey.deserializer(), PrivateKey.deserializer());
+        assertSame(ExtendedPrivateKey.deserializer(), ExtendedPrivateKey.deserializer());
     }
 
     @Test
     public void publicKeyDeserializerIsConstant() {
-        assertSame(PublicKey.deserializer(), PublicKey.deserializer());
+        assertSame(ExtendedPublicKey.deserializer(), ExtendedPublicKey.deserializer());
     }
 
     @Test
@@ -87,7 +87,7 @@ public final class DeserializerTests {
         final byte[] bytes = base58Decode(testNetPublic);
         for (int i = 0; i < bytes.length; i++) {
             final byte[] copy = cloneWithMutationAt(bytes, i);
-            final Deserializer<PublicKey> deserializer = PublicKey.deserializer();
+            final Deserializer<ExtendedPublicKey> deserializer = ExtendedPublicKey.deserializer();
             assertThatThrownBy(() ->
                     deserializer.deserialize(copy)
             ).isInstanceOf(BadKeySerializationException.class)
@@ -100,7 +100,7 @@ public final class DeserializerTests {
         final byte[] bytes = base58Decode(testNetPrivate);
         for (int i = 0; i < bytes.length; i++) {
             final byte[] copy = cloneWithMutationAt(bytes, i);
-            final Deserializer<PrivateKey> deserializer = PrivateKey.deserializer();
+            final Deserializer<ExtendedPrivateKey> deserializer = ExtendedPrivateKey.deserializer();
             assertThatThrownBy(() ->
                     deserializer.deserialize(copy)
             ).isInstanceOf(BadKeySerializationException.class)

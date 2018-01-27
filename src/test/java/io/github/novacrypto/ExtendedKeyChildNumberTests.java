@@ -22,7 +22,7 @@
 package io.github.novacrypto;
 
 import io.github.novacrypto.bip32.ExtendedKey;
-import io.github.novacrypto.bip32.PrivateKey;
+import io.github.novacrypto.bip32.ExtendedPrivateKey;
 import io.github.novacrypto.bip32.derivation.Derive;
 import io.github.novacrypto.bip32.networks.Bitcoin;
 import org.junit.Test;
@@ -39,8 +39,8 @@ import static org.junit.Assert.assertEquals;
 @RunWith(Parameterized.class)
 public final class ExtendedKeyChildNumberTests {
 
-    private static Derive<PrivateKey> privateRoot =
-            PrivateKey.fromSeed(new byte[0], Bitcoin.MAIN_NET).derive();
+    private static Derive<ExtendedPrivateKey> privateRoot =
+            ExtendedPrivateKey.fromSeed(new byte[0], Bitcoin.MAIN_NET).derive();
 
     private final String path;
     private final int expectedChildNumber;

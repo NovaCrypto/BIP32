@@ -22,7 +22,7 @@
 package io.github.novacrypto;
 
 import io.github.novacrypto.bip32.Network;
-import io.github.novacrypto.bip32.PrivateKey;
+import io.github.novacrypto.bip32.ExtendedPrivateKey;
 import io.github.novacrypto.bip32.networks.Bitcoin;
 import io.github.novacrypto.bip32.networks.Litecoin;
 import io.github.novacrypto.bip39.SeedCalculator;
@@ -61,6 +61,6 @@ public final class Bip32PrivateRootTests {
     }
 
     private String findBip32Root(byte[] seed, Network network) {
-        return PrivateKey.fromSeed(seed, network).extendedBase58();
+        return ExtendedPrivateKey.fromSeed(seed, network).extendedBase58();
     }
 }

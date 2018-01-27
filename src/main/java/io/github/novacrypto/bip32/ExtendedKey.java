@@ -23,13 +23,39 @@ package io.github.novacrypto.bip32;
 
 public interface ExtendedKey {
 
+    /**
+     * The network of this extended key
+     *
+     * @return The network of this extended key
+     */
     Network network();
 
+    /**
+     * 1 byte: 0 for master nodes, 1 for level-1 derived keys, etc.
+     *
+     * @return the depth of this key node
+     */
     int depth();
 
+    /**
+     * 4 bytes: child number. e.g. 3 for m/3, hard(7) for m/7'
+     * 0 if master key
+     *
+     * @return the child number
+     */
     int childNumber();
 
+    /**
+     * Serialized Base58 String of this extended key
+     *
+     * @return the Base58 String representing this key
+     */
     String extendedBase58();
 
+    /**
+     * Serialized data of this extended key
+     *
+     * @return the byte array representing this key
+     */
     byte[] extendedKeyByteArray();
 }

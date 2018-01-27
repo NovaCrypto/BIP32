@@ -23,7 +23,7 @@ package io.github.novacrypto;
 
 import io.github.novacrypto.bip32.ExtendedKey;
 import io.github.novacrypto.bip32.Network;
-import io.github.novacrypto.bip32.PrivateKey;
+import io.github.novacrypto.bip32.ExtendedPrivateKey;
 import io.github.novacrypto.bip32.networks.Bitcoin;
 import io.github.novacrypto.bip32.networks.Litecoin;
 import org.junit.Test;
@@ -39,7 +39,7 @@ import static org.junit.Assert.assertEquals;
 @RunWith(Parameterized.class)
 public final class ExtendedKeyNetworkTests {
 
-    private final PrivateKey privateRoot;
+    private final ExtendedPrivateKey privateRoot;
     private final Network network;
 
     @Parameters
@@ -53,7 +53,7 @@ public final class ExtendedKeyNetworkTests {
 
     public ExtendedKeyNetworkTests(Network network) {
         this.network = network;
-        privateRoot = PrivateKey.fromSeed(new byte[0], network);
+        privateRoot = ExtendedPrivateKey.fromSeed(new byte[0], network);
     }
 
     @Test
