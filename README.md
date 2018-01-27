@@ -21,7 +21,7 @@ Add dependency:
 
 ```
 dependencies {
-    compile 'io.github.novacrypto:BIP32:0.0.8'
+    compile 'io.github.novacrypto:BIP32:0.0.9'
 }
 
 ```
@@ -29,9 +29,9 @@ dependencies {
 # Usage
 
 ```
-PrivateKey key = PrivateKey.fromSeed(seed, Bitcoin.MAIN_NET);
-PrivateKey child = key.derive("m/0'/0);
-PublicKey childPub = child.neuter();
+ExtendedPrivateKey key = ExtendedPrivateKey.fromSeed(seed, Bitcoin.MAIN_NET);
+ExtendedPrivateKey child = key.derive("m/0'/0);
+ExtendedPublicKey childPub = child.neuter();
 ```
 
 Need a seed from mnemonic/passphrase? check out [NovaCrypto/BIP39](https://github.com/NovaCrypto/BIP39).
@@ -51,13 +51,13 @@ String extendedKey = base58Encode(key.extendedKeyByteArray());
 # Deserialize extended
 
 ```
-PrivateKey key = PrivateKey.deserializer().deserializer(extendedBase58OrByteArray);
+ExtendedPrivateKey key = ExtendedPrivateKey.deserializer().deserializer(extendedBase58OrByteArray);
 ```
 
 Or public:
 
 ```
-PublicKey key = PublicKey.deserializer().deserializer(extendedBase58OrByteArray);
+ExtendedPublicKey key = ExtendedPublicKey.deserializer().deserializer(extendedBase58OrByteArray);
 ```
 
 # Serialize address
