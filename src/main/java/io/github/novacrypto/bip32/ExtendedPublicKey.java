@@ -1,6 +1,6 @@
 /*
  *  BIP32 library, a Java implementation of BIP32
- *  Copyright (C) 2017 Alan Evans, NovaCrypto
+ *  Copyright (C) 2017-2018 Alan Evans, NovaCrypto
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -35,9 +35,7 @@ import static io.github.novacrypto.bip32.ByteArrayWriter.head32;
 import static io.github.novacrypto.bip32.ByteArrayWriter.tail32;
 import static io.github.novacrypto.bip32.HmacSha512.hmacSha512;
 import static io.github.novacrypto.bip32.Index.isHardened;
-import static io.github.novacrypto.bip32.Secp256k1SC.gMultiplyAndAddPoint;
-import static io.github.novacrypto.bip32.Secp256k1SC.n;
-import static io.github.novacrypto.bip32.Secp256k1SC.pointSerP;
+import static io.github.novacrypto.bip32.Secp256k1SC.*;
 import static io.github.novacrypto.bip32.derivation.CkdFunctionResultCacheDecorator.newCacheOf;
 import static io.github.novacrypto.hashing.Hash160.hash160into;
 import static io.github.novacrypto.hashing.Sha256.sha256Twice;
@@ -123,6 +121,16 @@ public final class ExtendedPublicKey implements
     @Override
     public byte[] extendedKeyByteArray() {
         return hdKey.serialize();
+    }
+
+    @Override
+    public ExtendedPublicKey toNetwork(final Network otherNetwork) {
+        if (otherNetwork == network())
+            return this;
+        return new ExtendedPublicKey(
+                hdKey.toBuilder()
+                        .network(otherNetwork)
+                        .build());
     }
 
     @Override

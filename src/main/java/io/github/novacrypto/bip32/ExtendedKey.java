@@ -1,6 +1,6 @@
 /*
  *  BIP32 library, a Java implementation of BIP32
- *  Copyright (C) 2017 Alan Evans, NovaCrypto
+ *  Copyright (C) 2017-2018 Alan Evans, NovaCrypto
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -58,4 +58,12 @@ public interface ExtendedKey {
      * @return the byte array representing this key
      */
     byte[] extendedKeyByteArray();
+
+    /**
+     * Coerce this key on to another network.
+     *
+     * @param otherNetwork Network to put key on.
+     * @return A new extended key, or this instance if key already on the other Network.
+     */
+    ExtendedKey toNetwork(final Network otherNetwork);
 }

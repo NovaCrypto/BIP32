@@ -1,6 +1,6 @@
 /*
  *  BIP32 library, a Java implementation of BIP32
- *  Copyright (C) 2017 Alan Evans, NovaCrypto
+ *  Copyright (C) 2017-2018 Alan Evans, NovaCrypto
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -96,6 +96,16 @@ final class HdKey {
 
     int getChildNumber() {
         return childNumber;
+    }
+
+    Builder toBuilder() {
+        return new Builder()
+                .neutered(neutered)
+                .chainCode(chainCode)
+                .key(key)
+                .depth(depth)
+                .childNumber(childNumber)
+                .parentFingerprint(parentFingerprint);
     }
 
     static class Builder {
