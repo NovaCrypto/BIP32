@@ -1,6 +1,6 @@
 /*
  *  BIP32 library, a Java implementation of BIP32
- *  Copyright (C) 2017 Alan Evans, NovaCrypto
+ *  Copyright (C) 2017-2018 Alan Evans, NovaCrypto
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -106,6 +106,16 @@ public final class ExtendedPrivateKey implements
     @Override
     public byte[] extendedKeyByteArray() {
         return hdKey.serialize();
+    }
+
+    @Override
+    public ExtendedPrivateKey toNetwork(final Network otherNetwork) {
+        if (otherNetwork == network())
+            return this;
+        return new ExtendedPrivateKey(
+                hdKey.toBuilder()
+                        .network(otherNetwork)
+                        .build());
     }
 
     @Override
