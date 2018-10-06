@@ -19,4 +19,4 @@
  *  You can contact the authors via github issues.
  */
 
-rootProject.name = 'bip32'
+rootProject.name = 'BIP32'
