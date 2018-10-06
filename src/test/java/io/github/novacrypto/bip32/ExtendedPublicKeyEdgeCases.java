@@ -22,9 +22,7 @@
 package io.github.novacrypto.bip32;
 
 import io.github.novacrypto.bip32.networks.Bitcoin;
-import mockit.integration.junit4.JMockit;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import java.math.BigInteger;
 
@@ -43,7 +41,6 @@ import static org.junit.Assert.assertEquals;
  * As unlikely as this is, these are the tests. They use jmockit as I don't know of any test vectors for this very
  * improbable scenario.
  */
-@RunWith(JMockit.class)
 public final class ExtendedPublicKeyEdgeCases {
 
     private void assertKeyIsOfIndex(int requestedIndex, int expectedIndex, BigInteger... il) {

@@ -24,8 +24,8 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.0'
-        classpath 'com.github.ben-manes:gradle-versions-plugin:0.17.0'
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4'
+        classpath 'com.github.ben-manes:gradle-versions-plugin:0.20.0'
     }
 }
 
@@ -78,13 +78,17 @@ dependencies {
     compile 'io.github.novacrypto:Hash160:0.0.1@jar'
     compile 'io.github.novacrypto:SHA256:0.0.1@jar'
     compile 'io.github.novacrypto:ToRuntime:0.9.0@jar'
-    compile 'io.github.novacrypto:Base58:0.1.2@jar'
+    compile 'io.github.novacrypto:Base58:0.1.3@jar'
     compile 'io.github.novacrypto:BIP32derivation:0.0.2@jar'
+    testCompile 'org.jmockit:jmockit:1.43'
     testCompile 'junit:junit:4.12'
-    testCompile 'com.google.code.gson:gson:2.8.2'
-    testCompile 'org.assertj:assertj-core:3.9.0'
-    testCompile 'io.github.novacrypto:BIP39:0.1.7@jar'
-    testCompile 'org.jmockit:jmockit:1.38'
+    testCompile 'com.google.code.gson:gson:2.8.5'
+    testCompile 'org.assertj:assertj-core:3.11.1'
+    testCompile 'io.github.novacrypto:BIP39:0.1.9@jar'
+}
+
+test {
+    jvmArgs "-javaagent:${classpath.find { it.name.contains("jmockit") }.absolutePath}"
 }
 
 compileJava.options.encoding = 'UTF-8'

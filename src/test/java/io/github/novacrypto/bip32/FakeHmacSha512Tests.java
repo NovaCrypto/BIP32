@@ -21,9 +21,7 @@
 
 package io.github.novacrypto.bip32;
 
-import mockit.integration.junit4.JMockit;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import java.math.BigInteger;
 import java.util.Arrays;
@@ -35,7 +33,6 @@ import static io.github.novacrypto.bip32.Secp256k1SC.n;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 
-@RunWith(JMockit.class)
 public final class FakeHmacSha512Tests {
     @Test
     public void canFakeHmacResponses() {
