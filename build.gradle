@@ -1,6 +1,6 @@
 /*
  *  BIP32 library, a Java implementation of BIP32
- *  Copyright (C) 2017 Alan Evans, NovaCrypto
+ *  Copyright (C) 2017-2018 Alan Evans, NovaCrypto
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -24,8 +24,8 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.0'
-        classpath 'com.github.ben-manes:gradle-versions-plugin:0.17.0'
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4'
+        classpath 'com.github.ben-manes:gradle-versions-plugin:0.20.0'
     }
 }
 
@@ -38,7 +38,7 @@ apply from: 'bintray.gradle'
 apply plugin: 'com.github.ben-manes.versions'
 
 group 'io.github.novacrypto'
-version '0.0.9'
+version '2018.10.06'
 
 // To upload a new version
 // ./gradlew clean build bintrayUpload -Puser=user -Pkey=APIKEY
@@ -48,10 +48,10 @@ bintray {
     publications = ['MyPublication']
     pkg {
         repo = 'BIP'
-        name = 'BIP32'
+        name = project.name
         userOrg = 'novacrypto'
         licenses = ['GPL-3.0']
-        vcsUrl = 'https://github.com/NovaCrypto/BIP32.git'
+        vcsUrl = "https://github.com/NovaCrypto/${project.name}.git"
         version {
             name = project.version
         }
@@ -75,14 +75,22 @@ compileJava {
 
 dependencies {
     compile 'com.madgag.spongycastle:core:1.58.0.0@jar'
-    compile 'io.github.novacrypto:Hash160:0.0.1@jar'
-    compile 'io.github.novacrypto:SHA256:0.0.1@jar'
-    compile 'io.github.novacrypto:ToRuntime:0.9.0@jar'
-    compile 'io.github.novacrypto:Base58:0.1.2@jar'
-    compile 'io.github.novacrypto:BIP32derivation:0.0.2@jar'
+    compile 'io.github.novacrypto:Hash160:2018.10.06@jar'
+    compile 'io.github.novacrypto:SHA256:2018.10.06@jar'
+    compile 'io.github.novacrypto:ToRuntime:2018.10.06@jar'
+    compile 'io.github.novacrypto:Base58:2018.10.06@jar'
+    compile 'io.github.novacrypto:BIP32derivation:2018.10.06@jar'
+    testCompile 'org.jmockit:jmockit:1.43'
     testCompile 'junit:junit:4.12'
-    testCompile 'com.google.code.gson:gson:2.8.2'
-    testCompile 'org.assertj:assertj-core:3.9.0'
-    testCompile 'io.github.novacrypto:BIP39:0.1.7@jar'
-    testCompile 'org.jmockit:jmockit:1.38'
+    testCompile 'com.google.code.gson:gson:2.8.5'
+    testCompile 'org.assertj:assertj-core:3.11.1'
+    testCompile 'io.github.novacrypto:BIP39:2018.10.06@jar'
 }
+
+test {
+    jvmArgs "-javaagent:${classpath.find { it.name.contains("jmockit") }.absolutePath}"
+}
+
+compileJava.options.encoding = 'UTF-8'
+compileTestJava.options.encoding = 'UTF-8'
+javadoc.options.encoding = 'UTF-8'

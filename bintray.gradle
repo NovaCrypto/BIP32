@@ -1,6 +1,6 @@
 /*
  *  BIP32 library, a Java implementation of BIP32
- *  Copyright (C) 2017 Alan Evans, NovaCrypto
+ *  Copyright (C) 2017-2018 Alan Evans, NovaCrypto
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -50,14 +50,14 @@ publishing {
             artifact sourcesJar
             artifact javadocJar
             groupId group
-            artifactId 'BIP32'
+            artifactId project.name
             version project.version
         }
     }
 }
 
 jacoco {
-    toolVersion = '0.8.0'
+    toolVersion = '0.8.2'
 }
 
 jacocoTestReport {
@@ -78,6 +78,7 @@ dependencyUpdates {
 }
 
 bintrayUpload.dependsOn(dependencyUpdates)
+bintrayUpload.dependsOn(check)
 
 task('installSharedIdea', type: Copy) {
     description = "Copy the shared intellij files into local .idea/"
