@@ -21,7 +21,7 @@ Add dependency:
 
 ```
 dependencies {
-    compile 'io.github.novacrypto:BIP32:0.0.9'
+    compile 'io.github.novacrypto:BIP32:2018.10.06'
 }
 
 ```
@@ -30,7 +30,7 @@ dependencies {
 
 ```
 ExtendedPrivateKey key = ExtendedPrivateKey.fromSeed(seed, Bitcoin.MAIN_NET);
-ExtendedPrivateKey child = key.derive("m/0'/0);
+ExtendedPrivateKey child = key.derive("m/0'/0");
 ExtendedPublicKey childPub = child.neuter();
 ```
 
