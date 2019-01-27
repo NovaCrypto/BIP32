@@ -40,10 +40,10 @@ public final class Asserts {
             final String actualDecoded = decodeKey(actualKey);
             final int index = indexOfFirstDifference(expectedDecoded, actualDecoded);
             final String differencePointer = String.format("%1$" + (index + 1) + "s", "^");
-            failureMessage = String.format("\n" +
-                            "          version  d  f.print   child    chain code                                                       key                                                               checksum\n" +
-                            "Expected :%s\n" +
-                            "Actual   :%s\n" +
+            failureMessage = String.format("%n" +
+                            "          version  d  f.print   child    chain code                                                       key                                                               checksum%n" +
+                            "Expected :%s%n" +
+                            "Actual   :%s%n" +
                             "          %s",
                     expectedDecoded, actualDecoded, differencePointer);
         }
@@ -57,10 +57,10 @@ public final class Asserts {
             final String actualDecoded = decodeAddress(actualAddress);
             final int index = indexOfFirstDifference(expectedDecoded, actualDecoded);
             final String differencePointer = String.format("%1$" + (index + 1) + "s", "^");
-            failureMessage = String.format("\n" +
-                            "       version                  key                   checksum\n" +
-                            "Expected :%s\n" +
-                            "Actual   :%s\n" +
+            failureMessage = String.format("%n" +
+                            "       version                  key                   checksum%n" +
+                            "Expected :%s%n" +
+                            "Actual   :%s%n" +
                             "          %s",
                     expectedDecoded, actualDecoded, differencePointer);
         }
@@ -86,16 +86,17 @@ public final class Asserts {
     }
 
     private static String breakString(final String s, final int expectedLength, final int[] indexes) {
-        assertEquals(expectedLength * 2, s.length());
+        final int doubleLength = expectedLength * 2;
+        assertEquals(doubleLength, s.length());
         StringBuilder sb = new StringBuilder();
         int last = 0;
         for (int index : indexes) {
             final int current = last + index * 2;
-            sb.append(s.substring(last, current));
+            sb.append(s, last, current);
             sb.append(" ");
             last = current;
         }
-        assertEquals(expectedLength * 2, last);
+        assertEquals(doubleLength, last);
         return sb.toString();
     }
 }
