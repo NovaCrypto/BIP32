@@ -21,6 +21,7 @@
 
 package io.github.novacrypto.bip32;
 
+import io.github.novacrypto.SuppressFBWarnings;
 import mockit.Invocation;
 import mockit.Mock;
 import mockit.MockUp;
@@ -32,11 +33,15 @@ import static io.github.novacrypto.bip32.Secp256k1SC.CURVE;
 
 final class FakeSecp256k1SC {
 
-    static void fakeGMultiplyAndAddPoint(ECPoint... responses) {
+    private static void fakeGMultiplyAndAddPoint(ECPoint... responses) {
         new MockUp<Secp256k1SC>() {
             private int i = 0;
 
             @Mock
+            @SuppressFBWarnings(
+                    value = "UMAC_UNCALLABLE_METHOD_OF_ANONYMOUS_CLASS",
+                    justification = "Found by reflection"
+            )
             public ECPoint gMultiplyAndAddPoint(final Invocation inv, final BigInteger p, final byte[] toAdd) {
                 if (i > responses.length - 1) {
                     return inv.proceed(p, toAdd);
