@@ -23,14 +23,17 @@ package io.github.novacrypto.bip32;
 
 import org.junit.Test;
 
+import static org.junit.Assert.assertNotNull;
+
 public final class ConstructorCoverage {
 
     @Test
+    @SuppressWarnings("ObviousNullCheck")
     public void coverUtilClassConstructors() {
-        new BigIntegerUtils();
-        new HmacSha512();
-        new Index();
-        new Secp256k1SC();
-        new Checksum();
+        assertNotNull(new BigIntegerUtils());
+        assertNotNull(new HmacSha512());
+        assertNotNull(new Index());
+        assertNotNull(new Secp256k1SC());
+        assertNotNull(new Checksum());
     }
 }
