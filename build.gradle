@@ -80,7 +80,7 @@ dependencies {
     compile 'io.github.novacrypto:ToRuntime:2018.10.06@jar'
     compile 'io.github.novacrypto:Base58:2018.10.06@jar'
     compile 'io.github.novacrypto:BIP32derivation:2018.10.06@jar'
-    testCompile 'org.jmockit:jmockit:1.43'
+    testCompile 'org.jmockit:jmockit:1.44'
     testCompile 'junit:junit:4.12'
     testCompile 'com.google.code.gson:gson:2.8.5'
     testCompile 'org.assertj:assertj-core:3.11.1'
