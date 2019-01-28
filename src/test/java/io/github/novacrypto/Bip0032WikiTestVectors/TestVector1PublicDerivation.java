@@ -1,6 +1,6 @@
 /*
  *  BIP32 library, a Java implementation of BIP32
- *  Copyright (C) 2017-2018 Alan Evans, NovaCrypto
+ *  Copyright (C) 2017-2019 Alan Evans, NovaCrypto
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -26,6 +26,8 @@ import io.github.novacrypto.bip32.ExtendedPrivateKey;
 import io.github.novacrypto.bip32.ExtendedPublicKey;
 import org.junit.Test;
 
+import javax.annotation.CheckReturnValue;
+
 import static io.github.novacrypto.Bip0032WikiTestVectors.TestVectorHelpers.assertBase58;
 import static io.github.novacrypto.Bip0032WikiTestVectors.TestVectorHelpers.createMainNetRootFromSeed;
 import static io.github.novacrypto.bip32.Index.hard;
@@ -38,11 +40,10 @@ public final class TestVector1PublicDerivation {
     @Test
     public void chain_m_0h_1_2h_2_public() {
         assertBase58("xpub6FHa3pjLCk84BayeJxFW2SP4XRrFd1JYnxeLeU8EqN3vDfZmbqBqaGJAyiLjTAwm6ZLRQUMv1ZACTj37sR62cfN7fe5JnJ7dh8zL4fiyLHV",
-                root
+                cKDpubIgnoreResultForSpotBugs(root
                         .cKDpriv(hard(0))
                         .cKDpriv(1)
-                        .cKDpub(hard(2))
-                        .cKDpub(2));
+                        .cKDpub(hard(2)), 2));
     }
 
     @Test
@@ -70,9 +71,16 @@ public final class TestVector1PublicDerivation {
     @Test
     public void illegal_chain_m_0h_0h() {
         final ExtendedPublicKey key = root.cKDpub(0);
-        assertThatThrownBy(() -> key.cKDpub(hard(0)))
+        final int index = hard(0);
+        //noinspection ResultOfMethodCallIgnored
+        assertThatThrownBy(() -> cKDpubIgnoreResultForSpotBugs(key, index))
                 .isInstanceOf(IllegalCKDCall.class)
                 .hasMessage("Cannot derive a hardened key from a public key");
+    }
+
+    @CheckReturnValue
+    private ExtendedPublicKey cKDpubIgnoreResultForSpotBugs(ExtendedPublicKey key, int index) {
+        return key.cKDpub(index);
     }
 
     @Test

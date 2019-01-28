@@ -1,6 +1,6 @@
 /*
  *  BIP32 library, a Java implementation of BIP32
- *  Copyright (C) 2017-2018 Alan Evans, NovaCrypto
+ *  Copyright (C) 2017-2019 Alan Evans, NovaCrypto
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -23,14 +23,17 @@ package io.github.novacrypto.bip32;
 
 import org.junit.Test;
 
+import static org.junit.Assert.assertNotNull;
+
 public final class ConstructorCoverage {
 
     @Test
+    @SuppressWarnings("ObviousNullCheck")
     public void coverUtilClassConstructors() {
-        new BigIntegerUtils();
-        new HmacSha512();
-        new Index();
-        new Secp256k1SC();
-        new Checksum();
+        assertNotNull(new BigIntegerUtils());
+        assertNotNull(new HmacSha512());
+        assertNotNull(new Index());
+        assertNotNull(new Secp256k1SC());
+        assertNotNull(new Checksum());
     }
 }

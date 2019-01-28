@@ -1,6 +1,6 @@
 /*
  *  BIP32 library, a Java implementation of BIP32
- *  Copyright (C) 2017-2018 Alan Evans, NovaCrypto
+ *  Copyright (C) 2017-2019 Alan Evans, NovaCrypto
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
 
 package io.github.novacrypto.bip32;
 
+import io.github.novacrypto.SuppressFBWarnings;
 import mockit.Invocation;
 import mockit.Mock;
 import mockit.MockUp;
@@ -44,6 +45,10 @@ final class FakeHmacSha512 {
             private int i = 0;
 
             @Mock
+            @SuppressFBWarnings(
+                    value = "UMAC_UNCALLABLE_METHOD_OF_ANONYMOUS_CLASS",
+                    justification = "Found by reflection"
+            )
             public byte[] hmacSha512(Invocation inv, final byte[] byteKey, final byte[] seed) {
                 if (i > responses.length - 1) {
                     return inv.proceed(byteKey, seed);

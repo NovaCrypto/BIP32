@@ -19,10 +19,21 @@
  *  You can contact the authors via github issues.
  */
 
-package io.github.novacrypto.bip32.networks;
+package io.github.novacrypto;
 
-public final class UnknownNetworkException extends RuntimeException {
-    UnknownNetworkException(final String message) {
-        super(message);
-    }
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
+@Retention(RetentionPolicy.CLASS)
+public @interface SuppressFBWarnings {
+    /**
+     * The set of SpotBugs warnings that are to be suppressed in
+     * annotated element. The value can be a bug category, kind or pattern.
+     */
+    String[] value();
+
+    /**
+     * Documentation of the reason why the warning is suppressed
+     */
+    String justification();
 }

@@ -1,6 +1,6 @@
 /*
  *  BIP32 library, a Java implementation of BIP32
- *  Copyright (C) 2017-2018 Alan Evans, NovaCrypto
+ *  Copyright (C) 2017-2019 Alan Evans, NovaCrypto
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -22,10 +22,13 @@
 package io.github.novacrypto.bip32;
 
 import io.github.novacrypto.bip32.networks.Bitcoin;
+import org.junit.Assert;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.Assert.assertNotNull;
 
+@SuppressWarnings("ConstantConditions")
 public final class SerializerBadDataTests {
 
     @Test
@@ -93,10 +96,10 @@ public final class SerializerBadDataTests {
 
     @Test
     public void canCreateSerializerInAllValidDepthRanges() {
-        for (int i = 0; i <= 255; i++)
-            new Serializer.Builder()
+        for (int depth = 0; depth <= 255; depth++)
+            assertNotNull(new Serializer.Builder()
                     .network(Bitcoin.MAIN_NET)
-                    .depth(255)
-                    .build();
+                    .depth(depth)
+                    .build());
     }
 }
